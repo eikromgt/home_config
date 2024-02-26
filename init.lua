@@ -2,6 +2,7 @@
 -- Basic Settings
 --==============================================================================
 vim.opt.encoding        = "utf-8"
+vim.opt.fileencoding    = "utf-8"
 
 vim.opt.number          = true
 vim.opt.relativenumber  = true
@@ -16,9 +17,10 @@ vim.opt.wrap            = false
 vim.opt.cmdheight       = 0
 vim.opt.showmode        = false
 vim.opt.list            = true
-vim.opt.listchars       = { nbsp = "␣", tab = "» ", trail = "•" }
+vim.opt.splitright      = true
 
 vim.opt.clipboard:append("unnamedplus")
+vim.opt.fillchars:append({ eob = " " })
 vim.api.nvim_create_autocmd("BufEnter",  { callback = function() vim.opt.formatoptions = vim.opt.formatoptions - { "c","r","o" } end })
 
 --==============================================================================
@@ -31,10 +33,15 @@ vim.keymap.set("n", "<A-v>",   "<C-v>",  { noremap = true })     vim.keymap.set(
 vim.keymap.set("",  "<C-H>",   "<C-w>",  { noremap = true })
 
 vim.keymap.set("n", "<A-W>",   "<C-w>c", { noremap = true })     vim.keymap.set("n", "<C-w>c", "<Nop>", { noremap = true })
+vim.keymap.set("n", "<A-S>",   "<C-w>v", { noremap = true })     vim.keymap.set("n", "<C-w>v", "<Nop>", { noremap = true })
 vim.keymap.set("n", "<A-l>",   "<C-w>l", { noremap = true })     vim.keymap.set("n", "<C-w>l", "<Nop>", { noremap = true })
 vim.keymap.set("n", "<A-h>",   "<C-w>h", { noremap = true })     vim.keymap.set("n", "<C-w>h", "<Nop>", { noremap = true })
 vim.keymap.set("n", "<A-k>",   "<C-w>k", { noremap = true })     vim.keymap.set("n", "<C-w>k", "<Nop>", { noremap = true })
 vim.keymap.set("n", "<A-j>",   "<C-w>j", { noremap = true })     vim.keymap.set("n", "<C-w>j", "<Nop>", { noremap = true })
+vim.keymap.set("n", "<A-L>",   "<C-w>L", { noremap = true })     vim.keymap.set("n", "<C-w>L", "<Nop>", { noremap = true })
+vim.keymap.set("n", "<A-H>",   "<C-w>H", { noremap = true })     vim.keymap.set("n", "<C-w>H", "<Nop>", { noremap = true })
+vim.keymap.set("n", "<A-K>",   "<C-w>K", { noremap = true })     vim.keymap.set("n", "<C-w>K", "<Nop>", { noremap = true })
+vim.keymap.set("n", "<A-J>",   "<C-w>J", { noremap = true })     vim.keymap.set("n", "<C-w>J", "<Nop>", { noremap = true })
 
 vim.keymap.set("n", "<A-p>",   ":e ",             { noremap = true })
 vim.keymap.set("n", "<A-z>",   ":vertical help ", { noremap = true })
@@ -52,41 +59,35 @@ vim.keymap.set("n", "<A-x>", "<Cmd>Lazy<CR>", { noremap = true })
 require("lazy").setup({
     { "nvim-tree/nvim-web-devicons",                                        },
     { "RRethy/vim-illuminate"                                               },
-    { "ellisonleao/gruvbox.nvim",   priority = 1000                         },
-    { "windwp/nvim-autopairs",      event    = "InsertEnter", opts = {}     },
-    { "L3MON4D3/LuaSnip",           version      = "2.*"                    },
+    { "ellisonleao/gruvbox.nvim", priority = 1000                           },
+    { "windwp/nvim-autopairs",    event    = "InsertEnter", opts = {}       },
+    { "L3MON4D3/LuaSnip",         version      = "2.*"                      },
     { "vim-scripts/ReplaceWithRegister"                                     },
     { "Pocco81/auto-save.nvim"                                              },
-    { "phaazon/hop.nvim",           branch   = "v2"                         },
+    { "phaazon/hop.nvim",         branch   = "v2"                           },
     { "nvim-tree/nvim-tree.lua"                                             },
     { "nvim-lualine/lualine.nvim",                                          },
     { "nvim-lua/plenary.nvim"                                               },
     { "gaborvecsei/memento.nvim"                                            },
     { "roxma/nvim-yarp"                                                     },
-    { "nixprime/cpsm",              cmd      = "UpdateRemotePlugins"        },
+    { "nixprime/cpsm",            build = lazypath .. "../cpsm/install.sh"  },
+    { "nvim-lua/plenary.nvim"                                               },
+    { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate"                },
     { "romgrk/fzy-lua-native"                                               },
     { "sindrets/diffview.nvim"                                              },
     { "gelguy/wilder.nvim"                                                  },
     { "lewis6991/gitsigns.nvim"                                             },
     --{ "f-person/git-blame.nvim"                                             },
     { "romgrk/barbar.nvim"                                                  },
-    { "akinsho/toggleterm.nvim",    version  = "*",           config = true },
+    { "akinsho/toggleterm.nvim",  version  = "*",           config = true   },
+    { "nvim-telescope/telescope.nvim", tag = "0.1.3"                        },
     { "hrsh7th/cmp-nvim-lsp"                                                },
     { "hrsh7th/nvim-cmp"                                                    },
     { "williamboman/mason.nvim"                                             },
     { "williamboman/mason-lspconfig.nvim"                                   },
     { "neovim/nvim-lspconfig"                                               },
+    { "stevearc/overseer.nvim"                                             },
 })
-
---==============================================================================
--- RRethy/vim-illuminate
---==============================================================================
-require("illuminate").configure({
-    providers = { "regex" }
-})
-vim.api.nvim_set_hl(0, "IlluminatedWordText",  { reverse = true })
-vim.api.nvim_set_hl(0, "IlluminatedWordRead",  { reverse = true })
-vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { reverse = true })
 
 --==============================================================================
 -- ellisonleao/gruvbox.nvim
@@ -97,6 +98,16 @@ require("gruvbox").setup({
     italic              = { strings = false }
 })
 vim.cmd("colorscheme gruvbox")
+
+--==============================================================================
+-- RRethy/vim-illuminate
+--==============================================================================
+require("illuminate").configure({
+    providers = { "regex" }
+})
+vim.api.nvim_set_hl(0, "IlluminatedWordText", { link = "Visual" })
+vim.api.nvim_set_hl(0, "IlluminatedWordRead", { link = "Visual" })
+vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { link = "Visual" })
 
 --==============================================================================
 -- TODO: L3MON4D3/LuaSnip
@@ -131,7 +142,18 @@ vim.keymap.set({ "n", "v" }, "<Leader>c", "<cmd>HopChar1<cr>", { noremap = true 
 --==============================================================================
 -- nvim-tree/nvim-tree.lua
 --==============================================================================
-require("nvim-tree").setup()
+require("nvim-tree").setup({
+    view = {
+        signcolumn = "auto"
+    },
+    renderer = {
+        indent_width = 1
+    },
+    filters = {
+        git_ignored = false,
+        dotfiles = false
+    },
+})
 vim.keymap.set("", "<A-e>",    "<cmd>NvimTreeToggle<cr>",   { noremap = true })
 
 --==============================================================================
@@ -151,6 +173,29 @@ require("lualine").setup({
 -- fgaborvecsei/memento.nvim
 --==============================================================================
 vim.keymap.set("n", "<A-o>", "<Cmd>lua require(\"memento\").toggle()<CR>",  { noremap = true, silent = true })
+
+--==============================================================================
+-- nvim-treesitter/nvim-treesitter
+--==============================================================================
+require("nvim-treesitter.configs").setup({
+  ensure_installed = { "c","vim", "vimdoc", "query", "cpp", "lua", "python", "cmake", "glsl", "json" },
+  sync_install = false,
+  auto_install = true,
+
+  highlight = {
+    enable = true,
+    disable = function(lang, buf)
+        local max_filesize = 5 * 1024 * 1024
+        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+        if ok and stats and stats.size > max_filesize then
+            return true
+        end
+    end,
+  },
+  indent = {
+      enable = true
+  },
+})
 
 --==============================================================================
 -- sindrets/diffview.nvim
@@ -174,15 +219,14 @@ wilder.set_option("pipeline", {
         wilder.python_file_finder_pipeline({
             file_command = { "fd", "-tf"   },
             dir_command  = { "fd", "-td",  },
-            --filters      = { "cpsm_filter" },
-            filters      = { "fuzzy_filter", "difflib_sorter" },
+            filters      = { "cpsm_filter" },
         }),
         wilder.cmdline_pipeline({
             language     = "python",
-            fuzzy        = 1,
+            fuzzy        = 2,
         }),
         wilder.python_search_pipeline({
-            pattern      = wilder.python_fuzzy_delimiter_pattern(),
+            pattern      = wilder.python_fuzzy_pattern(),
             sorter       = wilder.python_difflib_sorter(),
             engine       = "re",
         })
@@ -264,7 +308,6 @@ cmp.setup({
       end,
     },
     mapping = cmp.mapping.preset.insert({
-      --["<Esc>"]     = cmp.mapping.abort(),
       ["<CR>"]      = cmp.mapping.confirm({ select = true }),
       ["<Tab>"]     = cmp.mapping(function(fallback)
           if cmp.visible() then
@@ -303,9 +346,15 @@ require("toggleterm").setup({
     direction           = "float",
     float_opts          = {
         border          = "curved",
-        width           = function() return vim.o.columns * 0.8 end,
+        width           = function() return math.floor(vim.o.columns * 0.8 + 0.5) end,
     }
 })
+
+--==============================================================================
+-- nvim-telescope/telescope.nvim
+--==============================================================================
+local telescope = require("telescope.builtin")
+vim.keymap.set("n", "<A-f>", telescope.live_grep, {})
 
 --==============================================================================
 -- williamboman/mason.nvim
@@ -313,9 +362,9 @@ require("toggleterm").setup({
 require("mason").setup({
     ui = {
         icons = {
-            package_installed   = "✓",
-            package_pending     = "➜",
-            package_uninstalled = "✗"
+            package_installed   = "�",
+            package_pending     = "�",
+            package_uninstalled = "�"
         }
     }
 })
@@ -360,3 +409,10 @@ vim.keymap.set("n",          "<A-q>",     vim.lsp.buf.hover,         { noremap =
 vim.keymap.set("n",          "<Leader>l", vim.lsp.buf.references,    { noremap = true })
 vim.keymap.set("n",          "<Leader>r", vim.lsp.buf.rename,        { noremap = true })
 vim.keymap.set({ "n", "v" }, "<Leader>a", vim.lsp.buf.code_action,   { noremap = true })
+
+--==============================================================================
+-- stevearc/overseer.nvim 
+--==============================================================================
+require("overseer").setup()
+
+vim.keymap.set("n", "<A-t>", "<Cmd>OverseerRun<CR>", { noremap = true })
