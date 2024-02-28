@@ -57,36 +57,69 @@ vim.opt.runtimepath:prepend(lazypath)
 vim.keymap.set("n", "<A-x>", "<Cmd>Lazy<CR>", { noremap = true })
 
 require("lazy").setup({
+    -- Editor
+    { "vim-scripts/ReplaceWithRegister"                                     },
+    { "phaazon/hop.nvim",         branch   = "v2"                           },
+    { "windwp/nvim-autopairs",    event    = "InsertEnter", opts = {}       },
+    { "Pocco81/auto-save.nvim"                                              },
+
+    -- Decoration
+    { "ellisonleao/gruvbox.nvim", priority = 1000                           },
     { "nvim-tree/nvim-web-devicons",                                        },
     { "RRethy/vim-illuminate"                                               },
-    { "ellisonleao/gruvbox.nvim", priority = 1000                           },
-    { "windwp/nvim-autopairs",    event    = "InsertEnter", opts = {}       },
-    { "L3MON4D3/LuaSnip",         version      = "2.*"                      },
-    { "vim-scripts/ReplaceWithRegister"                                     },
-    { "Pocco81/auto-save.nvim"                                              },
-    { "phaazon/hop.nvim",         branch   = "v2"                           },
+
+    -- Window
     { "nvim-tree/nvim-tree.lua"                                             },
     { "nvim-lualine/lualine.nvim",                                          },
+    { "romgrk/barbar.nvim"                                                  },
+
+    -- Library
     { "nvim-lua/plenary.nvim"                                               },
-    { "gaborvecsei/memento.nvim"                                            },
     { "roxma/nvim-yarp"                                                     },
     { "nixprime/cpsm",            build = lazypath .. "../cpsm/install.sh"  },
-    { "nvim-lua/plenary.nvim"                                               },
-    { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate"                },
     { "romgrk/fzy-lua-native"                                               },
-    { "sindrets/diffview.nvim"                                              },
+    { "nvim-telescope/telescope.nvim", tag = "0.1.x"                        },
+
+    -- Tool
     { "gelguy/wilder.nvim"                                                  },
+    { "akinsho/toggleterm.nvim",  version  = "*",           config = true   },
+    { "gaborvecsei/memento.nvim"                                            },
+    { "L3MON4D3/LuaSnip",         version      = "2.*"                      },
+    { "stevearc/overseer.nvim"                                              },
+
+    -- Git
+    { "sindrets/diffview.nvim"                                              },
     { "lewis6991/gitsigns.nvim"                                             },
     --{ "f-person/git-blame.nvim"                                             },
-    { "romgrk/barbar.nvim"                                                  },
-    { "akinsho/toggleterm.nvim",  version  = "*",           config = true   },
-    { "nvim-telescope/telescope.nvim", tag = "0.1.3"                        },
+
+    -- Language
+    { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate"                },
     { "hrsh7th/cmp-nvim-lsp"                                                },
     { "hrsh7th/nvim-cmp"                                                    },
     { "williamboman/mason.nvim"                                             },
     { "williamboman/mason-lspconfig.nvim"                                   },
     { "neovim/nvim-lspconfig"                                               },
-    { "stevearc/overseer.nvim"                                             },
+})
+
+--==============================================================================
+-- phaazon/hop.nvim
+--==============================================================================
+local hop = require('hop')
+local directions = require('hop.hint').HintDirection
+hop.setup()
+
+vim.keymap.set({ "n", "v" }, "f", function() hop.hint_char1({ direction = directions.AFTER_CURSOR,  current_line_only = true })                    end, { remap = true })
+vim.keymap.set({ "n", "v" }, "F", function() hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true })                    end, { remap = true })
+vim.keymap.set({ "n", "v" }, "t", function() hop.hint_char1({ direction = directions.AFTER_CURSOR,  current_line_only = true, hint_offset = -1 })  end, { remap = true })
+vim.keymap.set({ "n", "v" }, "T", function() hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true, hint_offset = 1 })   end, { remap = true })
+vim.keymap.set({ "n", "v" }, "<Leader>w", "<cmd>HopWord<cr>",  { noremap = true })
+vim.keymap.set({ "n", "v" }, "<Leader>c", "<cmd>HopChar1<cr>", { noremap = true })
+
+--==============================================================================
+-- Pocco81/auto-save.nvim
+--==============================================================================
+require("auto-save").setup({
+    execution_message = { message = "" }
 })
 
 --==============================================================================
@@ -108,36 +141,6 @@ require("illuminate").configure({
 vim.api.nvim_set_hl(0, "IlluminatedWordText", { link = "Visual" })
 vim.api.nvim_set_hl(0, "IlluminatedWordRead", { link = "Visual" })
 vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { link = "Visual" })
-
---==============================================================================
--- TODO: L3MON4D3/LuaSnip
---==============================================================================
-local luasnip = require("luasnip")
---vim.keymap.set({"i"},       "<Tab>",   function() luasnip.expand() end, { noremap = false, silent = true })
---vim.keymap.set({"i", "s"},  "<Tab>",   function() luasnip.jump( 1) end, { noremap = false, silent = true })
---vim.keymap.set({"i", "s"},  "<S-Tab>", function() luasnip.jump(-1) end, { noremap = true,  silent = true })
---vim.keymap.set({"i", "s"},  "<A-c>",   function() if luasnip.choice_active() then luasnip.change_choice(1) end end, { noremap = true, silent = true })
-
---==============================================================================
--- Pocco81/auto-save.nvim
---==============================================================================
-require("auto-save").setup({
-    execution_message = { message = "" }
-})
-
---==============================================================================
--- phaazon/hop.nvim
---==============================================================================
-local hop = require('hop')
-local directions = require('hop.hint').HintDirection
-hop.setup()
-
-vim.keymap.set({ "n", "v" }, "f", function() hop.hint_char1({ direction = directions.AFTER_CURSOR,  current_line_only = true })                    end, { remap = true })
-vim.keymap.set({ "n", "v" }, "F", function() hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true })                    end, { remap = true })
-vim.keymap.set({ "n", "v" }, "t", function() hop.hint_char1({ direction = directions.AFTER_CURSOR,  current_line_only = true, hint_offset = -1 })  end, { remap = true })
-vim.keymap.set({ "n", "v" }, "T", function() hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true, hint_offset = 1 })   end, { remap = true })
-vim.keymap.set({ "n", "v" }, "<Leader>w", "<cmd>HopWord<cr>",  { noremap = true })
-vim.keymap.set({ "n", "v" }, "<Leader>c", "<cmd>HopChar1<cr>", { noremap = true })
 
 --==============================================================================
 -- nvim-tree/nvim-tree.lua
@@ -170,41 +173,30 @@ require("lualine").setup({
 })
 
 --==============================================================================
--- fgaborvecsei/memento.nvim
+-- romgrk/barbar.nvim
 --==============================================================================
-vim.keymap.set("n", "<A-o>", "<Cmd>lua require(\"memento\").toggle()<CR>",  { noremap = true, silent = true })
+vim.keymap.set("n", "<A-,>", "<Cmd>BufferPrevious<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<A-.>", "<Cmd>BufferNext<CR>",     { noremap = true, silent = true })
+
+vim.keymap.set("n", "<A-1>", "<Cmd>BufferGoto 1<CR>",   { noremap = true, silent = true })
+vim.keymap.set("n", "<A-2>", "<Cmd>BufferGoto 2<CR>",   { noremap = true, silent = true })
+vim.keymap.set("n", "<A-3>", "<Cmd>BufferGoto 3<CR>",   { noremap = true, silent = true })
+vim.keymap.set("n", "<A-4>", "<Cmd>BufferGoto 4<CR>",   { noremap = true, silent = true })
+vim.keymap.set("n", "<A-5>", "<Cmd>BufferGoto 5<CR>",   { noremap = true, silent = true })
+vim.keymap.set("n", "<A-6>", "<Cmd>BufferGoto 6<CR>",   { noremap = true, silent = true })
+vim.keymap.set("n", "<A-7>", "<Cmd>BufferGoto 7<CR>",   { noremap = true, silent = true })
+vim.keymap.set("n", "<A-8>", "<Cmd>BufferGoto 8<CR>",   { noremap = true, silent = true })
+vim.keymap.set("n", "<A-9>", "<Cmd>BufferGoto 9<CR>",   { noremap = true, silent = true })
+vim.keymap.set("n", "<A-0>", "<Cmd>BufferLast<CR>",     { noremap = true, silent = true })
+
+vim.keymap.set("n", "<A-w>", "<Cmd>BufferClose<CR>",    { noremap = true, silent = true })
+vim.keymap.set("n", "<A-s>", "<Cmd>BufferPick<CR>",     { noremap = true, silent = true })
 
 --==============================================================================
--- nvim-treesitter/nvim-treesitter
+-- nvim-telescope/telescope.nvim
 --==============================================================================
-require("nvim-treesitter.configs").setup({
-  ensure_installed = { "c","vim", "vimdoc", "query", "cpp", "lua", "python", "cmake", "glsl", "json" },
-  sync_install = false,
-  auto_install = true,
-
-  highlight = {
-    enable = true,
-    disable = function(lang, buf)
-        local max_filesize = 5 * 1024 * 1024
-        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-        if ok and stats and stats.size > max_filesize then
-            return true
-        end
-    end,
-  },
-  indent = {
-      enable = true
-  },
-})
-
---==============================================================================
--- sindrets/diffview.nvim
---==============================================================================
-vim.keymap.set("n", "<A-g>", ":DiffviewOpen ",                { noremap = true, silent = true })
-vim.keymap.set("n", "<A-G>", "<Cmd>DiffviewRefresh<CR>",      { noremap = true, silent = true })
-vim.keymap.set("n", "<A-c>", "<Cmd>DiffviewToggleFiles<CR>",  { noremap = true, silent = true })
-vim.keymap.set("n", "<A-]>", "]c",  { noremap = true })     vim.keymap.set("n", "]c", "<Nop>",  { noremap = true })
-vim.keymap.set("n", "<A-[>", "[c",  { noremap = true })     vim.keymap.set("n", "[c", "<Nop>",  { noremap = true })
+local telescope = require("telescope.builtin")
+vim.keymap.set("n", "<A-f>", telescope.live_grep, {})
 
 --==============================================================================
 -- TODO: gelguy/wilder.nvim
@@ -247,6 +239,48 @@ wilder.set_option("renderer", wilder.popupmenu_renderer(
 ))
 
 --==============================================================================
+-- akinsho/toggleterm.nvim
+--==============================================================================
+vim.opt.hidden          = true
+require("toggleterm").setup({
+    open_mapping        = "<A-`>",
+    direction           = "float",
+    float_opts          = {
+        border          = "curved",
+        width           = function() return math.floor(vim.o.columns * 0.8 + 0.5) end,
+    }
+})
+
+--==============================================================================
+-- fgaborvecsei/memento.nvim
+--==============================================================================
+vim.keymap.set("n", "<A-o>", "<Cmd>lua require(\"memento\").toggle()<CR>",  { noremap = true, silent = true })
+
+--==============================================================================
+-- TODO: L3MON4D3/LuaSnip
+--==============================================================================
+local luasnip = require("luasnip")
+--vim.keymap.set({"i"},       "<Tab>",   function() luasnip.expand() end, { noremap = false, silent = true })
+--vim.keymap.set({"i", "s"},  "<Tab>",   function() luasnip.jump( 1) end, { noremap = false, silent = true })
+--vim.keymap.set({"i", "s"},  "<S-Tab>", function() luasnip.jump(-1) end, { noremap = true,  silent = true })
+--vim.keymap.set({"i", "s"},  "<A-c>",   function() if luasnip.choice_active() then luasnip.change_choice(1) end end, { noremap = true, silent = true })
+
+--==============================================================================
+-- stevearc/overseer.nvim 
+--==============================================================================
+require("overseer").setup()
+
+vim.keymap.set("n", "<A-t>", "<Cmd>OverseerRun<CR>", { noremap = true })
+--==============================================================================
+-- sindrets/diffview.nvim
+--==============================================================================
+vim.keymap.set("n", "<A-g>", ":DiffviewOpen ",                { noremap = true, silent = true })
+vim.keymap.set("n", "<A-G>", "<Cmd>DiffviewRefresh<CR>",      { noremap = true, silent = true })
+vim.keymap.set("n", "<A-c>", "<Cmd>DiffviewToggleFiles<CR>",  { noremap = true, silent = true })
+vim.keymap.set("n", "<A-]>", "]c",  { noremap = true })     vim.keymap.set("n", "]c", "<Nop>",  { noremap = true })
+vim.keymap.set("n", "<A-[>", "[c",  { noremap = true })     vim.keymap.set("n", "[c", "<Nop>",  { noremap = true })
+
+--==============================================================================
 -- lewis6991/gitsigns.nvim
 --==============================================================================
 -- TODO: copy sha to system clipboard
@@ -273,24 +307,27 @@ vim.keymap.set("n", "<A-b>", gitsigns.toggle_current_line_blame,  { noremap = tr
 --vim.keymap.set("n", "<A-s>", "<Cmd>GitBlameCopySHA<CR>", { noremap = true, silent = true })
 
 --==============================================================================
--- romgrk/barbar.nvim
+-- nvim-treesitter/nvim-treesitter
 --==============================================================================
-vim.keymap.set("n", "<A-,>", "<Cmd>BufferPrevious<CR>", { noremap = true, silent = true })
-vim.keymap.set("n", "<A-.>", "<Cmd>BufferNext<CR>",     { noremap = true, silent = true })
+require("nvim-treesitter.configs").setup({
+  ensure_installed = { "c","vim", "vimdoc", "query", "cpp", "lua", "python", "cmake", "glsl", "json" },
+  sync_install = false,
+  auto_install = true,
 
-vim.keymap.set("n", "<A-1>", "<Cmd>BufferGoto 1<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-2>", "<Cmd>BufferGoto 2<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-3>", "<Cmd>BufferGoto 3<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-4>", "<Cmd>BufferGoto 4<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-5>", "<Cmd>BufferGoto 5<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-6>", "<Cmd>BufferGoto 6<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-7>", "<Cmd>BufferGoto 7<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-8>", "<Cmd>BufferGoto 8<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-9>", "<Cmd>BufferGoto 9<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-0>", "<Cmd>BufferLast<CR>",     { noremap = true, silent = true })
-
-vim.keymap.set("n", "<A-w>", "<Cmd>BufferClose<CR>",    { noremap = true, silent = true })
-vim.keymap.set("n", "<A-s>", "<Cmd>BufferPick<CR>",     { noremap = true, silent = true })
+  highlight = {
+    enable = true,
+    disable = function(lang, buf)
+        local max_filesize = 5 * 1024 * 1024
+        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+        if ok and stats and stats.size > max_filesize then
+            return true
+        end
+    end,
+  },
+  indent = {
+      enable = true
+  },
+})
 
 --==============================================================================
 -- hrsh7th/cmp-nvim-lsp
@@ -336,25 +373,6 @@ cmp.setup({
         { name = "buffer"  }
     })
 })
-
---==============================================================================
--- akinsho/toggleterm.nvim
---==============================================================================
-vim.opt.hidden          = true
-require("toggleterm").setup({
-    open_mapping        = "<A-`>",
-    direction           = "float",
-    float_opts          = {
-        border          = "curved",
-        width           = function() return math.floor(vim.o.columns * 0.8 + 0.5) end,
-    }
-})
-
---==============================================================================
--- nvim-telescope/telescope.nvim
---==============================================================================
-local telescope = require("telescope.builtin")
-vim.keymap.set("n", "<A-f>", telescope.live_grep, {})
 
 --==============================================================================
 -- williamboman/mason.nvim
@@ -410,9 +428,3 @@ vim.keymap.set("n",          "<Leader>l", vim.lsp.buf.references,    { noremap =
 vim.keymap.set("n",          "<Leader>r", vim.lsp.buf.rename,        { noremap = true })
 vim.keymap.set({ "n", "v" }, "<Leader>a", vim.lsp.buf.code_action,   { noremap = true })
 
---==============================================================================
--- stevearc/overseer.nvim 
---==============================================================================
-require("overseer").setup()
-
-vim.keymap.set("n", "<A-t>", "<Cmd>OverseerRun<CR>", { noremap = true })
