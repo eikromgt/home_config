@@ -49,6 +49,7 @@ vim.keymap.set("n", "<A-z>",   ":vertical help ", { noremap = true })
 --==============================================================================
 -- Plugin Manager: folke/lazy.nvim
 --==============================================================================
+local plugin_path = vim.fn.stdpath("data") .. "/lazy"
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
@@ -58,47 +59,48 @@ vim.keymap.set("n", "<A-x>", "<Cmd>Lazy<CR>", { noremap = true })
 
 require("lazy").setup({
     -- Editor
-    { "vim-scripts/ReplaceWithRegister"                                     },
-    { "phaazon/hop.nvim",         branch   = "v2"                           },
-    { "windwp/nvim-autopairs",    event    = "InsertEnter", opts = {}       },
-    { "Pocco81/auto-save.nvim"                                              },
+    { "vim-scripts/ReplaceWithRegister"                                                           },
+    { "phaazon/hop.nvim",         branch   = "v2"                                                 },
+    { "windwp/nvim-autopairs",    event    = "InsertEnter", opts = {}                             },
+    { "Pocco81/auto-save.nvim"                                                                    },
 
     -- Decoration
-    { "ellisonleao/gruvbox.nvim", priority = 1000                           },
-    { "nvim-tree/nvim-web-devicons",                                        },
-    { "RRethy/vim-illuminate"                                               },
+    { "ellisonleao/gruvbox.nvim", priority = 1000                                                 },
+    { "nvim-tree/nvim-web-devicons",                                                              },
+    { "RRethy/vim-illuminate"                                                                     },
+    { "nvimdev/hlsearch.nvim",    event = "BufRead"                                               },
 
     -- Window
-    { "nvim-tree/nvim-tree.lua"                                             },
-    { "nvim-lualine/lualine.nvim",                                          },
-    { "romgrk/barbar.nvim"                                                  },
+    { "nvim-tree/nvim-tree.lua"                                                                   },
+    { "nvim-lualine/lualine.nvim",                                                                },
+    { "romgrk/barbar.nvim"                                                                        },
 
     -- Library
-    { "nvim-lua/plenary.nvim"                                               },
-    { "roxma/nvim-yarp"                                                     },
-    { "nixprime/cpsm",            build = lazypath .. "../cpsm/install.sh"  },
-    { "romgrk/fzy-lua-native"                                               },
-    { "nvim-telescope/telescope.nvim", tag = "0.1.x"                        },
+    { "nvim-lua/plenary.nvim"                                                                     },
+    { "roxma/nvim-yarp"                                                                           },
+    { "nixprime/cpsm",            build = plugin_path .. "/cpsm/install.sh"                       },
+    { "romgrk/fzy-lua-native"                                                                     },
+    { "nvim-telescope/telescope.nvim", branch = "0.1.x"                                           },
 
     -- Tool
-    { "gelguy/wilder.nvim"                                                  },
-    { "akinsho/toggleterm.nvim",  version  = "*",           config = true   },
-    { "gaborvecsei/memento.nvim"                                            },
-    { "L3MON4D3/LuaSnip",         version      = "2.*"                      },
-    { "stevearc/overseer.nvim"                                              },
+    { "gelguy/wilder.nvim",       dependencies = { "roxma/nvim-yarp", "romgrk/fzy-lua-native" }   },
+    { "akinsho/toggleterm.nvim",  version  = "*",           config = true                         },
+    { "gaborvecsei/memento.nvim"                                                                  },
+    { "L3MON4D3/LuaSnip",         version      = "2.*"                                            },
+    { "stevearc/overseer.nvim"                                                                    },
 
     -- Git
-    { "sindrets/diffview.nvim"                                              },
-    { "lewis6991/gitsigns.nvim"                                             },
-    --{ "f-person/git-blame.nvim"                                             },
+    { "sindrets/diffview.nvim"                                                                    },
+    { "lewis6991/gitsigns.nvim"                                                                   },
+    --{ "f-person/git-blame.nvim"                                                                   },
 
     -- Language
-    { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate"                },
-    { "hrsh7th/cmp-nvim-lsp"                                                },
-    { "hrsh7th/nvim-cmp"                                                    },
-    { "williamboman/mason.nvim"                                             },
-    { "williamboman/mason-lspconfig.nvim"                                   },
-    { "neovim/nvim-lspconfig"                                               },
+    { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate"                                      },
+    { "hrsh7th/cmp-nvim-lsp"                                                                      },
+    { "hrsh7th/nvim-cmp"                                                                          },
+    { "williamboman/mason.nvim"                                                                   },
+    { "williamboman/mason-lspconfig.nvim"                                                         },
+    { "neovim/nvim-lspconfig"                                                                     },
 })
 
 --==============================================================================
@@ -141,6 +143,11 @@ require("illuminate").configure({
 vim.api.nvim_set_hl(0, "IlluminatedWordText", { link = "Visual" })
 vim.api.nvim_set_hl(0, "IlluminatedWordRead", { link = "Visual" })
 vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { link = "Visual" })
+
+--==============================================================================
+-- nvimdev/hlsearch.nvim
+--==============================================================================
+require("hlsearch").setup()
 
 --==============================================================================
 -- nvim-tree/nvim-tree.lua
@@ -192,6 +199,12 @@ vim.keymap.set("n", "<A-0>", "<Cmd>BufferLast<CR>",     { noremap = true, silent
 vim.keymap.set("n", "<A-w>", "<Cmd>BufferClose<CR>",    { noremap = true, silent = true })
 vim.keymap.set("n", "<A-s>", "<Cmd>BufferPick<CR>",     { noremap = true, silent = true })
 
+
+--==============================================================================
+-- nixprime/cpsm
+--==============================================================================
+vim.g.ctrlp_match_func = { match = "cpsm#CtrlPMatch" }
+
 --==============================================================================
 -- nvim-telescope/telescope.nvim
 --==============================================================================
@@ -203,7 +216,8 @@ vim.keymap.set("n", "<A-f>", telescope.live_grep, {})
 --==============================================================================
 local wilder = require("wilder")
 wilder.setup({
-    modes = { ":", "/", "?" }
+    modes       = { ":", "/", "?" },
+    interval    = 1000,
 })
 
 wilder.set_option("pipeline", {
@@ -211,32 +225,36 @@ wilder.set_option("pipeline", {
         wilder.python_file_finder_pipeline({
             file_command = { "fd", "-tf"   },
             dir_command  = { "fd", "-td",  },
-            filters      = { "cpsm_filter" },
+            -- filters      = { "cpsm_filter" },
+            filters = {'fuzzy_filter', 'difflib_sorter'},
         }),
-        wilder.cmdline_pipeline({
-            language     = "python",
-            fuzzy        = 2,
-        }),
-        wilder.python_search_pipeline({
-            pattern      = wilder.python_fuzzy_pattern(),
-            sorter       = wilder.python_difflib_sorter(),
-            engine       = "re",
-        })
+        wilder.cmdline_pipeline(),
+        wilder.python_search_pipeline()
     ),
 })
 
-wilder.set_option("renderer", wilder.popupmenu_renderer(
-    wilder.popupmenu_palette_theme({
-        highlighter     = { wilder.lua_pcre2_highlighter(), wilder.lua_fzy_highlighter() },
+wilder.set_option("renderer", wilder.renderer_mux({
+    [":"] = wilder.popupmenu_renderer(
+        wilder.popupmenu_palette_theme({
+            highlighter     = { wilder.lua_pcre2_highlighter(), wilder.lua_fzy_highlighter() },
+            highlights      = { accent = wilder.make_hl("WilderAccent", "Pmenu", {{ a = 1 }, { a = 1 }, { foreground = "#f4468f" }}), },
+            left            = { " ", wilder.popupmenu_devicons() },
+            border          = "rounded",
+            max_height      = "75%",
+            min_height      = 0,
+            prompt_position = "top",
+            reverse         = 0,
+        })
+    ),
+    ["/"] = wilder.wildmenu_renderer({
+        highlighter = wilder.basic_highlighter(),
         highlights      = { accent = wilder.make_hl("WilderAccent", "Pmenu", {{ a = 1 }, { a = 1 }, { foreground = "#f4468f" }}), },
-        left            = { " ", wilder.popupmenu_devicons() },
-        border          = "rounded",
-        max_height      = "75%",
-        min_height      = 0,
-        prompt_position = "top",
-        reverse         = 0,
-    })
-))
+    }),
+    ["?"] = wilder.wildmenu_renderer({
+        highlighter = wilder.basic_highlighter(),
+        highlights      = { accent = wilder.make_hl("WilderAccent", "Pmenu", {{ a = 1 }, { a = 1 }, { foreground = "#f4468f" }}), },
+    }),
+}))
 
 --==============================================================================
 -- akinsho/toggleterm.nvim
@@ -380,9 +398,9 @@ cmp.setup({
 require("mason").setup({
     ui = {
         icons = {
-            package_installed   = "¿",
-            package_pending     = "¿",
-            package_uninstalled = "¿"
+            package_installed   = "âœ“",
+            package_pending     = "âžœ",
+            package_uninstalled = "âœ—"
         }
     }
 })
