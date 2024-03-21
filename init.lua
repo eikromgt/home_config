@@ -19,8 +19,11 @@ vim.opt.showmode        = false
 vim.opt.list            = true
 vim.opt.splitright      = true
 
+vim.opt.ignorecase      = true
+vim.opt.smartcase       = true
+
 vim.opt.clipboard:append("unnamedplus")
-vim.opt.fillchars:append({ eob = " " })
+vim.opt.fillchars:append({ eob = " ", diff = " " })
 vim.api.nvim_create_autocmd("BufEnter",  { callback = function() vim.opt.formatoptions = vim.opt.formatoptions - { "c","r","o" } end })
 
 --==============================================================================
@@ -46,6 +49,22 @@ vim.keymap.set("n", "<A-J>",   "<C-w>J", { noremap = true })     vim.keymap.set(
 vim.keymap.set("n", "<A-p>",   ":e ",             { noremap = true })
 vim.keymap.set("n", "<A-z>",   ":vertical help ", { noremap = true })
 
+vim.api.nvim_create_autocmd("LspAttach", {
+    callback = function(args)
+        vim.keymap.set("n",          "<Leader>q", vim.diagnostic.open_float, { noremap = true })
+        vim.keymap.set("n",          "<Leader>[", vim.diagnostic.goto_prev,  { noremap = true })
+        vim.keymap.set("n",          "<Leader>]", vim.diagnostic.goto_next,  { noremap = true })
+        vim.keymap.set("n",          "<Leader>o", vim.diagnostic.setloclist, { noremap = true })
+
+        vim.keymap.set("n",          "<A-u>",     vim.lsp.buf.declaration,   { noremap = true })
+        vim.keymap.set("n",          "<A-y>",     vim.lsp.buf.definition,    { noremap = true })
+        vim.keymap.set("n",          "<A-q>",     vim.lsp.buf.hover,         { noremap = true })
+        vim.keymap.set("n",          "<Leader>l", vim.lsp.buf.references,    { noremap = true })
+        vim.keymap.set("n",          "<Leader>r", vim.lsp.buf.rename,        { noremap = true })
+        vim.keymap.set({ "n", "v" }, "<Leader>a", vim.lsp.buf.code_action,   { noremap = true })
+    end,
+})
+
 --==============================================================================
 -- Plugin Manager: folke/lazy.nvim
 --==============================================================================
@@ -59,48 +78,49 @@ vim.keymap.set("n", "<A-x>", "<Cmd>Lazy<CR>", { noremap = true })
 
 require("lazy").setup({
     -- Editor
-    { "vim-scripts/ReplaceWithRegister"                                                           },
-    { "phaazon/hop.nvim",         branch   = "v2"                                                 },
-    { "windwp/nvim-autopairs",    event    = "InsertEnter", opts = {}                             },
-    { "Pocco81/auto-save.nvim"                                                                    },
+    { "vim-scripts/ReplaceWithRegister"                                     },
+    { "phaazon/hop.nvim",         branch   = "v2"                           },
+    { "windwp/nvim-autopairs",    event    = "InsertEnter", config = true   },
+    { "Pocco81/auto-save.nvim"                                              },
 
     -- Decoration
-    { "ellisonleao/gruvbox.nvim", priority = 1000                                                 },
-    { "nvim-tree/nvim-web-devicons",                                                              },
-    { "RRethy/vim-illuminate"                                                                     },
-    { "nvimdev/hlsearch.nvim",    event = "BufRead"                                               },
+    { "ellisonleao/gruvbox.nvim", priority = 1000                           },
+    { "nvim-tree/nvim-web-devicons",                                        },
+    { "RRethy/vim-illuminate"                                               },
+    { "nvimdev/hlsearch.nvim",    event = "BufRead", config = true          },
+    { "HiPhish/rainbow-delimiters.nvim"                                     },
 
     -- Window
-    { "nvim-tree/nvim-tree.lua"                                                                   },
-    { "nvim-lualine/lualine.nvim",                                                                },
-    { "romgrk/barbar.nvim"                                                                        },
+    { "nvim-tree/nvim-tree.lua"                                             },
+    { "nvim-lualine/lualine.nvim",                                          },
+    { "romgrk/barbar.nvim"                                                  },
 
     -- Library
-    { "nvim-lua/plenary.nvim"                                                                     },
-    { "roxma/nvim-yarp"                                                                           },
-    { "nixprime/cpsm",            build = plugin_path .. "/cpsm/install.sh"                       },
-    { "romgrk/fzy-lua-native"                                                                     },
-    { "nvim-telescope/telescope.nvim", branch = "0.1.x"                                           },
+    { "nvim-lua/plenary.nvim"                                               },
+    { "roxma/nvim-yarp"                                                     },
+    { "romgrk/fzy-lua-native"                                               },
+    { "nvim-telescope/telescope.nvim", branch = "0.1.x",
+        dependencies = { "nvim-lua/plenary.nvim" }                          },
 
     -- Tool
-    { "gelguy/wilder.nvim",       dependencies = { "roxma/nvim-yarp", "romgrk/fzy-lua-native" }   },
-    { "akinsho/toggleterm.nvim",  version  = "*",           config = true                         },
-    { "gaborvecsei/memento.nvim"                                                                  },
-    { "L3MON4D3/LuaSnip",         version      = "2.*"                                            },
-    { "stevearc/overseer.nvim"                                                                    },
+    { "gelguy/wilder.nvim",
+        dependencies = { "roxma/nvim-yarp", "romgrk/fzy-lua-native" }       },
+    { "akinsho/toggleterm.nvim",  version  = "*",           config = true   },
+    { "L3MON4D3/LuaSnip",         version      = "2.*"                      },
+    { "stevearc/overseer.nvim"                                              },
 
     -- Git
-    { "sindrets/diffview.nvim"                                                                    },
-    { "lewis6991/gitsigns.nvim"                                                                   },
-    --{ "f-person/git-blame.nvim"                                                                   },
+    { "sindrets/diffview.nvim"                                              },
+    { "lewis6991/gitsigns.nvim"                                             },
+    --{ "f-person/git-blame.nvim"                                             },
 
     -- Language
-    { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate"                                      },
-    { "hrsh7th/cmp-nvim-lsp"                                                                      },
-    { "hrsh7th/nvim-cmp"                                                                          },
-    { "williamboman/mason.nvim"                                                                   },
-    { "williamboman/mason-lspconfig.nvim"                                                         },
-    { "neovim/nvim-lspconfig"                                                                     },
+    { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate"                },
+    { "hrsh7th/cmp-nvim-lsp"                                                },
+    { "hrsh7th/nvim-cmp"                                                    },
+    { "williamboman/mason.nvim"                                             },
+    { "williamboman/mason-lspconfig.nvim"                                   },
+    { "neovim/nvim-lspconfig"                                               },
 })
 
 --==============================================================================
@@ -145,11 +165,6 @@ vim.api.nvim_set_hl(0, "IlluminatedWordRead", { link = "Visual" })
 vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { link = "Visual" })
 
 --==============================================================================
--- nvimdev/hlsearch.nvim
---==============================================================================
-require("hlsearch").setup()
-
---==============================================================================
 -- nvim-tree/nvim-tree.lua
 --==============================================================================
 require("nvim-tree").setup({
@@ -175,7 +190,8 @@ require("lualine").setup({
         component_separators = ""
     },
     sections = {
-        lualine_a = {}
+        lualine_a = {},
+        lualine_x = { "overseer", "encoding", "fileformat", "filetype" },
     }
 })
 
@@ -199,12 +215,6 @@ vim.keymap.set("n", "<A-0>", "<Cmd>BufferLast<CR>",     { noremap = true, silent
 vim.keymap.set("n", "<A-w>", "<Cmd>BufferClose<CR>",    { noremap = true, silent = true })
 vim.keymap.set("n", "<A-s>", "<Cmd>BufferPick<CR>",     { noremap = true, silent = true })
 
-
---==============================================================================
--- nixprime/cpsm
---==============================================================================
-vim.g.ctrlp_match_func = { match = "cpsm#CtrlPMatch" }
-
 --==============================================================================
 -- nvim-telescope/telescope.nvim
 --==============================================================================
@@ -225,7 +235,6 @@ wilder.set_option("pipeline", {
         wilder.python_file_finder_pipeline({
             file_command = { "fd", "-tf"   },
             dir_command  = { "fd", "-td",  },
-            -- filters      = { "cpsm_filter" },
             filters = {'fuzzy_filter', 'difflib_sorter'},
         }),
         wilder.cmdline_pipeline(),
@@ -270,11 +279,6 @@ require("toggleterm").setup({
 })
 
 --==============================================================================
--- fgaborvecsei/memento.nvim
---==============================================================================
-vim.keymap.set("n", "<A-o>", "<Cmd>lua require(\"memento\").toggle()<CR>",  { noremap = true, silent = true })
-
---==============================================================================
 -- TODO: L3MON4D3/LuaSnip
 --==============================================================================
 local luasnip = require("luasnip")
@@ -286,12 +290,19 @@ local luasnip = require("luasnip")
 --==============================================================================
 -- stevearc/overseer.nvim 
 --==============================================================================
-require("overseer").setup()
+require("overseer").setup({
+    strategy    = "toggleterm",
+})
 
 vim.keymap.set("n", "<A-t>", "<Cmd>OverseerRun<CR>", { noremap = true })
+
 --==============================================================================
 -- sindrets/diffview.nvim
 --==============================================================================
+require("diffview").setup({
+     enhanced_diff_hl = true
+})
+
 vim.keymap.set("n", "<A-g>", ":DiffviewOpen ",                { noremap = true, silent = true })
 vim.keymap.set("n", "<A-G>", "<Cmd>DiffviewRefresh<CR>",      { noremap = true, silent = true })
 vim.keymap.set("n", "<A-c>", "<Cmd>DiffviewToggleFiles<CR>",  { noremap = true, silent = true })
@@ -328,7 +339,7 @@ vim.keymap.set("n", "<A-b>", gitsigns.toggle_current_line_blame,  { noremap = tr
 -- nvim-treesitter/nvim-treesitter
 --==============================================================================
 require("nvim-treesitter.configs").setup({
-  ensure_installed = { "c","vim", "vimdoc", "query", "cpp", "lua", "python", "cmake", "glsl", "json" },
+  ensure_installed = { "c","vim", "vimdoc", "cpp", "lua", "python", "cmake", "glsl", "json", "query" },
   sync_install = false,
   auto_install = true,
 
@@ -432,17 +443,6 @@ require("mason-lspconfig").setup_handlers {
 }
 
 --==============================================================================
--- TODO: neovim/nvim-lspconfig
+-- neovim/nvim-lspconfig
 --==============================================================================
-vim.keymap.set("n",          "<Leader>q", vim.diagnostic.open_float, { noremap = true })
-vim.keymap.set("n",          "<Leader>[", vim.diagnostic.goto_prev,  { noremap = true })
-vim.keymap.set("n",          "<Leader>]", vim.diagnostic.goto_next,  { noremap = true })
-vim.keymap.set("n",          "<Leader>o", vim.diagnostic.setloclist, { noremap = true })
-
-vim.keymap.set("n",          "<A-u>",     vim.lsp.buf.declaration,   { noremap = true })
-vim.keymap.set("n",          "<A-y>",     vim.lsp.buf.definition,    { noremap = true })
-vim.keymap.set("n",          "<A-q>",     vim.lsp.buf.hover,         { noremap = true })
-vim.keymap.set("n",          "<Leader>l", vim.lsp.buf.references,    { noremap = true })
-vim.keymap.set("n",          "<Leader>r", vim.lsp.buf.rename,        { noremap = true })
-vim.keymap.set({ "n", "v" }, "<Leader>a", vim.lsp.buf.code_action,   { noremap = true })
 
