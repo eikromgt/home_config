@@ -50,7 +50,7 @@ vim.keymap.set("n", "<A-p>",   ":e ",             { noremap = true })
 vim.keymap.set("n", "<A-z>",   ":vertical help ", { noremap = true })
 
 vim.api.nvim_create_autocmd("LspAttach", {
-    callback = function(args)
+    callback = function(_)
         vim.keymap.set("n",          "<Leader>q", vim.diagnostic.open_float, { noremap = true })
         vim.keymap.set("n",          "<Leader>[", vim.diagnostic.goto_prev,  { noremap = true })
         vim.keymap.set("n",          "<Leader>]", vim.diagnostic.goto_next,  { noremap = true })
@@ -68,7 +68,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 --==============================================================================
 -- Plugin Manager: folke/lazy.nvim
 --==============================================================================
-local plugin_path = vim.fn.stdpath("data") .. "/lazy"
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
@@ -79,7 +78,7 @@ vim.keymap.set("n", "<A-x>", "<Cmd>Lazy<CR>", { noremap = true })
 require("lazy").setup({
     -- Editor
     { "vim-scripts/ReplaceWithRegister"                                     },
-    { "phaazon/hop.nvim",         branch   = "v2"                           },
+    { "phaazon/hop.nvim",         branch   = "v2", config = true            },
     { "windwp/nvim-autopairs",    event    = "InsertEnter", config = true   },
     { "Pocco81/auto-save.nvim"                                              },
 
@@ -112,7 +111,6 @@ require("lazy").setup({
     -- Git
     { "sindrets/diffview.nvim"                                              },
     { "lewis6991/gitsigns.nvim"                                             },
-    --{ "f-person/git-blame.nvim"                                             },
 
     -- Language
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate"                },
@@ -126,9 +124,8 @@ require("lazy").setup({
 --==============================================================================
 -- phaazon/hop.nvim
 --==============================================================================
-local hop = require('hop')
-local directions = require('hop.hint').HintDirection
-hop.setup()
+local hop = require("hop")
+local directions = require("hop.hint").HintDirection
 
 vim.keymap.set({ "n", "v" }, "f", function() hop.hint_char1({ direction = directions.AFTER_CURSOR,  current_line_only = true })                    end, { remap = true })
 vim.keymap.set({ "n", "v" }, "F", function() hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true })                    end, { remap = true })
@@ -235,7 +232,7 @@ wilder.set_option("pipeline", {
         wilder.python_file_finder_pipeline({
             file_command = { "fd", "-tf"   },
             dir_command  = { "fd", "-td",  },
-            filters = {'fuzzy_filter', 'difflib_sorter'},
+            filters = {"fuzzy_filter", "difflib_sorter"},
         }),
         wilder.cmdline_pipeline(),
         wilder.python_search_pipeline()
@@ -312,7 +309,6 @@ vim.keymap.set("n", "<A-[>", "[c",  { noremap = true })     vim.keymap.set("n", 
 --==============================================================================
 -- lewis6991/gitsigns.nvim
 --==============================================================================
--- TODO: copy sha to system clipboard
 local gitsigns = require("gitsigns")
 
 gitsigns.setup {
@@ -329,11 +325,15 @@ gitsigns.setup {
 
 vim.keymap.set("n", "<A-b>", gitsigns.toggle_current_line_blame,  { noremap = true, silent = true })
 
---==============================================================================
--- f-person/git-blame.nvim
---==============================================================================
---vim.keymap.set("n", "<A-b>", "<Cmd>GitBlameToggle<CR>",  { noremap = true, silent = true })
---vim.keymap.set("n", "<A-s>", "<Cmd>GitBlameCopySHA<CR>", { noremap = true, silent = true })
+local function copy_sha()
+    local filepath = vim.api.nvim_buf_get_name(0)
+    local line = vim.api.nvim_win_get_cursor(0)[1]
+
+    local sha = vim.fn.system("git blame -sp -L " .. line .. "," .. line .. " "..  filepath .. " | head -n1 | cut -d ' ' -f 1")
+    vim.fn.setreg("+", sha)
+end
+vim.keymap.set("n", "<A-s>", copy_sha, { noremap = true, silent = true })
+
 
 --==============================================================================
 -- nvim-treesitter/nvim-treesitter
@@ -345,7 +345,7 @@ require("nvim-treesitter.configs").setup({
 
   highlight = {
     enable = true,
-    disable = function(lang, buf)
+    disable = function(_, buf)
         local max_filesize = 5 * 1024 * 1024
         local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
         if ok and stats and stats.size > max_filesize then
