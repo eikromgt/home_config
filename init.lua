@@ -78,38 +78,37 @@ vim.keymap.set("n", "<A-x>", "<Cmd>Lazy<CR>", { noremap = true })
 require("lazy").setup({
     -- Editor
     { "vim-scripts/ReplaceWithRegister"                                     },
-    { "phaazon/hop.nvim",         branch   = "v2", config = true            },
+    { "smoka7/hop.nvim",          branch   = "v2", config = true            },
     { "windwp/nvim-autopairs",    event    = "InsertEnter", config = true   },
     { "Pocco81/auto-save.nvim"                                              },
 
     -- Decoration
     { "ellisonleao/gruvbox.nvim", priority = 1000                           },
-    { "nvim-tree/nvim-web-devicons",                                        },
     { "RRethy/vim-illuminate"                                               },
     { "nvimdev/hlsearch.nvim",    event = "BufRead", config = true          },
     { "HiPhish/rainbow-delimiters.nvim"                                     },
 
     -- Window
-    { "nvim-tree/nvim-tree.lua"                                             },
-    { "nvim-lualine/lualine.nvim",                                          },
-    { "romgrk/barbar.nvim"                                                  },
-
-    -- Library
-    { "nvim-lua/plenary.nvim"                                               },
-    { "roxma/nvim-yarp"                                                     },
-    { "romgrk/fzy-lua-native"                                               },
-    { "nvim-telescope/telescope.nvim", branch = "0.1.x",
-        dependencies = { "nvim-lua/plenary.nvim" }                          },
+    { "nvim-tree/nvim-tree.lua",
+        dependencies = { "nvim-tree/nvim-web-devicons" }                    },
+    { "nvim-lualine/lualine.nvim",
+        dependencies = { "nvim-tree/nvim-web-devicons" }                    },
+    { "romgrk/barbar.nvim", dependencies = { "nvim-tree/nvim-web-devicons",
+        "lewis6991/gitsigns.nvim"}                                          },
 
     -- Tool
+    { "nvim-telescope/telescope.nvim", branch = "0.1.x",
+        dependencies = { "nvim-lua/plenary.nvim" }                          },
     { "gelguy/wilder.nvim",
         dependencies = { "roxma/nvim-yarp", "romgrk/fzy-lua-native" }       },
-    { "akinsho/toggleterm.nvim",  version  = "*",           config = true   },
-    { "L3MON4D3/LuaSnip",         version      = "2.*"                      },
-    { "stevearc/overseer.nvim"                                              },
+    { "akinsho/toggleterm.nvim",  version  = "*", config = true             },
+    { "L3MON4D3/LuaSnip",         version  = "2.*"                          },
+    { "stevearc/overseer.nvim",
+        dependencies = { "nvim-telescope/telescope.nvim" }                  },
 
     -- Git
-    { "sindrets/diffview.nvim"                                              },
+    { "sindrets/diffview.nvim",
+        dependencies = { "nvim-tree/nvim-web-devicons" }                    },
     { "lewis6991/gitsigns.nvim"                                             },
 
     -- Language
@@ -117,12 +116,13 @@ require("lazy").setup({
     { "hrsh7th/cmp-nvim-lsp"                                                },
     { "hrsh7th/nvim-cmp"                                                    },
     { "williamboman/mason.nvim"                                             },
-    { "williamboman/mason-lspconfig.nvim"                                   },
+    { "williamboman/mason-lspconfig.nvim",
+        dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" }},
     { "neovim/nvim-lspconfig"                                               },
 })
 
 --==============================================================================
--- phaazon/hop.nvim
+-- smoka7/hop.nvim
 --==============================================================================
 local hop = require("hop")
 local directions = require("hop.hint").HintDirection
@@ -138,25 +138,21 @@ vim.keymap.set({ "n", "v" }, "<Leader>c", "<cmd>HopChar1<cr>", { noremap = true 
 -- Pocco81/auto-save.nvim
 --==============================================================================
 require("auto-save").setup({
-    execution_message = { message = "" }
+    execution_message = { message = "" },
+    debounce_delay = 1000,
 })
 
 --==============================================================================
 -- ellisonleao/gruvbox.nvim
 --==============================================================================
-vim.opt.background      = "dark"
 require("gruvbox").setup({
     transparent_mode    = true,
-    italic              = { strings = false }
 })
-vim.cmd("colorscheme gruvbox")
+vim.cmd.colorscheme("gruvbox")
 
 --==============================================================================
 -- RRethy/vim-illuminate
 --==============================================================================
-require("illuminate").configure({
-    providers = { "regex" }
-})
 vim.api.nvim_set_hl(0, "IlluminatedWordText", { link = "Visual" })
 vim.api.nvim_set_hl(0, "IlluminatedWordRead", { link = "Visual" })
 vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { link = "Visual" })
