@@ -49,6 +49,24 @@ vim.keymap.set("n", "<A-J>",   "<C-w>J", { noremap = true })     vim.keymap.set(
 vim.keymap.set("n", "<A-p>",   ":e ",             { noremap = true })
 vim.keymap.set("n", "<A-z>",   ":vertical help ", { noremap = true })
 
+-- copy current filepath to system clipboard
+vim.keymap.set("n", "<Leader>f", function()
+        local filepath = vim.api.nvim_buf_get_name(0)
+
+        vim.fn.setreg("+", filepath)
+        print("copy filepath: " .. filepath)
+    end, { noremap = true, silent = true })
+
+-- copy current line git commit hash to system clipboard
+vim.keymap.set("n", "<Leader>s", function()
+        local filepath = vim.api.nvim_buf_get_name(0)
+        local line = vim.api.nvim_win_get_cursor(0)[1]
+
+        local sha = vim.fn.system("git blame -sp -L " .. line .. "," .. line .. " "..  filepath .. " | head -n1 | cut -d ' ' -f 1")
+        vim.fn.setreg("+", sha)
+        print(filepath .. ":" .. line .. " " .. sha)
+    end, { noremap = true, silent = true })
+
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(_)
         vim.keymap.set("n",          "<Leader>q", vim.diagnostic.open_float, { noremap = true })
@@ -64,7 +82,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
         vim.keymap.set({ "n", "v" }, "<Leader>a", vim.lsp.buf.code_action,   { noremap = true })
     end,
 })
-
 --==============================================================================
 -- Plugin Manager: folke/lazy.nvim
 --==============================================================================
@@ -78,7 +95,7 @@ vim.keymap.set("n", "<A-x>", "<Cmd>Lazy<CR>", { noremap = true })
 require("lazy").setup({
     -- Editor
     { "vim-scripts/ReplaceWithRegister"                                     },
-    { "smoka7/hop.nvim",          branch   = "v2", config = true            },
+    { "smoka7/hop.nvim",          version  = "*", config = true             },
     { "windwp/nvim-autopairs",    event    = "InsertEnter", config = true   },
     { "Pocco81/auto-save.nvim"                                              },
 
@@ -119,6 +136,9 @@ require("lazy").setup({
     { "williamboman/mason-lspconfig.nvim",
         dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" }},
     { "neovim/nvim-lspconfig"                                               },
+    { "mfussenegger/nvim-dap"                                               },
+    { "rcarriga/nvim-dap-ui", config = true,
+        dependencies = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"}   },
 })
 
 --==============================================================================
@@ -285,6 +305,7 @@ local luasnip = require("luasnip")
 --==============================================================================
 require("overseer").setup({
     strategy    = "toggleterm",
+    dap         = false,
 })
 
 vim.keymap.set("n", "<A-t>", "<Cmd>OverseerRun<CR>", { noremap = true })
@@ -296,9 +317,7 @@ require("diffview").setup({
      enhanced_diff_hl = true
 })
 
-vim.keymap.set("n", "<A-g>", ":DiffviewOpen ",                { noremap = true, silent = true })
-vim.keymap.set("n", "<A-G>", "<Cmd>DiffviewRefresh<CR>",      { noremap = true, silent = true })
-vim.keymap.set("n", "<A-c>", "<Cmd>DiffviewToggleFiles<CR>",  { noremap = true, silent = true })
+vim.keymap.set("n", "<A-g>", ":DiffviewOpen ",                { noremap = true })
 vim.keymap.set("n", "<A-]>", "]c",  { noremap = true })     vim.keymap.set("n", "]c", "<Nop>",  { noremap = true })
 vim.keymap.set("n", "<A-[>", "[c",  { noremap = true })     vim.keymap.set("n", "[c", "<Nop>",  { noremap = true })
 
@@ -319,17 +338,7 @@ gitsigns.setup {
   },
 }
 
-vim.keymap.set("n", "<A-b>", gitsigns.toggle_current_line_blame,  { noremap = true, silent = true })
-
-local function copy_sha()
-    local filepath = vim.api.nvim_buf_get_name(0)
-    local line = vim.api.nvim_win_get_cursor(0)[1]
-
-    local sha = vim.fn.system("git blame -sp -L " .. line .. "," .. line .. " "..  filepath .. " | head -n1 | cut -d ' ' -f 1")
-    vim.fn.setreg("+", sha)
-end
-vim.keymap.set("n", "<A-s>", copy_sha, { noremap = true, silent = true })
-
+vim.keymap.set("n", "<Leader>b", gitsigns.toggle_current_line_blame,  { noremap = true, silent = true })
 
 --==============================================================================
 -- nvim-treesitter/nvim-treesitter
@@ -439,6 +448,42 @@ require("mason-lspconfig").setup_handlers {
 }
 
 --==============================================================================
--- neovim/nvim-lspconfig
+-- mfussenegger/nvim-dap
 --==============================================================================
+local dap = require("dap")
+local dap_vscode = require("dap.ext.vscode")
+
+require("overseer").patch_dap(true)
+
+dap_vscode.json_decode = require("overseer.json").decode
+
+dap.adapters.lldb = {
+    type = "server",
+    port = "${port}",
+    executable = {
+        command = "codelldb",
+        args = { "--port", "${port}" }
+    }
+}
+
+vim.keymap.set("n", "<A-d>", function()
+        if vim.fn.filereadable(".vscode/launch.json") then
+            dap_vscode.load_launchjs(nil, { lldb = { "c", "cpp" }})
+        end
+        require("dap").continue()
+    end,          { noremap = true, silent = true })
+vim.keymap.set("n", "<A-n>", function() require("dap").step_over() end,         { noremap = true, silent = true })
+vim.keymap.set("n", "<A-i>", function() require("dap").step_into() end,         { noremap = true, silent = true })
+vim.keymap.set("n", "<A-o>", function() require("dap").step_out() end,          { noremap = true, silent = true })
+vim.keymap.set("n", "<A-b>", function() require("dap").toggle_breakpoint() end, { noremap = true, silent = true })
+
+--==============================================================================
+-- rcarriga/nvim-dap-ui
+--==============================================================================
+local dapui = require("dapui")
+
+dap.listeners.before.attach.dapui_config           = function() dapui.open() end
+dap.listeners.before.launch.dapui_config           = function() dapui.open() end
+dap.listeners.before.event_terminated.dapui_config = function() dapui.close() end
+dap.listeners.before.event_exited.dapui_config     = function() dapui.close() end
 
