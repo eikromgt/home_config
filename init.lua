@@ -284,12 +284,15 @@ wilder.set_option("renderer", wilder.renderer_mux({
 vim.opt.hidden          = true
 require("toggleterm").setup({
     open_mapping        = "<A-`>",
+    autochdir           = true,
     direction           = "float",
     float_opts          = {
         border          = "curved",
         width           = function() return math.floor(vim.o.columns * 0.8 + 0.5) end,
     }
 })
+
+vim.keymap.set("n", "<A-S-`>", "<Cmd>TermSelect<CR>", { noremap = true })
 
 --==============================================================================
 -- TODO: L3MON4D3/LuaSnip
@@ -304,7 +307,10 @@ local luasnip = require("luasnip")
 -- stevearc/overseer.nvim 
 --==============================================================================
 require("overseer").setup({
-    strategy    = "toggleterm",
+    strategy    = {
+        "toggleterm",
+        quit_on_exit    = "success",
+    },
     dap         = false,
 })
 
