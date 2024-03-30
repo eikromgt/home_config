@@ -82,6 +82,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         vim.keymap.set({ "n", "v" }, "<Leader>a", vim.lsp.buf.code_action,   { noremap = true })
     end,
 })
+
 --==============================================================================
 -- Plugin Manager: folke/lazy.nvim
 --==============================================================================
@@ -104,6 +105,7 @@ require("lazy").setup({
     { "RRethy/vim-illuminate"                                               },
     { "nvimdev/hlsearch.nvim",    event = "BufRead", config = true          },
     { "HiPhish/rainbow-delimiters.nvim"                                     },
+    { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate"                },
 
     -- Window
     { "nvim-tree/nvim-tree.lua",
@@ -119,23 +121,30 @@ require("lazy").setup({
     { "gelguy/wilder.nvim",
         dependencies = { "roxma/nvim-yarp", "romgrk/fzy-lua-native" }       },
     { "akinsho/toggleterm.nvim",  version  = "*", config = true             },
-    { "L3MON4D3/LuaSnip",         version  = "2.*"                          },
     { "stevearc/overseer.nvim",
-        dependencies = { "nvim-telescope/telescope.nvim" }                  },
+        dependencies = { "nvim-telescope/telescope.nvim", "akinsho/toggleterm.nvim" }},
 
     -- Git
     { "sindrets/diffview.nvim",
         dependencies = { "nvim-tree/nvim-web-devicons" }                    },
     { "lewis6991/gitsigns.nvim"                                             },
 
-    -- Language
-    { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate"                },
+    -- Completion
+    { "L3MON4D3/LuaSnip", version  = "2.*", build = "make install_jsregexp" },
     { "hrsh7th/cmp-nvim-lsp"                                                },
-    { "hrsh7th/nvim-cmp"                                                    },
+    { "hrsh7th/cmp-buffer"                                                  },
+    { "hrsh7th/nvim-cmp",
+        dependencies = { "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer" }     },
+    { "saadparwaiz1/cmp_luasnip",
+        dependencies = { "L3MON4D3/LuaSnip", "hrsh7th/nvim-cmp" }           },
+
+    -- LSP
     { "williamboman/mason.nvim"                                             },
     { "williamboman/mason-lspconfig.nvim",
         dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" }},
     { "neovim/nvim-lspconfig"                                               },
+
+    -- DAP
     { "mfussenegger/nvim-dap"                                               },
     { "rcarriga/nvim-dap-ui", config = true,
         dependencies = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"}   },
@@ -176,6 +185,29 @@ vim.cmd.colorscheme("gruvbox")
 vim.api.nvim_set_hl(0, "IlluminatedWordText", { link = "Visual" })
 vim.api.nvim_set_hl(0, "IlluminatedWordRead", { link = "Visual" })
 vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { link = "Visual" })
+
+--==============================================================================
+-- nvim-treesitter/nvim-treesitter
+--==============================================================================
+require("nvim-treesitter.configs").setup({
+  ensure_installed = { "c","vim", "vimdoc", "cpp", "lua", "python", "cmake", "glsl", "json", "query" },
+  sync_install = false,
+  auto_install = true,
+
+  highlight = {
+    enable = true,
+    disable = function(_, buf)
+        local max_filesize = 5 * 1024 * 1024
+        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+        if ok and stats and stats.size > max_filesize then
+            return true
+        end
+    end,
+  },
+  indent = {
+      enable = true
+  },
+})
 
 --==============================================================================
 -- nvim-tree/nvim-tree.lua
@@ -295,15 +327,6 @@ require("toggleterm").setup({
 vim.keymap.set("n", "<A-S-`>", "<Cmd>TermSelect<CR>", { noremap = true })
 
 --==============================================================================
--- TODO: L3MON4D3/LuaSnip
---==============================================================================
-local luasnip = require("luasnip")
---vim.keymap.set({"i"},       "<Tab>",   function() luasnip.expand() end, { noremap = false, silent = true })
---vim.keymap.set({"i", "s"},  "<Tab>",   function() luasnip.jump( 1) end, { noremap = false, silent = true })
---vim.keymap.set({"i", "s"},  "<S-Tab>", function() luasnip.jump(-1) end, { noremap = true,  silent = true })
---vim.keymap.set({"i", "s"},  "<A-c>",   function() if luasnip.choice_active() then luasnip.change_choice(1) end end, { noremap = true, silent = true })
-
---==============================================================================
 -- stevearc/overseer.nvim 
 --==============================================================================
 require("overseer").setup({
@@ -347,32 +370,18 @@ gitsigns.setup {
 vim.keymap.set("n", "<Leader>b", gitsigns.toggle_current_line_blame,  { noremap = true, silent = true })
 
 --==============================================================================
--- nvim-treesitter/nvim-treesitter
+-- L3MON4D3/LuaSnip
 --==============================================================================
-require("nvim-treesitter.configs").setup({
-  ensure_installed = { "c","vim", "vimdoc", "cpp", "lua", "python", "cmake", "glsl", "json", "query" },
-  sync_install = false,
-  auto_install = true,
-
-  highlight = {
-    enable = true,
-    disable = function(_, buf)
-        local max_filesize = 5 * 1024 * 1024
-        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-        if ok and stats and stats.size > max_filesize then
-            return true
-        end
-    end,
-  },
-  indent = {
-      enable = true
-  },
+local luasnip = require("luasnip")
+require("luasnip.loaders.from_vscode").load_standalone({
+    path = "~/.config/Code/User/snippets/common.code-snippets",
+    lazy = true
 })
 
 --==============================================================================
 -- hrsh7th/cmp-nvim-lsp
 --==============================================================================
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
+local cmp_nvim_lsp_cap = require("cmp_nvim_lsp").default_capabilities()
 
 --==============================================================================
 -- hrsh7th/nvim-cmp
@@ -407,7 +416,7 @@ cmp.setup({
     }),
     sources = cmp.config.sources( {
         { name = "nvim_lsp" },
-        { name = "luasnip"  }
+        { name = "luasnip"  },
     },
     {
         { name = "buffer"  }
@@ -432,26 +441,23 @@ vim.keymap.set("n", "<A-m>", "<Cmd>Mason<CR>", { noremap = true })
 --==============================================================================
 -- williamboman/mason-lspconfig.nvim
 --==============================================================================
-require("mason-lspconfig").setup()
-require("mason-lspconfig").setup_handlers {
-    function(server_name)
-        require("lspconfig")[server_name].setup {
-            capabilities = capabilities
-        }
-    end,
-    ["lua_ls"] = function()
-        require("lspconfig").lua_ls.setup {
-            capabilities = capabilities,
-            settings = {
-                Lua = {
-                    diagnostics = {
-                        globals = { "vim" }
-                    }
+require("mason-lspconfig").setup({
+    handlers = {
+        function(server_name)
+            require("lspconfig")[server_name].setup {
+                capabilities = cmp_nvim_lsp_cap
+            }
+        end,
+        ["lua_ls"] = function()
+            require("lspconfig").lua_ls.setup {
+                capabilities = cmp_nvim_lsp_cap,
+                settings     = {
+                    Lua = { diagnostics = { globals = { "vim" } } }
                 }
             }
-        }
-    end,
-}
+        end,
+    }
+})
 
 --==============================================================================
 -- mfussenegger/nvim-dap
