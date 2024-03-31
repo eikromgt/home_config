@@ -27,6 +27,12 @@ vim.opt.fillchars:append({ eob = " ", diff = " " })
 vim.api.nvim_create_autocmd("BufEnter",  { callback = function() vim.opt.formatoptions = vim.opt.formatoptions - { "c","r","o" } end })
 
 --==============================================================================
+-- Global Variables
+--==============================================================================
+CodePath        = "~/.config/Code"
+CodeSnippets    = CodePath .. "/User/snippets/common.code-snippets"
+
+--==============================================================================
 -- Keyboard Shortcuts and Mappings
 --==============================================================================
 vim.keymap.set("n", "<Space>", "<Nop>",  { noremap = true })
@@ -133,6 +139,7 @@ require("lazy").setup({
     { "L3MON4D3/LuaSnip", version  = "2.*", build = "make install_jsregexp" },
     { "hrsh7th/cmp-nvim-lsp"                                                },
     { "hrsh7th/cmp-buffer"                                                  },
+    { "hrsh7th/cmp-path"                                                    },
     { "hrsh7th/nvim-cmp",
         dependencies = { "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer" }     },
     { "saadparwaiz1/cmp_luasnip",
@@ -267,7 +274,7 @@ local telescope = require("telescope.builtin")
 vim.keymap.set("n", "<A-f>", telescope.live_grep, {})
 
 --==============================================================================
--- TODO: gelguy/wilder.nvim
+-- gelguy/wilder.nvim
 --==============================================================================
 local wilder = require("wilder")
 wilder.setup({
@@ -374,7 +381,7 @@ vim.keymap.set("n", "<Leader>b", gitsigns.toggle_current_line_blame,  { noremap 
 --==============================================================================
 local luasnip = require("luasnip")
 require("luasnip.loaders.from_vscode").load_standalone({
-    path = "~/.config/Code/User/snippets/common.code-snippets",
+    path = CodeSnippets,
     lazy = true
 })
 
@@ -414,12 +421,14 @@ cmp.setup({
           end
       end, { "i", "s" }),
     }),
-    sources = cmp.config.sources( {
+    sources = cmp.config.sources(
+    {
         { name = "nvim_lsp" },
         { name = "luasnip"  },
+        { name = "path"     },
     },
     {
-        { name = "buffer"  }
+        { name = "buffer"   },
     })
 })
 
