@@ -285,8 +285,8 @@ wilder.setup({
 wilder.set_option("pipeline", {
     wilder.branch(
         wilder.python_file_finder_pipeline({
-            file_command = { "fd", "-tf"   },
-            dir_command  = { "fd", "-td",  },
+            file_command = { "fd", "-tf", "-u" },
+            dir_command  = { "fd", "-td", "-u" },
             filters = {"fuzzy_filter", "difflib_sorter"},
         }),
         wilder.cmdline_pipeline(),
@@ -422,14 +422,8 @@ cmp.setup({
       end, { "i", "s" }),
     }),
     sources = cmp.config.sources(
-    {
-        { name = "nvim_lsp" },
-        { name = "luasnip"  },
-        { name = "path"     },
-    },
-    {
-        { name = "buffer"   },
-    })
+        { { name = "nvim_lsp" }, { name = "luasnip" }, { name = "path" } },
+        { { name = "buffer"   }, })
 })
 
 --==============================================================================
