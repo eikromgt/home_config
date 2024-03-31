@@ -135,6 +135,12 @@ require("lazy").setup({
         dependencies = { "nvim-tree/nvim-web-devicons" }                    },
     { "lewis6991/gitsigns.nvim"                                             },
 
+    -- LSP
+    { "williamboman/mason.nvim"                                             },
+    { "williamboman/mason-lspconfig.nvim",
+        dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" }},
+    { "neovim/nvim-lspconfig"                                               },
+
     -- Completion
     { "L3MON4D3/LuaSnip", version  = "2.*", build = "make install_jsregexp" },
     { "hrsh7th/cmp-nvim-lsp"                                                },
@@ -144,12 +150,6 @@ require("lazy").setup({
         dependencies = { "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer" }     },
     { "saadparwaiz1/cmp_luasnip",
         dependencies = { "L3MON4D3/LuaSnip", "hrsh7th/nvim-cmp" }           },
-
-    -- LSP
-    { "williamboman/mason.nvim"                                             },
-    { "williamboman/mason-lspconfig.nvim",
-        dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" }},
-    { "neovim/nvim-lspconfig"                                               },
 
     -- DAP
     { "mfussenegger/nvim-dap"                                               },
@@ -377,6 +377,42 @@ gitsigns.setup {
 vim.keymap.set("n", "<Leader>b", gitsigns.toggle_current_line_blame,  { noremap = true, silent = true })
 
 --==============================================================================
+-- williamboman/mason.nvim
+--==============================================================================
+require("mason").setup({
+    ui = {
+        icons = {
+            package_installed   = "✓",
+            package_pending     = "➜",
+            package_uninstalled = "✗"
+        }
+    }
+})
+
+vim.keymap.set("n", "<A-m>", "<Cmd>Mason<CR>", { noremap = true })
+
+--==============================================================================
+-- williamboman/mason-lspconfig.nvim
+--==============================================================================
+require("mason-lspconfig").setup({
+    handlers = {
+        function(server_name)
+            require("lspconfig")[server_name].setup {
+                capabilities = cmp_nvim_lsp_cap
+            }
+        end,
+        ["lua_ls"] = function()
+            require("lspconfig").lua_ls.setup {
+                capabilities = cmp_nvim_lsp_cap,
+                settings     = {
+                    Lua = { diagnostics = { globals = { "vim" } } }
+                }
+            }
+        end,
+    }
+})
+
+--==============================================================================
 -- L3MON4D3/LuaSnip
 --==============================================================================
 local luasnip = require("luasnip")
@@ -430,42 +466,6 @@ cmp.setup({
     {
         { name = "buffer"   },
     })
-})
-
---==============================================================================
--- williamboman/mason.nvim
---==============================================================================
-require("mason").setup({
-    ui = {
-        icons = {
-            package_installed   = "✓",
-            package_pending     = "➜",
-            package_uninstalled = "✗"
-        }
-    }
-})
-
-vim.keymap.set("n", "<A-m>", "<Cmd>Mason<CR>", { noremap = true })
-
---==============================================================================
--- williamboman/mason-lspconfig.nvim
---==============================================================================
-require("mason-lspconfig").setup({
-    handlers = {
-        function(server_name)
-            require("lspconfig")[server_name].setup {
-                capabilities = cmp_nvim_lsp_cap
-            }
-        end,
-        ["lua_ls"] = function()
-            require("lspconfig").lua_ls.setup {
-                capabilities = cmp_nvim_lsp_cap,
-                settings     = {
-                    Lua = { diagnostics = { globals = { "vim" } } }
-                }
-            }
-        end,
-    }
 })
 
 --==============================================================================
