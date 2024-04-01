@@ -153,7 +153,7 @@ require("lazy").setup({
 
     -- DAP
     { "mfussenegger/nvim-dap"                                               },
-    { "rcarriga/nvim-dap-ui", config = true,
+    { "rcarriga/nvim-dap-ui",
         dependencies = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"}   },
 })
 
@@ -496,6 +496,28 @@ vim.keymap.set("n", "<A-b>", function() require("dap").toggle_breakpoint() end, 
 -- rcarriga/nvim-dap-ui
 --==============================================================================
 local dapui = require("dapui")
+dapui.setup({
+    layouts = {
+        {
+            elements = {
+                { id = "scopes",        size = 0.25 },
+                { id = "breakpoints",   size = 0.25 },
+                { id = "stacks",        size = 0.25 },
+                { id = "watches",       size = 0.25 }
+            },
+            position = "left",
+            size = 30
+        },
+        {
+            elements = {
+                { id = "repl", size = 0.5 },
+                { id = "console", size = 0.5 }
+            },
+            position = "bottom",
+            size = 10
+        }
+    },
+})
 
 dap.listeners.before.attach.dapui_config           = function() dapui.open() end
 dap.listeners.before.launch.dapui_config           = function() dapui.open() end
