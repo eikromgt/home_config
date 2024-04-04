@@ -51,6 +51,10 @@ vim.keymap.set("n", "<A-L>",   "<C-w>L", { noremap = true })     vim.keymap.set(
 vim.keymap.set("n", "<A-H>",   "<C-w>H", { noremap = true })     vim.keymap.set("n", "<C-w>H", "<Nop>", { noremap = true })
 vim.keymap.set("n", "<A-K>",   "<C-w>K", { noremap = true })     vim.keymap.set("n", "<C-w>K", "<Nop>", { noremap = true })
 vim.keymap.set("n", "<A-J>",   "<C-w>J", { noremap = true })     vim.keymap.set("n", "<C-w>J", "<Nop>", { noremap = true })
+vim.keymap.set("n", "<A-S-.>", "<C-w>>", { noremap = true })     vim.keymap.set("n", "<C-w>>", "<Nop>", { noremap = true })
+vim.keymap.set("n", "<A-S-,>", "<C-w><", { noremap = true })     vim.keymap.set("n", "<C-w><", "<Nop>", { noremap = true })
+vim.keymap.set("n", "<A-S-=>", "<C-w>+", { noremap = true })     vim.keymap.set("n", "<C-w>+", "<Nop>", { noremap = true })
+vim.keymap.set("n", "<A-S-->", "<C-w>-", { noremap = true })     vim.keymap.set("n", "<C-w>-", "<Nop>", { noremap = true })
 
 vim.keymap.set("n", "<A-p>",   ":e ",             { noremap = true })
 vim.keymap.set("n", "<A-z>",   ":vertical help ", { noremap = true })
@@ -221,7 +225,8 @@ require("nvim-treesitter.configs").setup({
 --==============================================================================
 require("nvim-tree").setup({
     view = {
-        signcolumn = "auto"
+        signcolumn = "auto",
+        side       = "right"
     },
     renderer = {
         indent_width = 1
@@ -231,7 +236,7 @@ require("nvim-tree").setup({
         dotfiles = false
     },
 })
-vim.keymap.set("", "<A-e>",    "<cmd>NvimTreeToggle<cr>",   { noremap = true })
+vim.keymap.set("", "<A-e>",    "<cmd>NvimTreeFindFileToggle<cr>",   { noremap = true })
 
 --==============================================================================
 -- nvim-lualine/lualine.nvim
@@ -505,13 +510,13 @@ dapui.setup({
                 { id = "stacks",        size = 0.25 },
                 { id = "watches",       size = 0.25 }
             },
-            position = "left",
+            position = "right",
             size = 30
         },
         {
             elements = {
-                { id = "repl", size = 0.5 },
-                { id = "console", size = 0.5 }
+                { id = "console",       size = 0.5 },
+                { id = "repl",          size = 0.5 }
             },
             position = "bottom",
             size = 10
