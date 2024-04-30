@@ -358,7 +358,8 @@ require("diffview").setup({
      enhanced_diff_hl = true
 })
 
-vim.keymap.set("n", "<A-g>", ":DiffviewOpen ",                { noremap = true })
+vim.keymap.set("n", "<A-g>",   ":DiffviewOpen ",                { noremap = true })
+vim.keymap.set("n", "<A-S-g>", ":DiffviewClose ",               { noremap = true })
 vim.keymap.set("n", "<A-]>", "]c",  { noremap = true })     vim.keymap.set("n", "]c", "<Nop>",  { noremap = true })
 vim.keymap.set("n", "<A-[>", "[c",  { noremap = true })     vim.keymap.set("n", "[c", "<Nop>",  { noremap = true })
 
@@ -488,7 +489,7 @@ dap.adapters.lldb = {
 
 vim.keymap.set("n", "<A-d>", function()
         if vim.fn.filereadable(".vscode/launch.json") then
-            dap_vscode.load_launchjs(nil, { lldb = { "c", "cpp" }})
+            dap_vscode.load_launchjs(nil, { lldb = { "c", "cpp", "glsl" }})
         end
         require("dap").continue()
     end,          { noremap = true, silent = true })
@@ -511,12 +512,12 @@ dapui.setup({
                 { id = "watches",       size = 0.25 }
             },
             position = "right",
-            size = 30
+            size = 40
         },
         {
             elements = {
-                { id = "console",       size = 0.5 },
-                { id = "repl",          size = 0.5 }
+                { id = "repl",          size = 0.5 },
+                { id = "console",       size = 0.5 }
             },
             position = "bottom",
             size = 10
