@@ -343,19 +343,20 @@ vim.keymap.set("n", "<A-S-`>", "<Cmd>TermSelect<CR>", { noremap = true })
 --==============================================================================
 require("overseer").setup({
     strategy    = {
-        "toggleterm",
-        quit_on_exit    = "success",
+        "terminal",
+        open_on_start = false,
     },
     dap         = false,
 })
 
 vim.keymap.set("n", "<A-t>", "<Cmd>OverseerRun<CR>", { noremap = true })
+vim.keymap.set("n", "<A-S-t>", "<Cmd>OverseerToggle<CR>", { noremap = true })
 
 --==============================================================================
 -- sindrets/diffview.nvim
 --==============================================================================
 require("diffview").setup({
-     enhanced_diff_hl = true
+    enhanced_diff_hl = true,
 })
 
 vim.keymap.set("n", "<A-g>",   ":DiffviewOpen ",                { noremap = true })
