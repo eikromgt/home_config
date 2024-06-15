@@ -357,6 +357,18 @@ vim.keymap.set("n", "<A-S-t>", "<Cmd>OverseerToggle<CR>", { noremap = true })
 --==============================================================================
 require("diffview").setup({
     enhanced_diff_hl = true,
+    file_panel = {
+      listing_style = "tree",
+      tree_options = {
+        flatten_dirs = true,
+        folder_statuses = "only_folded",
+      },
+      win_config = {
+        position = "right",
+        width = 35,
+        win_opts = {},
+      },
+    },
 })
 
 vim.keymap.set("n", "<A-g>",   ":DiffviewOpen ",                { noremap = true })
