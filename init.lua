@@ -21,6 +21,7 @@ vim.opt.splitright      = true
 
 vim.opt.ignorecase      = true
 vim.opt.smartcase       = true
+vim.opt.display         = "uhex"
 
 vim.opt.clipboard:append("unnamedplus")
 vim.opt.fillchars:append({ eob = " ", diff = " " })
@@ -56,8 +57,8 @@ vim.keymap.set("n", "<A-S-,>", "<C-w><", { noremap = true })     vim.keymap.set(
 vim.keymap.set("n", "<A-S-=>", "<C-w>+", { noremap = true })     vim.keymap.set("n", "<C-w>+", "<Nop>", { noremap = true })
 vim.keymap.set("n", "<A-S-->", "<C-w>-", { noremap = true })     vim.keymap.set("n", "<C-w>-", "<Nop>", { noremap = true })
 
-vim.keymap.set("n", "<A-p>",   ":e ",             { noremap = true })
-vim.keymap.set("n", "<A-z>",   ":vertical help ", { noremap = true })
+vim.keymap.set("n", "<A-p>",   ":e ",                   { noremap = true })
+vim.keymap.set("n", "<A-z>",   ":vertical help ",       { noremap = true })
 
 -- copy current filepath to system clipboard
 vim.keymap.set("n", "<Leader>f", function()
@@ -133,6 +134,7 @@ require("lazy").setup({
     { "akinsho/toggleterm.nvim",  version  = "*", config = true             },
     { "stevearc/overseer.nvim",
         dependencies = { "nvim-telescope/telescope.nvim", "akinsho/toggleterm.nvim" }},
+    { "RaafatTurki/hex.nvim",     config = true                             },
 
     -- Git
     { "sindrets/diffview.nvim",
@@ -339,7 +341,7 @@ require("toggleterm").setup({
 vim.keymap.set("n", "<A-S-`>", "<Cmd>TermSelect<CR>", { noremap = true })
 
 --==============================================================================
--- stevearc/overseer.nvim 
+-- stevearc/overseer.nvim
 --==============================================================================
 require("overseer").setup({
     strategy    = {
@@ -351,6 +353,11 @@ require("overseer").setup({
 
 vim.keymap.set("n", "<A-t>", "<Cmd>OverseerRun<CR>", { noremap = true })
 vim.keymap.set("n", "<A-S-t>", "<Cmd>OverseerToggle<CR>", { noremap = true })
+
+--==============================================================================
+-- RaafatTurki/hex.nvim
+--==============================================================================
+vim.keymap.set("n", "<A-j>",   "<Cmd>HexToggle<CR>",    { noremap = true })
 
 --==============================================================================
 -- sindrets/diffview.nvim
