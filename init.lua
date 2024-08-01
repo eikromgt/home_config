@@ -127,14 +127,14 @@ require("lazy").setup({
         "lewis6991/gitsigns.nvim"}                                          },
 
     -- Tool
-    { "nvim-telescope/telescope.nvim", branch = "0.1.x",
+    { "nvim-telescope/telescope.nvim", config = true, branch = "0.1.x",
         dependencies = { "nvim-lua/plenary.nvim" }                          },
     { "gelguy/wilder.nvim",
         dependencies = { "roxma/nvim-yarp", "romgrk/fzy-lua-native" }       },
     { "akinsho/toggleterm.nvim",  version  = "*", config = true             },
     { "stevearc/overseer.nvim",
         dependencies = { "nvim-telescope/telescope.nvim", "akinsho/toggleterm.nvim" }},
-    { "RaafatTurki/hex.nvim",     config = true                             },
+    { "RaafatTurki/hex.nvim",                                               },
 
     -- Git
     { "sindrets/diffview.nvim",
@@ -278,7 +278,8 @@ vim.keymap.set("n", "<A-s>", "<Cmd>BufferPick<CR>",     { noremap = true, silent
 -- nvim-telescope/telescope.nvim
 --==============================================================================
 local telescope = require("telescope.builtin")
-vim.keymap.set("n", "<A-f>", telescope.live_grep, {})
+vim.keymap.set("n", "<A-f>", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
+vim.keymap.set("n", "<A-S-f>", telescope.live_grep, { noremap = true })
 
 --==============================================================================
 -- gelguy/wilder.nvim
@@ -357,7 +358,12 @@ vim.keymap.set("n", "<A-S-t>", "<Cmd>OverseerToggle<CR>", { noremap = true })
 --==============================================================================
 -- RaafatTurki/hex.nvim
 --==============================================================================
-vim.keymap.set("n", "<A-j>",   "<Cmd>HexToggle<CR>",    { noremap = true })
+require("hex").setup {
+  is_buf_binary_pre_read = function() return false end,
+  is_buf_binary_post_read = function() return false end,
+}
+
+vim.keymap.set("n", "<A-a>",   "<Cmd>HexToggle<CR>",    { noremap = true })
 
 --==============================================================================
 -- sindrets/diffview.nvim
