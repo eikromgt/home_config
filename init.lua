@@ -18,6 +18,7 @@ vim.opt.cmdheight       = 0
 vim.opt.showmode        = false
 vim.opt.list            = true
 vim.opt.splitright      = true
+vim.opt.splitkeep       = "screen"
 
 vim.opt.ignorecase      = true
 vim.opt.smartcase       = true
@@ -332,11 +333,6 @@ vim.opt.hidden          = true
 require("toggleterm").setup({
     open_mapping        = "<A-`>",
     autochdir           = true,
-    direction           = "float",
-    float_opts          = {
-        border          = "curved",
-        width           = function() return math.floor(vim.o.columns * 0.8 + 0.5) end,
-    }
 })
 
 vim.keymap.set("n", "<A-S-`>", "<Cmd>TermSelect<CR>", { noremap = true })
@@ -345,10 +341,6 @@ vim.keymap.set("n", "<A-S-`>", "<Cmd>TermSelect<CR>", { noremap = true })
 -- stevearc/overseer.nvim
 --==============================================================================
 require("overseer").setup({
-    strategy    = {
-        "terminal",
-        open_on_start = false,
-    },
     dap         = false,
 })
 
