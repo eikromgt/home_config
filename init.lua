@@ -58,6 +58,9 @@ vim.keymap.set("n", "<A-S-,>", "<C-w><", { noremap = true })     vim.keymap.set(
 vim.keymap.set("n", "<A-S-=>", "<C-w>+", { noremap = true })     vim.keymap.set("n", "<C-w>+", "<Nop>", { noremap = true })
 vim.keymap.set("n", "<A-S-->", "<C-w>-", { noremap = true })     vim.keymap.set("n", "<C-w>-", "<Nop>", { noremap = true })
 
+vim.keymap.set("n", "<A-a>",   "<Cmd>%!xxd<CR>",       { noremap = true })
+vim.keymap.set("n", "<A-S-a>",   "<Cmd>%!xxd -r<CR>",    { noremap = true })
+
 vim.keymap.set("n", "<A-p>",   ":e ",                   { noremap = true })
 vim.keymap.set("n", "<A-z>",   ":vertical help ",       { noremap = true })
 
@@ -135,7 +138,6 @@ require("lazy").setup({
     { "akinsho/toggleterm.nvim",  version  = "*", config = true             },
     { "stevearc/overseer.nvim",
         dependencies = { "nvim-telescope/telescope.nvim", "akinsho/toggleterm.nvim" }},
-    { "RaafatTurki/hex.nvim",                                               },
 
     -- Git
     { "sindrets/diffview.nvim",
@@ -346,16 +348,6 @@ require("overseer").setup({
 
 vim.keymap.set("n", "<A-t>", "<Cmd>OverseerRun<CR>", { noremap = true })
 vim.keymap.set("n", "<A-S-t>", "<Cmd>OverseerToggle<CR>", { noremap = true })
-
---==============================================================================
--- RaafatTurki/hex.nvim
---==============================================================================
-require("hex").setup {
-  is_buf_binary_pre_read = function() return false end,
-  is_buf_binary_post_read = function() return false end,
-}
-
-vim.keymap.set("n", "<A-a>",   "<Cmd>HexToggle<CR>",    { noremap = true })
 
 --==============================================================================
 -- sindrets/diffview.nvim
