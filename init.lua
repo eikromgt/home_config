@@ -296,8 +296,8 @@ wilder.setup({
 wilder.set_option("pipeline", {
     wilder.branch(
         wilder.python_file_finder_pipeline({
-            file_command = { "fd", "-tf", "-u" },
-            dir_command  = { "fd", "-td", "-u" },
+            file_command = { "fd", "--type", "file",      },
+            dir_command  = { "fd", "--type", "directory", },
             filters = {"fuzzy_filter", "difflib_sorter"},
         }),
         wilder.cmdline_pipeline(),
