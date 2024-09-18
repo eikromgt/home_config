@@ -138,6 +138,8 @@ require("lazy").setup({
     { "akinsho/toggleterm.nvim",  version  = "*", config = true             },
     { "stevearc/overseer.nvim",
         dependencies = { "nvim-telescope/telescope.nvim", "akinsho/toggleterm.nvim" }},
+    { "jemag/telescope-diff.nvim",
+        dependencies = { "nvim-telescope/telescope.nvim" }                  },
 
     -- Git
     { "sindrets/diffview.nvim",
@@ -348,6 +350,18 @@ require("overseer").setup({
 
 vim.keymap.set("n", "<A-t>", "<Cmd>OverseerRun<CR>", { noremap = true })
 vim.keymap.set("n", "<A-S-t>", "<Cmd>OverseerToggle<CR>", { noremap = true })
+
+
+--==============================================================================
+-- jemag/telescope-diff.nvim
+--==============================================================================
+require("telescope").load_extension("diff")
+
+vim.keymap.set("n", "<A-S-c>", function() require("telescope").extensions.diff.diff_files({ hidden = true }) end,
+    { desc = "Compare 2 files" })
+
+vim.keymap.set("n", "<A-c>",   function() require("telescope").extensions.diff.diff_current({ hidden = true }) end,
+    { desc = "Compare file with current" })
 
 --==============================================================================
 -- sindrets/diffview.nvim
