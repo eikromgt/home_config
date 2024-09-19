@@ -31,6 +31,7 @@ vim.api.nvim_create_autocmd("BufEnter",  { callback = function() vim.opt.formato
 --==============================================================================
 -- Global Variables
 --==============================================================================
+PluginPath      = vim.fn.stdpath("data") .. "/lazy"
 CodePath        = "~/.config/Code"
 CodeSnippets    = CodePath .. "/User/snippets/common.code-snippets"
 
@@ -101,7 +102,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 --==============================================================================
 -- Plugin Manager: folke/lazy.nvim
 --==============================================================================
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+local lazypath = PluginPath .. "/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
 end
@@ -133,11 +134,12 @@ require("lazy").setup({
     -- Tool
     { "nvim-telescope/telescope.nvim", config = true, branch = "0.1.x",
         dependencies = { "nvim-lua/plenary.nvim" }                          },
-    { "gelguy/wilder.nvim",
-        dependencies = { "roxma/nvim-yarp", "romgrk/fzy-lua-native" }       },
+    { "nixprime/cpsm",            build = "./install.sh"                    },
+    { "gelguy/wilder.nvim", dependencies = {
+        "roxma/nvim-yarp", "romgrk/fzy-lua-native" }                        },
     { "akinsho/toggleterm.nvim",  version  = "*", config = true             },
-    { "stevearc/overseer.nvim",
-        dependencies = { "nvim-telescope/telescope.nvim", "akinsho/toggleterm.nvim" }},
+    { "stevearc/overseer.nvim", dependencies = {
+        "nvim-telescope/telescope.nvim", "akinsho/toggleterm.nvim" }        },
     { "jemag/telescope-diff.nvim",
         dependencies = { "nvim-telescope/telescope.nvim" }                  },
 
@@ -283,8 +285,8 @@ vim.keymap.set("n", "<A-s>", "<Cmd>BufferPick<CR>",     { noremap = true, silent
 -- nvim-telescope/telescope.nvim
 --==============================================================================
 local telescope = require("telescope.builtin")
-vim.keymap.set("n", "<A-f>", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
-vim.keymap.set("n", "<A-S-f>", telescope.live_grep, { noremap = true })
+vim.keymap.set("n", "<A-f>", telescope.live_grep, { noremap = true })
+vim.keymap.set("n", "<A-S-f>", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
 
 --==============================================================================
 -- gelguy/wilder.nvim
@@ -298,11 +300,20 @@ wilder.setup({
 wilder.set_option("pipeline", {
     wilder.branch(
         wilder.python_file_finder_pipeline({
-            file_command = { "fd", "--type", "file",      },
-            dir_command  = { "fd", "--type", "directory", },
-            filters = {"fuzzy_filter", "difflib_sorter"},
+            file_command = function(_, arg)
+                if arg:sub(1, 1) == "." then
+                    return { "fd", "--type", "file", "--fixed-strings", "--unrestricted" }
+                else
+                    return { "fd", "--type", "file", "--fixed-strings" }
+                end
+            end,
+            dir_command = { "fd", "--type", "directory", "--fixed-strings" },
+            filters     = { "cpsm_filter" }
         }),
-        wilder.cmdline_pipeline(),
+        wilder.cmdline_pipeline({
+          fuzzy = 1,
+          fuzzy_filter = wilder.lua_fzy_filter(),
+        }),
         wilder.python_search_pipeline()
     ),
 })
