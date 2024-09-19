@@ -301,7 +301,7 @@ wilder.set_option("pipeline", {
     wilder.branch(
         wilder.python_file_finder_pipeline({
             file_command = function(_, arg)
-                if arg:sub(1, 1) == "." then
+                if string.find(arg, '.') ~= nil then
                     return { "fd", "--type", "file", "--fixed-strings", "--unrestricted" }
                 else
                     return { "fd", "--type", "file", "--fixed-strings" }
@@ -311,11 +311,16 @@ wilder.set_option("pipeline", {
             filters     = { "cpsm_filter" }
         }),
         wilder.cmdline_pipeline({
-          fuzzy = 1,
-          fuzzy_filter = wilder.lua_fzy_filter(),
+            language    = "python",
+            fuzzy       = 1
         }),
-        wilder.python_search_pipeline()
-    ),
+        wilder.python_search_pipeline({
+            pattern     = wilder.python_fuzzy_pattern(),
+            sorter      = wilder.python_difflib_sorter(),
+            engine      = "re"
+        })
+        --wilder.vim_search_pipeline()
+    )
 })
 
 wilder.set_option("renderer", wilder.renderer_mux({
