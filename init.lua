@@ -308,18 +308,25 @@ wilder.set_option("pipeline", {
                 end
             end,
             dir_command = { "fd", "--type", "directory", "--fixed-strings" },
-            filters     = { "cpsm_filter" }
+            filters     = { "fuzzy_filter" }
+        }),
+        wilder.substitute_pipeline({
+            pipeline    = wilder.python_search_pipeline({
+                skip_cmdtype_check  = 1,
+                pattern             = wilder.python_fuzzy_pattern({ start_at_boundary = 0, }),
+            }),
         }),
         wilder.cmdline_pipeline({
-            language    = "python",
-            fuzzy       = 1
+            fuzzy        = 2,
+            fuzzy_filter = wilder.lua_fzy_filter(),
         }),
+        {
+            wilder.check(function(_, x) return x == "" end),
+            wilder.history(),
+        },
         wilder.python_search_pipeline({
-            pattern     = wilder.python_fuzzy_pattern(),
-            sorter      = wilder.python_difflib_sorter(),
-            engine      = "re"
+            pattern = wilder.python_fuzzy_pattern({ start_at_boundary = 0, }),
         })
-        --wilder.vim_search_pipeline()
     )
 })
 
@@ -361,7 +368,7 @@ vim.keymap.set("n", "<A-S-`>", "<Cmd>TermSelect<CR>", { noremap = true })
 -- stevearc/overseer.nvim
 --==============================================================================
 require("overseer").setup({
-    dap         = false,
+    dap = false
 })
 
 vim.keymap.set("n", "<A-t>", "<Cmd>OverseerRun<CR>", { noremap = true })
@@ -502,6 +509,15 @@ require("mason-lspconfig").setup({
                 capabilities = cmp_nvim_lsp_cap,
                 settings     = {
                     Lua = { diagnostics = { globals = { "vim" } } }
+                }
+            }
+        end,
+        ["verible"] = function()
+            require("lspconfig").verible.setup {
+                capabilities = cmp_nvim_lsp_cap,
+                root_dir     = function() return vim.fn.getcwd() end,
+                handlers     = {
+                    ["textDocument/publishDiagnostics"] = nil
                 }
             }
         end,
