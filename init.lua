@@ -59,8 +59,8 @@ vim.keymap.set("n", "<A-S-,>", "<C-w><", { noremap = true })     vim.keymap.set(
 vim.keymap.set("n", "<A-S-=>", "<C-w>+", { noremap = true })     vim.keymap.set("n", "<C-w>+", "<Nop>", { noremap = true })
 vim.keymap.set("n", "<A-S-->", "<C-w>-", { noremap = true })     vim.keymap.set("n", "<C-w>-", "<Nop>", { noremap = true })
 
-vim.keymap.set("n", "<A-a>",   "<Cmd>%!xxd<CR>",       { noremap = true })
-vim.keymap.set("n", "<A-S-a>",   "<Cmd>%!xxd -r<CR>",    { noremap = true })
+vim.keymap.set("n", "<A-a>",   "<Cmd>%!xxd<CR>",        { noremap = true })
+vim.keymap.set("n", "<A-S-a>",   "<Cmd>%!xxd -r<CR>",   { noremap = true })
 
 vim.keymap.set("n", "<A-p>",   ":e ",                   { noremap = true })
 vim.keymap.set("n", "<A-z>",   ":vertical help ",       { noremap = true })
@@ -68,9 +68,8 @@ vim.keymap.set("n", "<A-z>",   ":vertical help ",       { noremap = true })
 -- copy current filepath to system clipboard
 vim.keymap.set("n", "<Leader>f", function()
         local filepath = vim.api.nvim_buf_get_name(0)
-
         vim.fn.setreg("+", filepath)
-        print("copy filepath: " .. filepath)
+        vim.notify("filepath copied: " .. filepath, "info")
     end, { noremap = true, silent = true })
 
 -- copy current line git commit hash to system clipboard
@@ -80,7 +79,7 @@ vim.keymap.set("n", "<Leader>s", function()
 
         local sha = vim.fn.system("git blame -sp -L " .. line .. "," .. line .. " "..  filepath .. " | head -n1 | cut -d ' ' -f 1")
         vim.fn.setreg("+", sha)
-        print(filepath .. ":" .. line .. " " .. sha)
+        vim.notify(filepath .. ":" .. line .. " " .. sha, "info")
     end, { noremap = true, silent = true })
 
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -142,6 +141,7 @@ require("lazy").setup({
         "nvim-telescope/telescope.nvim", "akinsho/toggleterm.nvim" }        },
     { "jemag/telescope-diff.nvim",
         dependencies = { "nvim-telescope/telescope.nvim" }                  },
+    { "rcarriga/nvim-notify", opts = { background_colour = "#1d2021" }      },
 
     -- Git
     { "sindrets/diffview.nvim",
@@ -387,6 +387,13 @@ vim.keymap.set("n", "<A-c>",   function() require("telescope").extensions.diff.d
     { desc = "Compare file with current" })
 
 --==============================================================================
+-- "rcarriga/nvim-notify"
+--==============================================================================
+vim.notify = require("notify")
+require("telescope").load_extension("notify")
+vim.keymap.set("n", "<A-/>", "<Cmd>Telescope notify<CR>", { noremap = true })
+
+--==============================================================================
 -- sindrets/diffview.nvim
 --==============================================================================
 require("diffview").setup({
@@ -515,7 +522,7 @@ require("mason-lspconfig").setup({
         ["verible"] = function()
             require("lspconfig").verible.setup {
                 capabilities = cmp_nvim_lsp_cap,
-                root_dir     = function() return vim.fn.getcwd() end,
+               root_dir     = function() return vim.fn.getcwd() end,
                 handlers     = {
                     ["textDocument/publishDiagnostics"] = nil
                 }
