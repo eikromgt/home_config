@@ -168,6 +168,11 @@ require("lazy").setup({
     { "mfussenegger/nvim-dap"                                               },
     { "rcarriga/nvim-dap-ui",
         dependencies = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"}   },
+
+    -- Application
+    { "kawre/leetcode.nvim", build = ":TSUpdate html", lazy = vim.fn.argv()[1] ~= "leetcode",
+                dependencies = { "nvim-telescope/telescope.nvim", "MunifTanjim/nui.nvim",
+        "nvim-treesitter/nvim-treesitter", "rcarriga/nvim-notify", "nvim-tree/nvim-web-devicons", }},
 })
 
 --==============================================================================
@@ -592,4 +597,33 @@ dap.listeners.before.attach.dapui_config           = function() dapui.open() end
 dap.listeners.before.launch.dapui_config           = function() dapui.open() end
 dap.listeners.before.event_terminated.dapui_config = function() dapui.close() end
 dap.listeners.before.event_exited.dapui_config     = function() dapui.close() end
+
+--==============================================================================
+-- kawre/leetcode.nvim
+--==============================================================================
+local leetcodeCppInclude = [[
+#include <iostream>
+#include <string>
+#include <stdint.h>
+#include <memory>
+#include <cmath>
+#include <random>
+
+#include <vector>
+#include <list>
+#include <array>
+#include <map>
+#include <unordered_map>
+#include <queue>
+#include <utility>
+#include <algorithm>
+]]
+
+require("leetcode").setup({
+    arg = "leetcode",
+    cn = {enabled = true},
+    injector = {
+        ["cpp"] = { before =  { leetcodeCppInclude }}
+    }
+})
 
