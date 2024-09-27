@@ -301,7 +301,7 @@ wilder.set_option("pipeline", {
     wilder.branch(
         wilder.python_file_finder_pipeline({
             file_command = function(_, arg)
-                if string.find(arg, '.') ~= nil then
+                if arg[1] == "." then
                     return { "fd", "--type", "file", "--fixed-strings", "--unrestricted" }
                 else
                     return { "fd", "--type", "file", "--fixed-strings" }
@@ -568,7 +568,7 @@ dapui.setup({
                 { id = "watches",       size = 0.25 }
             },
             position = "right",
-            size = 40
+            size = 60
         },
         {
             elements = {
