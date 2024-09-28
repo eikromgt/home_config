@@ -59,6 +59,9 @@ vim.keymap.set("n", "<A-S-,>", "<C-w><", { noremap = true })     vim.keymap.set(
 vim.keymap.set("n", "<A-S-=>", "<C-w>+", { noremap = true })     vim.keymap.set("n", "<C-w>+", "<Nop>", { noremap = true })
 vim.keymap.set("n", "<A-S-->", "<C-w>-", { noremap = true })     vim.keymap.set("n", "<C-w>-", "<Nop>", { noremap = true })
 
+vim.keymap.set("n", "<Leader>{", "dasO{<CR>}<Esc>P>i{", { noremap = true })
+vim.keymap.set("v", "<Leader>{", "dO{<CR>}<Esc>P>i{",   { noremap = true })
+
 vim.keymap.set("n", "<A-a>",   "<Cmd>%!xxd<CR>",        { noremap = true })
 vim.keymap.set("n", "<A-S-a>",   "<Cmd>%!xxd -r<CR>",   { noremap = true })
 
@@ -92,7 +95,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         vim.keymap.set("n",          "<A-u>",     vim.lsp.buf.declaration,   { noremap = true })
         vim.keymap.set("n",          "<A-y>",     vim.lsp.buf.definition,    { noremap = true })
         vim.keymap.set("n",          "<A-q>",     vim.lsp.buf.hover,         { noremap = true })
-        vim.keymap.set("n",          "<Leader>l", vim.lsp.buf.references,    { noremap = true })
+        vim.keymap.set("n",          "<Leader>y", vim.lsp.buf.references,    { noremap = true })
         vim.keymap.set("n",          "<Leader>r", vim.lsp.buf.rename,        { noremap = true })
         vim.keymap.set({ "n", "v" }, "<Leader>a", vim.lsp.buf.code_action,   { noremap = true })
     end,
@@ -185,8 +188,8 @@ vim.keymap.set({ "n", "v" }, "f", function() hop.hint_char1({ direction = direct
 vim.keymap.set({ "n", "v" }, "F", function() hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true })                    end, { remap = true })
 vim.keymap.set({ "n", "v" }, "t", function() hop.hint_char1({ direction = directions.AFTER_CURSOR,  current_line_only = true, hint_offset = -1 })  end, { remap = true })
 vim.keymap.set({ "n", "v" }, "T", function() hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true, hint_offset = 1 })   end, { remap = true })
-vim.keymap.set({ "n", "v" }, "<Leader>w", "<cmd>HopWord<cr>",  { noremap = true })
-vim.keymap.set({ "n", "v" }, "<Leader>c", "<cmd>HopChar1<cr>", { noremap = true })
+vim.keymap.set({ "n", "v" }, "<Leader>w", "<Cmd>HopWord<CR>",  { noremap = true })
+vim.keymap.set({ "n", "v" }, "<Leader>c", "<Cmd>HopChar1<CR>", { noremap = true })
 
 --==============================================================================
 -- Pocco81/auto-save.nvim
@@ -215,7 +218,8 @@ vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { link = "Visual" })
 -- nvim-treesitter/nvim-treesitter
 --==============================================================================
 require("nvim-treesitter.configs").setup({
-  ensure_installed = { "c","vim", "vimdoc", "cpp", "lua", "python", "cmake", "glsl", "json", "query" },
+  ensure_installed = { "c","vim", "vimdoc", "cpp", "lua", "python", "cmake",
+        "glsl", "json", "verilog", "systemverilog", "query" },
   sync_install = false,
   auto_install = true,
 
@@ -247,7 +251,7 @@ require("nvim-tree").setup({
         dotfiles = false
     },
 })
-vim.keymap.set("", "<A-e>",    "<cmd>NvimTreeFindFileToggle<cr>",   { noremap = true })
+vim.keymap.set("", "<A-e>",    "<Cmd>NvimTreeFindFileToggle<CR>",   { noremap = true })
 
 --==============================================================================
 -- nvim-lualine/lualine.nvim
@@ -605,7 +609,6 @@ local leetcodeCppInclude = [[
 #include <memory>
 #include <cmath>
 #include <random>
-
 #include <vector>
 #include <list>
 #include <array>
@@ -614,13 +617,26 @@ local leetcodeCppInclude = [[
 #include <queue>
 #include <utility>
 #include <algorithm>
+
+using namespace std;
 ]]
 
 require("leetcode").setup({
     arg = "leetcode",
-    cn = {enabled = true},
+    cn = {
+        enabled = true,
+        translator = false,
+        translate_problems = false,
+    },
     injector = {
         ["cpp"] = { before =  { leetcodeCppInclude }}
     }
 })
 
+vim.keymap.set({ "n" }, "<Leader>ll", "<Cmd>Leet list<CR>",     { noremap = true })
+vim.keymap.set({ "n" }, "<Leader>li", "<Cmd>Leet inject<CR>",   { noremap = true })
+vim.keymap.set({ "n" }, "<Leader>lr", "<Cmd>Leet reset<CR>",    { noremap = true })
+vim.keymap.set({ "n" }, "<Leader>lt", "<Cmd>Leet test<CR>",     { noremap = true })
+vim.keymap.set({ "n" }, "<Leader>ls", "<Cmd>Leet submit<CR>",   { noremap = true })
+vim.keymap.set({ "n" }, "<Leader>lc", "<Cmd>Leet console<CR>",  { noremap = true })
+vim.keymap.set({ "n" }, "<Leader>lq", "<Cmd>Leet exit<CR>",     { noremap = true })
