@@ -602,7 +602,7 @@ dap.listeners.before.event_exited.dapui_config     = function() dapui.close() en
 --==============================================================================
 -- kawre/leetcode.nvim
 --==============================================================================
-local leetcodeCppInclude = [[
+local leetcodeCppBeforeInjector = [[
 #include <iostream>
 #include <string>
 #include <stdint.h>
@@ -614,10 +614,11 @@ local leetcodeCppInclude = [[
 #include <array>
 #include <map>
 #include <unordered_map>
+#include <set>
+#include <unordered_set>
 #include <queue>
 #include <utility>
 #include <algorithm>
-
 using namespace std;
 ]]
 
@@ -629,7 +630,7 @@ require("leetcode").setup({
         translate_problems = false,
     },
     injector = {
-        ["cpp"] = { before =  { leetcodeCppInclude }}
+        ["cpp"] = { before =  { leetcodeCppBeforeInjector }}
     }
 })
 
