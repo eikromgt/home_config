@@ -455,6 +455,7 @@ require("luasnip.loaders.from_vscode").load_standalone({
 -- hrsh7th/cmp-nvim-lsp
 --==============================================================================
 local cmp_nvim_lsp_cap = require("cmp_nvim_lsp").default_capabilities()
+cmp_nvim_lsp_cap.textDocument.completion.completionItem.snippetSupport = false;
 
 --==============================================================================
 -- hrsh7th/nvim-cmp
@@ -488,8 +489,11 @@ cmp.setup({
       end, { "i", "s" }),
     }),
     sources = cmp.config.sources(
-        { { name = "nvim_lsp" }, { name = "luasnip" }, { name = "path" } },
-        { { name = "buffer"   }, })
+        {
+            { name = "nvim_lsp", entry_filter = function(entry, _) return cmp.lsp.CompletionItemKind.Snippet ~= entry:get_kind() end },
+            { name = "luasnip" },
+            { name = "path" }
+        })
 })
 
 --==============================================================================
@@ -528,7 +532,7 @@ require("mason-lspconfig").setup({
         ["verible"] = function()
             require("lspconfig").verible.setup {
                 capabilities = cmp_nvim_lsp_cap,
-               root_dir     = function() return vim.fn.getcwd() end,
+                root_dir     = function() return vim.fn.getcwd() end,
                 handlers     = {
                     ["textDocument/publishDiagnostics"] = nil
                 }
@@ -602,7 +606,7 @@ dap.listeners.before.event_exited.dapui_config     = function() dapui.close() en
 --==============================================================================
 -- kawre/leetcode.nvim
 --==============================================================================
-local leetcodeCppBeforeInjector = [[
+local leetcodeCppBeforeInjection = [[
 #include <iostream>
 #include <string>
 #include <stdint.h>
@@ -617,6 +621,7 @@ local leetcodeCppBeforeInjector = [[
 #include <set>
 #include <unordered_set>
 #include <queue>
+#include <limits>
 #include <utility>
 #include <algorithm>
 using namespace std;
@@ -630,7 +635,7 @@ require("leetcode").setup({
         translate_problems = false,
     },
     injector = {
-        ["cpp"] = { before =  { leetcodeCppBeforeInjector }}
+        ["cpp"] = { before =  { leetcodeCppBeforeInjection }}
     }
 })
 
@@ -640,4 +645,5 @@ vim.keymap.set({ "n" }, "<Leader>lr", "<Cmd>Leet reset<CR>",    { noremap = true
 vim.keymap.set({ "n" }, "<Leader>lt", "<Cmd>Leet test<CR>",     { noremap = true })
 vim.keymap.set({ "n" }, "<Leader>ls", "<Cmd>Leet submit<CR>",   { noremap = true })
 vim.keymap.set({ "n" }, "<Leader>lc", "<Cmd>Leet console<CR>",  { noremap = true })
+vim.keymap.set({ "n" }, "<Leader>lh", "<Cmd>Leet hints<CR>",    { noremap = true })
 vim.keymap.set({ "n" }, "<Leader>lq", "<Cmd>Leet exit<CR>",     { noremap = true })
