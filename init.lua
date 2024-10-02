@@ -59,8 +59,8 @@ vim.keymap.set("n", "<A-S-,>", "<C-w><", { noremap = true })     vim.keymap.set(
 vim.keymap.set("n", "<A-S-=>", "<C-w>+", { noremap = true })     vim.keymap.set("n", "<C-w>+", "<Nop>", { noremap = true })
 vim.keymap.set("n", "<A-S-->", "<C-w>-", { noremap = true })     vim.keymap.set("n", "<C-w>-", "<Nop>", { noremap = true })
 
-vim.keymap.set("n", "<Leader>{", "dasO{<CR>}<Esc>P>i{", { noremap = true })
-vim.keymap.set("v", "<Leader>{", "dO{<CR>}<Esc>P>i{",   { noremap = true })
+vim.keymap.set("n", "<Leader>{", "dasO{<CR>}<Esc>P=i{", { noremap = true })
+vim.keymap.set("v", "<Leader>{", "dO{<CR>}<Esc>P=i{",   { noremap = true })
 
 vim.keymap.set("n", "<A-a>",   "<Cmd>%!xxd<CR>",        { noremap = true })
 vim.keymap.set("n", "<A-S-a>",   "<Cmd>%!xxd -r<CR>",   { noremap = true })
@@ -76,7 +76,7 @@ vim.keymap.set("n", "<Leader>f", function()
     end, { noremap = true, silent = true })
 
 -- copy current line git commit hash to system clipboard
-vim.keymap.set("n", "<Leader>s", function()
+vim.keymap.set("n", "<Leader>h", function()
         local filepath = vim.api.nvim_buf_get_name(0)
         local line = vim.api.nvim_win_get_cursor(0)[1]
 
@@ -117,6 +117,7 @@ require("lazy").setup({
     { "smoka7/hop.nvim",          version  = "*", config = true             },
     { "windwp/nvim-autopairs",    event    = "InsertEnter", config = true   },
     { "Pocco81/auto-save.nvim"                                              },
+    { "kylechui/nvim-surround",   version = "*", event = "VeryLazy",        },
 
     -- Decoration
     { "ellisonleao/gruvbox.nvim", priority = 1000                           },
@@ -200,6 +201,11 @@ require("auto-save").setup({
 })
 
 --==============================================================================
+-- kylechui/nvim-surround
+--==============================================================================
+require("nvim-surround").setup()
+
+--==============================================================================
 -- ellisonleao/gruvbox.nvim
 --==============================================================================
 require("gruvbox").setup({
@@ -218,22 +224,26 @@ vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { link = "Visual" })
 -- nvim-treesitter/nvim-treesitter
 --==============================================================================
 require("nvim-treesitter.configs").setup({
-  ensure_installed = { "c","vim", "vimdoc", "cpp", "lua", "python", "cmake",
-        "glsl", "json", "verilog", "systemverilog", "query" },
-  sync_install = false,
-  auto_install = true,
-
-  highlight = {
-    enable = true,
-    disable = function(_, buf)
-        local max_filesize = 5 * 1024 * 1024
-        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-        if ok and stats and stats.size > max_filesize then
-            return true
-        end
-    end,
-  },
+    ensure_installed = { "c","cpp", "printf", "lua", "vim", "vimdoc", "python",
+        "cmake", "glsl", "json", "json5", "systemverilog", "query" },
+    additional_vim_regex_highlighting = false,
+    auto_install = true,
+    highlight = {
+        enable = true,
+        disable = function(_, buf)
+            local max_filesize = 5 * 1024 * 1024
+            local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+            if ok and stats and stats.size > max_filesize then
+                return true
+            end
+        end,
+    },
 })
+
+--vim.treesitter.language.register("printf",          { "c", "cpp" })
+--vim.treesitter.language.register("jons5",           { "json", "json5" })
+--vim.treesitter.language.register("systemverilog",   { "v", "verilog", "systemverilog" })
+--vim.treesitter.language.register("glsl",            { "glsl", "vert", "tesc", "tese", "geom", "frag", "comp" })
 
 --==============================================================================
 -- nvim-tree/nvim-tree.lua
