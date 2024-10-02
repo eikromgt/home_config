@@ -12,7 +12,7 @@ vim.opt.shiftwidth      = 4
 
 vim.opt.termguicolors   = true
 vim.opt.cursorline      = true
-vim.opt.signcolumn      = "number"
+vim.opt.signcolumn      = "no"
 vim.opt.wrap            = false
 vim.opt.cmdheight       = 0
 vim.opt.showmode        = false
@@ -84,6 +84,14 @@ vim.keymap.set("n", "<Leader>h", function()
         vim.fn.setreg("+", sha)
         vim.notify(filepath .. ":" .. line .. " " .. sha, "info")
     end, { noremap = true, silent = true })
+
+-- toggle signcolumn
+vim.keymap.set("n", "<Leader>s", function()
+        local sc = vim.o.signcolumn
+        if (sc == "no") then sc = "number" else sc = "no" end
+        vim.notify("set signcolumn=" .. sc, "info")
+        vim.opt.signcolumn = sc
+    end,   { noremap = true })
 
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(_)
