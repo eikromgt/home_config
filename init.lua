@@ -26,6 +26,7 @@ vim.opt.display         = "uhex"
 
 vim.opt.clipboard:append("unnamedplus")
 vim.opt.fillchars:append({ eob = " ", diff = " " })
+vim.opt.matchpairs:append("<:>")
 vim.api.nvim_create_autocmd("BufEnter",  { callback = function() vim.opt.formatoptions = vim.opt.formatoptions - { "c","r","o" } end })
 
 --==============================================================================
@@ -42,7 +43,7 @@ vim.keymap.set("n", "<Space>", "<Nop>",  { noremap = true })
 vim.g.mapleader         = " "
 
 vim.keymap.set("n", "<A-v>",   "<C-v>",  { noremap = true })     vim.keymap.set("n", "<C-v>",  "<Nop>", { noremap = true })
-vim.keymap.set("",  "<C-H>",   "<C-w>",  { noremap = true })
+vim.keymap.set("i", "<C-BS>",  "<C-w>",  { noremap = true })
 
 vim.keymap.set("n", "<A-W>",   "<C-w>c", { noremap = true })     vim.keymap.set("n", "<C-w>c", "<Nop>", { noremap = true })
 vim.keymap.set("n", "<A-S>",   "<C-w>v", { noremap = true })     vim.keymap.set("n", "<C-w>v", "<Nop>", { noremap = true })
@@ -59,8 +60,8 @@ vim.keymap.set("n", "<A-S-,>", "<C-w><", { noremap = true })     vim.keymap.set(
 vim.keymap.set("n", "<A-S-=>", "<C-w>+", { noremap = true })     vim.keymap.set("n", "<C-w>+", "<Nop>", { noremap = true })
 vim.keymap.set("n", "<A-S-->", "<C-w>-", { noremap = true })     vim.keymap.set("n", "<C-w>-", "<Nop>", { noremap = true })
 
-vim.keymap.set("n", "<Leader>{", "dasO{<CR>}<Esc>P=i{", { noremap = true })
-vim.keymap.set("v", "<Leader>{", "dO{<CR>}<Esc>P=i{",   { noremap = true })
+vim.keymap.set("n", "<Leader>{", "\"oddO{<CR>}<Esc>\"oP=i{",  { noremap = true })
+vim.keymap.set("v", "<Leader>{", "\"odO{<CR>}<Esc>\"oP=i{",   { noremap = true })
 
 vim.keymap.set("n", "<A-a>",   "<Cmd>%!xxd<CR>",        { noremap = true })
 vim.keymap.set("n", "<A-S-a>",   "<Cmd>%!xxd -r<CR>",   { noremap = true })
@@ -123,7 +124,7 @@ require("lazy").setup({
     -- Editor
     { "vim-scripts/ReplaceWithRegister"                                     },
     { "smoka7/hop.nvim",          version  = "*", config = true             },
-    { "windwp/nvim-autopairs",    event    = "InsertEnter", config = true   },
+    { "windwp/nvim-autopairs",    event    = "InsertEnter"                  },
     { "Pocco81/auto-save.nvim"                                              },
     { "kylechui/nvim-surround",   version = "*", event = "VeryLazy",        },
 
@@ -200,6 +201,7 @@ vim.keymap.set({ "n", "v" }, "T", function() hop.hint_char1({ direction = direct
 vim.keymap.set({ "n", "v" }, "<Leader>w", "<Cmd>HopWord<CR>",  { noremap = true })
 vim.keymap.set({ "n", "v" }, "<Leader>c", "<Cmd>HopChar1<CR>", { noremap = true })
 
+--==============================================================================
 --==============================================================================
 -- Pocco81/auto-save.nvim
 --==============================================================================
@@ -639,6 +641,7 @@ local leetcodeCppBeforeInjection = [[
 #include <set>
 #include <unordered_set>
 #include <queue>
+#include <stack>
 #include <limits>
 #include <utility>
 #include <algorithm>
@@ -664,4 +667,6 @@ vim.keymap.set({ "n" }, "<Leader>lt", "<Cmd>Leet test<CR>",     { noremap = true
 vim.keymap.set({ "n" }, "<Leader>ls", "<Cmd>Leet submit<CR>",   { noremap = true })
 vim.keymap.set({ "n" }, "<Leader>lc", "<Cmd>Leet console<CR>",  { noremap = true })
 vim.keymap.set({ "n" }, "<Leader>lh", "<Cmd>Leet hints<CR>",    { noremap = true })
+vim.keymap.set({ "n" }, "<Leader>lm", "<Cmd>Leet menu<CR>",    { noremap = true })
 vim.keymap.set({ "n" }, "<Leader>lq", "<Cmd>Leet exit<CR>",     { noremap = true })
+
