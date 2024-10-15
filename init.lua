@@ -241,7 +241,7 @@ vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { link = "Visual" })
 --==============================================================================
 require("nvim-treesitter.configs").setup({
     ensure_installed = { "c","cpp", "printf", "lua", "vim", "vimdoc", "python",
-        "cmake", "glsl", "json", "json5", "systemverilog", "query" },
+        "cmake", "glsl", "json", "json5", "typst", "systemverilog", "query" },
     additional_vim_regex_highlighting = false,
     auto_install = true,
     highlight = {
@@ -552,6 +552,14 @@ require("mason-lspconfig").setup({
                 capabilities = cmp_nvim_lsp_cap,
                 settings     = {
                     Lua = { diagnostics = { globals = { "vim" } } }
+                }
+            }
+        end,
+        ["typst_lsp"] = function()
+            require("lspconfig").typst_lsp.setup {
+                capabilities = cmp_nvim_lsp_cap,
+                settings     = {
+                    exportPdf = "onType"
                 }
             }
         end,
