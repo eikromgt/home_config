@@ -118,7 +118,7 @@ if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
 end
 vim.opt.runtimepath:prepend(lazypath)
-vim.keymap.set("n", "<A-x>", "<Cmd>Lazy<CR>", { noremap = true })
+vim.keymap.set({ "n", "t" }, "<A-x>", "<Cmd>Lazy<CR>", { noremap = true })
 
 require("lazy").setup({
     -- Editor
@@ -187,6 +187,7 @@ require("lazy").setup({
                 dependencies = { "nvim-telescope/telescope.nvim", "MunifTanjim/nui.nvim",
         "nvim-treesitter/nvim-treesitter", "rcarriga/nvim-notify", "nvim-tree/nvim-web-devicons", }},
 })
+
 
 --==============================================================================
 -- smoka7/hop.nvim
@@ -277,7 +278,7 @@ require("nvim-tree").setup({
         dotfiles = false
     },
 })
-vim.keymap.set("", "<A-e>",    "<Cmd>NvimTreeFindFileToggle<CR>",   { noremap = true })
+vim.keymap.set({ "n", "t" }, "<A-e>",    "<Cmd>NvimTreeFindFileToggle<CR>",   { noremap = true })
 
 --==============================================================================
 -- nvim-lualine/lualine.nvim
@@ -394,7 +395,7 @@ require("toggleterm").setup({
     autochdir           = true,
 })
 
-vim.keymap.set("n", "<A-S-`>", "<Cmd>TermSelect<CR>", { noremap = true })
+vim.keymap.set({ "n", "t" }, "<A-S-`>", "<Cmd>TermSelect<CR>", { noremap = true })
 
 --==============================================================================
 -- stevearc/overseer.nvim
@@ -403,8 +404,8 @@ require("overseer").setup({
     dap = false
 })
 
-vim.keymap.set("n", "<A-t>", "<Cmd>OverseerRun<CR>", { noremap = true })
-vim.keymap.set("n", "<A-S-t>", "<Cmd>OverseerToggle<CR>", { noremap = true })
+vim.keymap.set({ "n", "t" }, "<A-t>", "<Cmd>OverseerRun<CR>", { noremap = true })
+vim.keymap.set({ "n", "t" }, "<A-S-t>", "<Cmd>OverseerToggle<CR>", { noremap = true })
 
 
 --==============================================================================
@@ -423,7 +424,7 @@ vim.keymap.set("n", "<A-c>",   function() require("telescope").extensions.diff.d
 --==============================================================================
 vim.notify = require("notify")
 require("telescope").load_extension("notify")
-vim.keymap.set("n", "<A-/>", "<Cmd>Telescope notify<CR>", { noremap = true })
+vim.keymap.set({ "n", "t" }, "<A-/>", "<Cmd>Telescope notify<CR>", { noremap = true })
 
 --==============================================================================
 -- sindrets/diffview.nvim
@@ -535,7 +536,7 @@ require("mason").setup({
     }
 })
 
-vim.keymap.set("n", "<A-m>", "<Cmd>Mason<CR>", { noremap = true })
+vim.keymap.set({ "n", "t" }, "<A-m>", "<Cmd>Mason<CR>", { noremap = true })
 
 --==============================================================================
 -- williamboman/mason-lspconfig.nvim
@@ -659,6 +660,8 @@ local leetcodeCppBeforeInjection = [[
 #include <limits>
 #include <utility>
 #include <algorithm>
+#include <functional>
+#include <mutex>
 using namespace std;
 ]]
 
@@ -674,13 +677,13 @@ require("leetcode").setup({
     }
 })
 
-vim.keymap.set({ "n" }, "<Leader>ll", "<Cmd>Leet list<CR>",     { noremap = true })
-vim.keymap.set({ "n" }, "<Leader>li", "<Cmd>Leet inject<CR>",   { noremap = true })
-vim.keymap.set({ "n" }, "<Leader>lr", "<Cmd>Leet reset<CR>",    { noremap = true })
-vim.keymap.set({ "n" }, "<Leader>lt", "<Cmd>Leet test<CR>",     { noremap = true })
-vim.keymap.set({ "n" }, "<Leader>ls", "<Cmd>Leet submit<CR>",   { noremap = true })
-vim.keymap.set({ "n" }, "<Leader>lc", "<Cmd>Leet console<CR>",  { noremap = true })
-vim.keymap.set({ "n" }, "<Leader>lh", "<Cmd>Leet hints<CR>",    { noremap = true })
-vim.keymap.set({ "n" }, "<Leader>lm", "<Cmd>Leet menu<CR>",    { noremap = true })
-vim.keymap.set({ "n" }, "<Leader>lq", "<Cmd>Leet exit<CR>",     { noremap = true })
+vim.keymap.set({ "n", "t" }, "<Leader>ll", "<Cmd>Leet list<CR>",     { noremap = true })
+vim.keymap.set({ "n", "t" }, "<Leader>li", "<Cmd>Leet inject<CR>",   { noremap = true })
+vim.keymap.set({ "n", "t" }, "<Leader>lr", "<Cmd>Leet reset<CR>",    { noremap = true })
+vim.keymap.set({ "n", "t" }, "<Leader>lt", "<Cmd>Leet test<CR>",     { noremap = true })
+vim.keymap.set({ "n", "t" }, "<Leader>ls", "<Cmd>Leet submit<CR>",   { noremap = true })
+vim.keymap.set({ "n", "t" }, "<Leader>lc", "<Cmd>Leet console<CR>",  { noremap = true })
+vim.keymap.set({ "n", "t" }, "<Leader>lh", "<Cmd>Leet hints<CR>",    { noremap = true })
+vim.keymap.set({ "n", "t" }, "<Leader>lm", "<Cmd>Leet menu<CR>",    { noremap = true })
+vim.keymap.set({ "n", "t" }, "<Leader>lq", "<Cmd>Leet exit<CR>",     { noremap = true })
 
