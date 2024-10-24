@@ -139,7 +139,8 @@ require("lazy").setup({
     { "nvim-tree/nvim-tree.lua",
         dependencies = { "nvim-tree/nvim-web-devicons" }                    },
     { "nvim-lualine/lualine.nvim",
-        dependencies = { "nvim-tree/nvim-web-devicons" }                    },
+        dependencies = { "nvim-tree/nvim-web-devicons",
+        "yavorski/lualine-macro-recording.nvim"  }                          },
     { "romgrk/barbar.nvim", dependencies = { "nvim-tree/nvim-web-devicons",
         "lewis6991/gitsigns.nvim"}                                          },
 
@@ -290,6 +291,7 @@ require("lualine").setup({
     },
     sections = {
         lualine_a = {},
+        lualine_c = { "macro_recording", "%S" },
         lualine_x = { "overseer", "encoding", "fileformat", "filetype" },
     }
 })
