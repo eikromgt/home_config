@@ -550,6 +550,14 @@ require("mason-lspconfig").setup({
                 capabilities = cmp_nvim_lsp_cap
             }
         end,
+        ["clangd"] = function()
+            require("lspconfig").clangd.setup {
+                capabilities = cmp_nvim_lsp_cap,
+                init_options = {
+                    fallbackFlags = {"--std=c++23"}
+                },
+            }
+        end,
         ["lua_ls"] = function()
             require("lspconfig").lua_ls.setup {
                 capabilities = cmp_nvim_lsp_cap,
