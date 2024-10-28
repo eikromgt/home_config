@@ -447,7 +447,7 @@ require("diffview").setup({
     },
 })
 
-vim.keymap.set({ "n", "t" }, "<A-g>",   "<Cmd>DiffviewOpen<CR>",                { noremap = true })
+vim.keymap.set("n",          "<A-g>",   "<Cmd>DiffviewOpen<CR>",                { noremap = true })
 vim.keymap.set({ "n", "t" }, "<A-S-g>", "<Cmd>DiffviewClose<CR>",               { noremap = true })
 vim.keymap.set("n", "<A-]>", "]c",  { noremap = true })     vim.keymap.set("n", "]c", "<Nop>",  { noremap = true })
 vim.keymap.set("n", "<A-[>", "[c",  { noremap = true })     vim.keymap.set("n", "[c", "<Nop>",  { noremap = true })
