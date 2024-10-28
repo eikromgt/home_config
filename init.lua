@@ -659,11 +659,13 @@ local leetcodeCppBeforeInjection = [[
 #include <unordered_set>
 #include <queue>
 #include <stack>
+#include <bitset>
 #include <limits>
 #include <utility>
 #include <algorithm>
 #include <functional>
 #include <mutex>
+#include <ranges>
 using namespace std;
 ]]
 
@@ -679,13 +681,13 @@ require("leetcode").setup({
     }
 })
 
-vim.keymap.set({ "n", "t" }, "<Leader>ll", "<Cmd>Leet list<CR>",     { noremap = true })
-vim.keymap.set({ "n", "t" }, "<Leader>li", "<Cmd>Leet inject<CR>",   { noremap = true })
-vim.keymap.set({ "n", "t" }, "<Leader>lr", "<Cmd>Leet reset<CR>",    { noremap = true })
-vim.keymap.set({ "n", "t" }, "<Leader>lt", "<Cmd>Leet test<CR>",     { noremap = true })
-vim.keymap.set({ "n", "t" }, "<Leader>ls", "<Cmd>Leet submit<CR>",   { noremap = true })
-vim.keymap.set({ "n", "t" }, "<Leader>lc", "<Cmd>Leet console<CR>",  { noremap = true })
-vim.keymap.set({ "n", "t" }, "<Leader>lh", "<Cmd>Leet hints<CR>",    { noremap = true })
-vim.keymap.set({ "n", "t" }, "<Leader>lm", "<Cmd>Leet menu<CR>",    { noremap = true })
-vim.keymap.set({ "n", "t" }, "<Leader>lq", "<Cmd>Leet exit<CR>",     { noremap = true })
+vim.keymap.set("n", "<Leader>ll", "<Cmd>Leet list<CR>",     { noremap = true })
+vim.keymap.set("n", "<Leader>li", "<Cmd>Leet inject<CR>",   { noremap = true })
+vim.keymap.set("n", "<Leader>lr", "<Cmd>Leet reset<CR>",    { noremap = true })
+vim.keymap.set("n", "<Leader>lt", "<Cmd>Leet test<CR>",     { noremap = true })
+vim.keymap.set("n", "<Leader>ls", "<Cmd>Leet submit<CR>",   { noremap = true })
+vim.keymap.set("n", "<Leader>lc", "<Cmd>Leet console<CR>",  { noremap = true })
+vim.keymap.set("n", "<Leader>lh", "<Cmd>Leet hints<CR>",    { noremap = true })
+vim.keymap.set("n", "<Leader>lm", "<Cmd>Leet menu<CR>",     { noremap = true })
+vim.keymap.set("n", "<Leader>lq", "<Cmd>Leet exit<CR>",     { noremap = true })
 
