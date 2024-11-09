@@ -697,5 +697,7 @@ vim.keymap.set("n", "<Leader>ls", "<Cmd>Leet submit<CR>",   { noremap = true })
 vim.keymap.set("n", "<Leader>lc", "<Cmd>Leet console<CR>",  { noremap = true })
 vim.keymap.set("n", "<Leader>lh", "<Cmd>Leet hints<CR>",    { noremap = true })
 vim.keymap.set("n", "<Leader>lm", "<Cmd>Leet menu<CR>",     { noremap = true })
+vim.keymap.set("n", "<Leader>lp", "<Cmd>Leet lang<CR>",     { noremap = true })
+vim.keymap.set("n", "<Leader>ld", "<Cmd>Leet daily<CR>",     { noremap = true })
 vim.keymap.set("n", "<Leader>lq", "<Cmd>Leet exit<CR>",     { noremap = true })
 
