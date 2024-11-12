@@ -142,7 +142,7 @@ require("lazy").setup({
         dependencies = { "nvim-tree/nvim-web-devicons",
         "yavorski/lualine-macro-recording.nvim"  }                          },
     { "romgrk/barbar.nvim", dependencies = { "nvim-tree/nvim-web-devicons",
-        "lewis6991/gitsigns.nvim"}                                          },
+        "lewis6991/gitsigns.nvim"                                          }},
 
     -- Tool
     { "nvim-telescope/telescope.nvim", config = true, branch = "0.1.x",
@@ -564,6 +564,18 @@ require("mason-lspconfig").setup({
                 settings     = {
                     Lua = { diagnostics = { globals = { "vim" } } }
                 }
+            }
+        end,
+        ["pylsp"] = function()
+            require("lspconfig").pylsp.setup {
+                capabilities = cmp_nvim_lsp_cap,
+                settings = { pylsp = {
+                    plugins = {
+                        pycodestyle = {
+                            ignore = { "E501" }
+                        }
+                    }
+                }},
             }
         end,
         ["typst_lsp"] = function()
