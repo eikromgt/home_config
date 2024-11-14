@@ -689,6 +689,10 @@ local leetcodeCppBeforeInjection = [[
 using namespace std;
 ]]
 
+local leetcodePythonBeforeInjection = [[
+import collections
+]]
+
 require("leetcode").setup({
     arg = "leetcode",
     cn = {
@@ -697,7 +701,8 @@ require("leetcode").setup({
         translate_problems = false,
     },
     injector = {
-        ["cpp"] = { before =  { leetcodeCppBeforeInjection }}
+        ["cpp"] = { before =  { leetcodeCppBeforeInjection }},
+        ["python3"] = { before =  { leetcodePythonBeforeInjection }}
     }
 })
 
