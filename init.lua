@@ -690,7 +690,7 @@ using namespace std;
 ]]
 
 local leetcodePythonBeforeInjection = [[
-import collections
+from typing import Optional
 ]]
 
 require("leetcode").setup({
