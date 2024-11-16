@@ -572,7 +572,7 @@ require("mason-lspconfig").setup({
                 settings = { pylsp = {
                     plugins = {
                         pycodestyle = {
-                            ignore = { "E501" }
+                            ignore = { "E501", "E306" }
                         }
                     }
                 }},
