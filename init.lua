@@ -583,7 +583,7 @@ require("mason-lspconfig").setup({
                 capabilities = cmp_nvim_lsp_cap,
                 offset_encoding = "utf-8",
                 settings     = {
-                    exportPdf = "onType"
+                    exportPdf = "onSave"
                 }
             }
         end,
