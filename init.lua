@@ -156,7 +156,6 @@ require("lazy").setup({
     { "jemag/telescope-diff.nvim",
         dependencies = { "nvim-telescope/telescope.nvim" }                  },
     { "rcarriga/nvim-notify", opts = { background_colour = "#1d2021" }      },
-    { "3rd/image.nvim", opts = {}                                           },
 
     -- Git
     { "sindrets/diffview.nvim",
