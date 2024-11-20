@@ -578,9 +578,10 @@ require("mason-lspconfig").setup({
                 }},
             }
         end,
-        ["typst_lsp"] = function()
-            require("lspconfig").typst_lsp.setup {
+        ["tinymist"] = function()
+            require("lspconfig").tinymist.setup {
                 capabilities = cmp_nvim_lsp_cap,
+                offset_encoding = "utf-8",
                 settings     = {
                     exportPdf = "onType"
                 }
