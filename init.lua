@@ -692,6 +692,7 @@ using namespace std;
 
 local leetcodePythonBeforeInjection = [[
 from typing import Optional
+import math
 ]]
 
 require("leetcode").setup({
