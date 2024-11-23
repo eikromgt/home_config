@@ -691,7 +691,7 @@ using namespace std;
 ]]
 
 local leetcodePythonBeforeInjection = [[
-from typing import Optional
+from typing import *
 import math
 ]]
 
