@@ -694,6 +694,7 @@ local leetcodePythonBeforeInjection = [[
 from typing import Optional
 from typing import List
 from collection import Counter
+from collection import deque
 import math
 import heapq
 ]]
