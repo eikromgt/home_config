@@ -693,8 +693,8 @@ using namespace std;
 local leetcodePythonBeforeInjection = [[
 from typing import Optional
 from typing import List
-from collection import Counter
-from collection import deque
+import collections
+import itertools
 import math
 import heapq
 ]]
