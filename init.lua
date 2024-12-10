@@ -698,6 +698,7 @@ import itertools
 import math
 import heapq
 import bisect
+import copy
 ]]
 
 require("leetcode").setup({
