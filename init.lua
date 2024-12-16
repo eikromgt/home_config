@@ -29,6 +29,8 @@ vim.opt.fillchars:append({ eob = " ", diff = " " })
 vim.opt.matchpairs:append("<:>")
 vim.api.nvim_create_autocmd("BufEnter",  { callback = function() vim.opt.formatoptions = vim.opt.formatoptions - { "c","r","o" } end })
 
+vim.lsp.set_log_level("off")
+
 --==============================================================================
 -- Global Variables
 --==============================================================================
