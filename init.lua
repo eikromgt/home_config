@@ -705,11 +705,11 @@ import copy
 
 require("leetcode").setup({
     arg = "leetcode",
-    cn = {
-        enabled = true,
-        translator = false,
-        translate_problems = false,
-    },
+    --cn = {
+    --    enabled = true,
+    --    translator = false,
+    --    translate_problems = false,
+    --},
     injector = {
         ["cpp"] = { before =  { leetcodeCppBeforeInjection }},
         ["python3"] = { before =  { leetcodePythonBeforeInjection }}
