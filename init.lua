@@ -437,6 +437,19 @@ vim.keymap.set({ "n" }, "<Leader>f/", "<Cmd>Telescope notify<CR>", { noremap = t
 --==============================================================================
 require("mini.align").setup()
 
+require("mini.move").setup({
+  mappings = {
+    left = "<C-A-h>",
+    right = "<C-A-l>",
+    down = "<C-A-j>",
+    up = "<C-A-k>",
+    line_left = "<C-A-h>",
+    line_right = "<C-A-l>",
+    line_down = "<C-A-j>",
+    line_up = "<C-A-k>",
+  },
+})
+
 --==============================================================================
 -- sindrets/diffview.nvim
 --==============================================================================
