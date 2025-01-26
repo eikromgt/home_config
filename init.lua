@@ -140,7 +140,7 @@ if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
 end
 vim.opt.runtimepath:prepend(lazypath)
-vim.keymap.set({ "n", "t" }, "<Leader>x", "<Cmd>Lazy<CR>", { noremap = true })
+vim.keymap.set({ "n" }, "<Leader>x", "<Cmd>Lazy<CR>", { noremap = true })
 
 require("lazy").setup({
     -- Editor
@@ -300,7 +300,7 @@ require("nvim-tree").setup({
         dotfiles = false
     },
 })
-vim.keymap.set({ "n", "t" }, "<A-e>",    "<Cmd>NvimTreeFindFileToggle<CR>",   { noremap = true })
+vim.keymap.set({ "n" }, "<A-e>",    "<Cmd>NvimTreeFindFileToggle<CR>",   { noremap = true })
 
 --==============================================================================
 -- nvim-lualine/lualine.nvim
@@ -430,7 +430,7 @@ vim.keymap.set("n", "<Leader>fc",   function() require("telescope").extensions.d
 --==============================================================================
 vim.notify = require("notify")
 require("telescope").load_extension("notify")
-vim.keymap.set({ "n", "t" }, "<Leader>f/", "<Cmd>Telescope notify<CR>", { noremap = true })
+vim.keymap.set({ "n" }, "<Leader>f/", "<Cmd>Telescope notify<CR>", { noremap = true })
 
 --==============================================================================
 -- olimorris/persisted.nvim
@@ -456,9 +456,9 @@ require("diffview").setup({
     },
 })
 
-vim.keymap.set("n",          "<Leader>do",   ":DiffviewOpen",                        { noremap = true })
-vim.keymap.set("n",          "<Leader>dd",   "<Cmd>DiffviewOpen<CR>",                { noremap = true })
-vim.keymap.set({ "n", "t" }, "<Leader>dc",   "<Cmd>DiffviewClose<CR>",               { noremap = true })
+vim.keymap.set("n", "<Leader>do",   ":DiffviewOpen",          { noremap = true })
+vim.keymap.set("n", "<Leader>dd",   "<Cmd>DiffviewOpen<CR>",  { noremap = true })
+vim.keymap.set("n", "<Leader>dc",   "<Cmd>DiffviewClose<CR>", { noremap = true })
 vim.keymap.set("n", "<A-]>", "]c",  { noremap = true })     vim.keymap.set("n", "]c", "<Nop>",  { noremap = true })
 vim.keymap.set("n", "<A-[>", "[c",  { noremap = true })     vim.keymap.set("n", "[c", "<Nop>",  { noremap = true })
 
@@ -548,7 +548,7 @@ require("mason").setup({
     }
 })
 
-vim.keymap.set({ "n", "t" }, "<Leader>m", "<Cmd>Mason<CR>", { noremap = true })
+vim.keymap.set({ "n" }, "<Leader>m", "<Cmd>Mason<CR>", { noremap = true })
 
 --==============================================================================
 -- williamboman/mason-lspconfig.nvim
