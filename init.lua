@@ -72,14 +72,14 @@ vim.keymap.set("n", "<A-p>",   ":e ",                   { noremap = true })
 vim.keymap.set("n", "<A-z>",   ":vertical help ",       { noremap = true })
 
 -- copy current filepath to system clipboard
-vim.keymap.set("n", "<Leader>f", function()
+vim.keymap.set("n", "<Leader>tp", function()
         local filepath = vim.api.nvim_buf_get_name(0)
         vim.fn.setreg("+", filepath)
         vim.notify("filepath copied: " .. filepath, "info")
     end, { noremap = true, silent = true })
 
 -- copy current line git commit hash to system clipboard
-vim.keymap.set("n", "<Leader>h", function()
+vim.keymap.set("n", "<Leader>ts", function()
         local filepath = vim.api.nvim_buf_get_name(0)
         local line = vim.api.nvim_win_get_cursor(0)[1]
 
@@ -89,7 +89,7 @@ vim.keymap.set("n", "<Leader>h", function()
     end, { noremap = true, silent = true })
 
 -- toggle signcolumn
-vim.keymap.set("n", "<Leader>s", function()
+vim.keymap.set("n", "<Leader>ts", function()
         local sc = vim.o.signcolumn
         if (sc == "no") then sc = "number" else sc = "no" end
         vim.notify("set signcolumn=" .. sc, "info")
@@ -120,7 +120,7 @@ if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
 end
 vim.opt.runtimepath:prepend(lazypath)
-vim.keymap.set({ "n", "t" }, "<A-x>", "<Cmd>Lazy<CR>", { noremap = true })
+vim.keymap.set({ "n", "t" }, "<Leader>x", "<Cmd>Lazy<CR>", { noremap = true })
 
 require("lazy").setup({
     -- Editor
@@ -144,7 +144,7 @@ require("lazy").setup({
         dependencies = { "nvim-tree/nvim-web-devicons",
         "yavorski/lualine-macro-recording.nvim"  }                          },
     { "romgrk/barbar.nvim", dependencies = { "nvim-tree/nvim-web-devicons",
-        "lewis6991/gitsigns.nvim"                                          }},
+        "lewis6991/gitsigns.nvim"                                           }},
 
     -- Tool
     { "nvim-telescope/telescope.nvim", config = true, branch = "0.1.x",
@@ -322,8 +322,12 @@ vim.keymap.set("n", "<A-s>", "<Cmd>BufferPick<CR>",     { noremap = true, silent
 -- nvim-telescope/telescope.nvim
 --==============================================================================
 local telescope = require("telescope.builtin")
-vim.keymap.set("n", "<A-f>", telescope.live_grep, { noremap = true })
-vim.keymap.set("n", "<A-S-f>", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
+vim.keymap.set('n', '<leader>ff', telescope.find_files, { noremap = true })
+vim.keymap.set('n', '<leader>fg', telescope.live_grep, { noremap = true })
+vim.keymap.set('n', '<leader>fh', telescope.pickers, { noremap = true })
+vim.keymap.set('n', '<leader>fb', telescope.buffers, { noremap = true })
+vim.keymap.set('n', '<leader>fh', telescope.help_tags, { noremap = true })
+vim.keymap.set("n", "<Leader>fw", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
 
 --==============================================================================
 -- gelguy/wilder.nvim
@@ -345,7 +349,7 @@ wilder.set_option("pipeline", {
                 end
             end,
             dir_command = { "fd", "--type", "directory", "--fixed-strings" },
-            filters     = { "fuzzy_filter" }
+            filters     = { "cpsm_filter" }
         }),
         wilder.substitute_pipeline({
             pipeline    = wilder.python_search_pipeline({
@@ -411,16 +415,14 @@ require("overseer").setup({
 vim.keymap.set({ "n", "t" }, "<A-t>", "<Cmd>OverseerRun<CR>", { noremap = true })
 vim.keymap.set({ "n", "t" }, "<A-S-t>", "<Cmd>OverseerToggle<CR>", { noremap = true })
 
-
 --==============================================================================
 -- jemag/telescope-diff.nvim
 --==============================================================================
 require("telescope").load_extension("diff")
 
-vim.keymap.set("n", "<A-S-c>", function() require("telescope").extensions.diff.diff_files({ hidden = true }) end,
+vim.keymap.set("n", "<Leader>fd", function() require("telescope").extensions.diff.diff_files({ hidden = true }) end,
     { desc = "Compare 2 files" })
-
-vim.keymap.set("n", "<A-c>",   function() require("telescope").extensions.diff.diff_current({ hidden = true }) end,
+vim.keymap.set("n", "<Leader>fc",   function() require("telescope").extensions.diff.diff_current({ hidden = true }) end,
     { desc = "Compare file with current" })
 
 --==============================================================================
@@ -428,7 +430,7 @@ vim.keymap.set("n", "<A-c>",   function() require("telescope").extensions.diff.d
 --==============================================================================
 vim.notify = require("notify")
 require("telescope").load_extension("notify")
-vim.keymap.set({ "n", "t" }, "<A-/>", "<Cmd>Telescope notify<CR>", { noremap = true })
+vim.keymap.set({ "n", "t" }, "<Leader>f/", "<Cmd>Telescope notify<CR>", { noremap = true })
 
 --==============================================================================
 -- sindrets/diffview.nvim
@@ -449,8 +451,9 @@ require("diffview").setup({
     },
 })
 
-vim.keymap.set("n",          "<A-g>",   "<Cmd>DiffviewOpen<CR>",                { noremap = true })
-vim.keymap.set({ "n", "t" }, "<A-S-g>", "<Cmd>DiffviewClose<CR>",               { noremap = true })
+vim.keymap.set("n",          "<Leader>do",   ":DiffviewOpen",                        { noremap = true })
+vim.keymap.set("n",          "<Leader>dd",   "<Cmd>DiffviewOpen<CR>",                { noremap = true })
+vim.keymap.set({ "n", "t" }, "<Leader>dc",   "<Cmd>DiffviewClose<CR>",               { noremap = true })
 vim.keymap.set("n", "<A-]>", "]c",  { noremap = true })     vim.keymap.set("n", "]c", "<Nop>",  { noremap = true })
 vim.keymap.set("n", "<A-[>", "[c",  { noremap = true })     vim.keymap.set("n", "[c", "<Nop>",  { noremap = true })
 
@@ -540,7 +543,7 @@ require("mason").setup({
     }
 })
 
-vim.keymap.set({ "n", "t" }, "<A-m>", "<Cmd>Mason<CR>", { noremap = true })
+vim.keymap.set({ "n", "t" }, "<Leader>m", "<Cmd>Mason<CR>", { noremap = true })
 
 --==============================================================================
 -- williamboman/mason-lspconfig.nvim
