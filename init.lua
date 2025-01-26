@@ -176,6 +176,7 @@ require("lazy").setup({
     { "jemag/telescope-diff.nvim",
         dependencies = { "nvim-telescope/telescope.nvim" }                  },
     { "rcarriga/nvim-notify", opts = { background_colour = "#1d2021" }      },
+    { 'echasnovski/mini.nvim', version = false                              },
 
     -- Git
     { "sindrets/diffview.nvim",
@@ -425,11 +426,16 @@ vim.keymap.set("n", "<Leader>fc",   function() require("telescope").extensions.d
     { desc = "Compare file with current" })
 
 --==============================================================================
--- "rcarriga/nvim-notify"
+-- rcarriga/nvim-notify
 --==============================================================================
 vim.notify = require("notify")
 require("telescope").load_extension("notify")
 vim.keymap.set({ "n", "t" }, "<Leader>f/", "<Cmd>Telescope notify<CR>", { noremap = true })
+
+--==============================================================================
+-- olimorris/persisted.nvim
+--==============================================================================
+require("mini.align").setup()
 
 --==============================================================================
 -- sindrets/diffview.nvim
