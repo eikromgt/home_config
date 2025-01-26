@@ -113,6 +113,26 @@ vim.api.nvim_create_autocmd("LspAttach", {
 })
 
 --==============================================================================
+-- Auto Command
+--==============================================================================
+vim.api.nvim_create_autocmd({"WinEnter", "FocusGained"}, {
+  pattern = "*",
+  callback = function()
+    vim.wo.cursorline = true
+    require("illuminate").resume_buf()
+  end
+})
+
+vim.api.nvim_create_autocmd({"WinLeave", "FocusLost"}, {
+  pattern = "*",
+  callback = function()
+    vim.wo.cursorline = false
+    require("illuminate").pause_buf()
+  end
+})
+
+
+--==============================================================================
 -- Plugin Manager: folke/lazy.nvim
 --==============================================================================
 local lazypath = PluginPath .. "/lazy.nvim"
@@ -143,8 +163,6 @@ require("lazy").setup({
     { "nvim-lualine/lualine.nvim",
         dependencies = { "nvim-tree/nvim-web-devicons",
         "yavorski/lualine-macro-recording.nvim"  }                          },
-    { "romgrk/barbar.nvim", dependencies = { "nvim-tree/nvim-web-devicons",
-        "lewis6991/gitsigns.nvim"                                           }},
 
     -- Tool
     { "nvim-telescope/telescope.nvim", config = true, branch = "0.1.x",
@@ -288,35 +306,16 @@ vim.keymap.set({ "n", "t" }, "<A-e>",    "<Cmd>NvimTreeFindFileToggle<CR>",   { 
 --==============================================================================
 require("lualine").setup({
     options = {
+        globalstatus = true,
         section_separators = "",
         component_separators = ""
     },
     sections = {
         lualine_a = {},
-        lualine_c = { "macro_recording", "%S" },
+        lualine_c = { "filename", "macro_recording", "%S" },
         lualine_x = { "overseer", "encoding", "fileformat", "filetype" },
     }
 })
-
---==============================================================================
--- romgrk/barbar.nvim
---==============================================================================
-vim.keymap.set("n", "<A-,>", "<Cmd>BufferPrevious<CR>", { noremap = true, silent = true })
-vim.keymap.set("n", "<A-.>", "<Cmd>BufferNext<CR>",     { noremap = true, silent = true })
-
-vim.keymap.set("n", "<A-1>", "<Cmd>BufferGoto 1<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-2>", "<Cmd>BufferGoto 2<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-3>", "<Cmd>BufferGoto 3<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-4>", "<Cmd>BufferGoto 4<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-5>", "<Cmd>BufferGoto 5<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-6>", "<Cmd>BufferGoto 6<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-7>", "<Cmd>BufferGoto 7<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-8>", "<Cmd>BufferGoto 8<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-9>", "<Cmd>BufferGoto 9<CR>",   { noremap = true, silent = true })
-vim.keymap.set("n", "<A-0>", "<Cmd>BufferLast<CR>",     { noremap = true, silent = true })
-
-vim.keymap.set("n", "<A-w>", "<Cmd>BufferClose<CR>",    { noremap = true, silent = true })
-vim.keymap.set("n", "<A-s>", "<Cmd>BufferPick<CR>",     { noremap = true, silent = true })
 
 --==============================================================================
 -- nvim-telescope/telescope.nvim
