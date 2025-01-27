@@ -16,7 +16,6 @@ vim.opt.signcolumn      = "no"
 vim.opt.wrap            = false
 vim.opt.cmdheight       = 0
 vim.opt.showmode        = false
-vim.opt.list            = true
 vim.opt.splitright      = true
 vim.opt.splitkeep       = "screen"
 
@@ -182,7 +181,7 @@ require("lazy").setup({
     { "jemag/telescope-diff.nvim",
         dependencies = { "nvim-telescope/telescope.nvim" }                  },
     { "rcarriga/nvim-notify", opts = { background_colour = "#1d2021" }      },
-    { 'echasnovski/mini.nvim', version = false                              },
+    { "echasnovski/mini.nvim", version = false                              },
 
     -- Git
     { "sindrets/diffview.nvim",
@@ -436,9 +435,10 @@ require("telescope").load_extension("notify")
 vim.keymap.set({ "n" }, "<Leader>f/", "<Cmd>Telescope notify<CR>", { noremap = true })
 
 --==============================================================================
--- olimorris/persisted.nvim
+-- echasnovski/mini.nvim
 --==============================================================================
 require("mini.align").setup()
+require("mini.trailspace").setup();
 
 require("mini.move").setup({
   mappings = {
