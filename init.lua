@@ -264,7 +264,7 @@ vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { link = "Visual" })
 --==============================================================================
 require("nvim-treesitter.configs").setup({
     ensure_installed = { "c","cpp", "printf", "lua", "vim", "vimdoc", "python",
-        "cmake", "glsl", "json", "json5", "typst", "systemverilog", "query" },
+        "cmake", "glsl", "hjson", "typst", "verilog", "query" },
     additional_vim_regex_highlighting = false,
     auto_install = true,
     highlight = {
@@ -279,10 +279,7 @@ require("nvim-treesitter.configs").setup({
     },
 })
 
---vim.treesitter.language.register("printf",          { "c", "cpp" })
---vim.treesitter.language.register("jons5",           { "json", "json5" })
---vim.treesitter.language.register("systemverilog",   { "v", "verilog", "systemverilog" })
---vim.treesitter.language.register("glsl",            { "glsl", "vert", "tesc", "tese", "geom", "frag", "comp" })
+local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
 
 --==============================================================================
 -- nvim-tree/nvim-tree.lua
