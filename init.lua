@@ -70,6 +70,22 @@ vim.keymap.set("n", "<A-S-a>",   "<Cmd>%!xxd -r<CR>",   { noremap = true })
 vim.keymap.set("n", "<A-p>",   ":e ",                   { noremap = true })
 vim.keymap.set("n", "<A-z>",   ":vertical help ",       { noremap = true })
 
+vim.api.nvim_create_autocmd("LspAttach", {
+    callback = function(_)
+        vim.keymap.set("n",          "<Leader>q", vim.diagnostic.open_float, { noremap = true })
+        vim.keymap.set("n",          "<Leader>[", vim.diagnostic.goto_prev,  { noremap = true })
+        vim.keymap.set("n",          "<Leader>]", vim.diagnostic.goto_next,  { noremap = true })
+        vim.keymap.set("n",          "<Leader>o", vim.diagnostic.setloclist, { noremap = true })
+
+        vim.keymap.set("n",          "<A-u>",     vim.lsp.buf.declaration,   { noremap = true })
+        vim.keymap.set("n",          "<A-y>",     vim.lsp.buf.definition,    { noremap = true })
+        vim.keymap.set("n",          "<A-q>",     vim.lsp.buf.hover,         { noremap = true })
+        vim.keymap.set("n",          "<Leader>y", vim.lsp.buf.references,    { noremap = true })
+        vim.keymap.set("n",          "<Leader>r", vim.lsp.buf.rename,        { noremap = true })
+        vim.keymap.set({ "n", "v" }, "<Leader>a", vim.lsp.buf.code_action,   { noremap = true })
+    end,
+})
+
 -- copy current filepath to system clipboard
 vim.keymap.set("n", "<Leader>tp", function()
         local filepath = vim.api.nvim_buf_get_name(0)
@@ -95,27 +111,10 @@ vim.keymap.set("n", "<Leader>ts", function()
         vim.opt.signcolumn = sc
     end,   { noremap = true })
 
-vim.api.nvim_create_autocmd("LspAttach", {
-    callback = function(_)
-        vim.keymap.set("n",          "<Leader>q", vim.diagnostic.open_float, { noremap = true })
-        vim.keymap.set("n",          "<Leader>[", vim.diagnostic.goto_prev,  { noremap = true })
-        vim.keymap.set("n",          "<Leader>]", vim.diagnostic.goto_next,  { noremap = true })
-        vim.keymap.set("n",          "<Leader>o", vim.diagnostic.setloclist, { noremap = true })
-
-        vim.keymap.set("n",          "<A-u>",     vim.lsp.buf.declaration,   { noremap = true })
-        vim.keymap.set("n",          "<A-y>",     vim.lsp.buf.definition,    { noremap = true })
-        vim.keymap.set("n",          "<A-q>",     vim.lsp.buf.hover,         { noremap = true })
-        vim.keymap.set("n",          "<Leader>y", vim.lsp.buf.references,    { noremap = true })
-        vim.keymap.set("n",          "<Leader>r", vim.lsp.buf.rename,        { noremap = true })
-        vim.keymap.set({ "n", "v" }, "<Leader>a", vim.lsp.buf.code_action,   { noremap = true })
-    end,
-})
-
 --==============================================================================
 -- Auto Command
 --==============================================================================
 vim.api.nvim_create_autocmd({"WinEnter", "FocusGained"}, {
-  pattern = "*",
   callback = function()
     vim.wo.cursorline = true
     require("illuminate").resume_buf()
@@ -123,7 +122,6 @@ vim.api.nvim_create_autocmd({"WinEnter", "FocusGained"}, {
 })
 
 vim.api.nvim_create_autocmd({"WinLeave", "FocusLost"}, {
-  pattern = "*",
   callback = function()
     vim.wo.cursorline = false
     require("illuminate").pause_buf()
@@ -161,6 +159,8 @@ require("lazy").setup({
     { "nvim-lualine/lualine.nvim",
         dependencies = { "nvim-tree/nvim-web-devicons",
         "yavorski/lualine-macro-recording.nvim"  }                          },
+    { "nvimdev/dashboard-nvim", event = "VimEnter",  config = true,
+        dependencies = { "nvim-tree/nvim-web-devicons"  }                   },
 
     -- Tool
     { "nvim-telescope/telescope.nvim", config = true, branch = "0.1.x",
@@ -315,6 +315,15 @@ require("lualine").setup({
 })
 
 --==============================================================================
+-- nvimdev/dashboard-nvim
+--==============================================================================
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    vim.b.minitrailspace_disable = true;
+  end
+})
+
+--==============================================================================
 -- nvim-telescope/telescope.nvim
 --==============================================================================
 local telescope = require("telescope.builtin")
@@ -432,7 +441,9 @@ vim.keymap.set({ "n" }, "<Leader>f/", "<Cmd>Telescope notify<CR>", { noremap = t
 -- echasnovski/mini.nvim
 --==============================================================================
 require("mini.align").setup()
-require("mini.trailspace").setup();
+require("mini.trailspace").setup({
+
+});
 
 require("mini.move").setup({
   mappings = {
