@@ -131,6 +131,12 @@ vim.api.nvim_create_autocmd({"WinLeave", "FocusLost"}, {
   end
 })
 
+vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+    pattern = "*.json",
+    callback = function()
+        vim.bo.filetype = "json5"
+    end
+})
 
 --==============================================================================
 -- Plugin Manager: folke/lazy.nvim
