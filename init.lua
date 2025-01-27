@@ -130,13 +130,6 @@ vim.api.nvim_create_autocmd({"WinLeave", "FocusLost"}, {
   end
 })
 
-vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
-    pattern = "*.json",
-    callback = function()
-        vim.bo.filetype = "json5"
-    end
-})
-
 --==============================================================================
 -- Plugin Manager: folke/lazy.nvim
 --==============================================================================
@@ -197,6 +190,7 @@ require("lazy").setup({
         dependencies = { "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer" }     },
     { "saadparwaiz1/cmp_luasnip",
         dependencies = { "L3MON4D3/LuaSnip", "hrsh7th/nvim-cmp" }           },
+    { "b0o/schemastore.nvim"                                                },
 
     -- LSP
     { "williamboman/mason.nvim"                                             },
@@ -604,6 +598,17 @@ require("mason-lspconfig").setup({
                 }},
             }
         end,
+        ["jsonls"] = function()
+            require("lspconfig").jsonls.setup {
+                capabilities = cmp_nvim_lsp_cap,
+                settings = {
+                    json = {
+                        schemas = require("schemastore").json.schemas(),
+                        validate = { enable = true },
+                    },
+                }
+            }
+            end,
         ["tinymist"] = function()
             require("lspconfig").tinymist.setup {
                 capabilities = cmp_nvim_lsp_cap,
