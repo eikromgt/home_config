@@ -159,7 +159,7 @@ require("lazy").setup({
     { "nvim-lualine/lualine.nvim",
         dependencies = { "nvim-tree/nvim-web-devicons",
         "yavorski/lualine-macro-recording.nvim"  }                          },
-    { "nvimdev/dashboard-nvim", event = "VimEnter",  config = true,
+    { "nvimdev/dashboard-nvim", event = "VimEnter",
         dependencies = { "nvim-tree/nvim-web-devicons"  }                   },
 
     -- Tool
@@ -317,6 +317,9 @@ require("lualine").setup({
 --==============================================================================
 -- nvimdev/dashboard-nvim
 --==============================================================================
+require("dashboard").setup({
+})
+
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
     vim.b.minitrailspace_disable = true;
@@ -414,7 +417,10 @@ vim.keymap.set({ "n", "t" }, "<A-S-`>", "<Cmd>TermSelect<CR>", { noremap = true 
 -- stevearc/overseer.nvim
 --==============================================================================
 require("overseer").setup({
-    dap = false
+    dap = false,
+    task_list = {
+        min_height = 12,
+    }
 })
 
 vim.keymap.set({ "n", "t" }, "<A-t>", "<Cmd>OverseerRun<CR>", { noremap = true })
