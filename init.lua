@@ -440,6 +440,12 @@ vim.keymap.set("n", "<Leader>fc",   function() require("telescope").extensions.d
 -- rcarriga/nvim-notify
 --==============================================================================
 vim.notify = require("notify")
+vim.notify.setup({
+    render = "compact",
+    stages = "slide",
+    top_down = false
+})
+
 require("telescope").load_extension("notify")
 vim.keymap.set({ "n" }, "<Leader>f/", "<Cmd>Telescope notify<CR>", { noremap = true })
 
