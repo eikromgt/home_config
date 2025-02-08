@@ -566,7 +566,11 @@ cmp.setup({
             { name = "nvim_lsp", entry_filter = function(entry, _) return cmp.lsp.CompletionItemKind.Snippet ~= entry:get_kind() end },
             { name = "luasnip" },
             { name = "path" }
-        })
+        }),
+    window = {
+        completion =    { winblend = 5 },
+        documentation = { winblend = 5 }
+    },
 })
 
 --==============================================================================
