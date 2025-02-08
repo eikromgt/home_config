@@ -173,7 +173,7 @@ require("lazy").setup({
         "nvim-telescope/telescope.nvim", "akinsho/toggleterm.nvim" }        },
     { "jemag/telescope-diff.nvim",
         dependencies = { "nvim-telescope/telescope.nvim" }                  },
-    { "rcarriga/nvim-notify", opts = { background_colour = "#1d2021" }      },
+    { "rcarriga/nvim-notify",                                               },
     { "echasnovski/mini.nvim", version = false                              },
 
     -- Git
@@ -443,6 +443,7 @@ vim.notify = require("notify")
 vim.notify.setup({
     render = "compact",
     stages = "slide",
+    background_colour = "#1d2021",
     top_down = false
 })
 
