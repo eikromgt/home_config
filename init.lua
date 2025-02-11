@@ -197,6 +197,19 @@ require("lazy").setup({
     { "williamboman/mason-lspconfig.nvim",
         dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" }},
     { "neovim/nvim-lspconfig"                                               },
+    { "lervag/vimtex",
+        lazy = false, -- we don't want to lazy load VimTeX
+        -- tag = "v2.15", -- uncomment to pin to a specific release
+        init = function()
+            -- VimTeX configuration goes here, e.g.
+            vim.g.vimtex_view_method = "zathura"
+            vim.g.vimtex_compiler_method = "latexrun"
+            vim.g.vimtex_quickfix_mode = 0
+            --vim.g.vimtex_compiler_latexmk_engines = {
+            --    _ = "-xelatex"
+            --}
+        end
+    },
 
     -- DAP
     { "mfussenegger/nvim-dap"                                               },
@@ -399,6 +412,7 @@ wilder.set_option("renderer", wilder.renderer_mux({
     ["?"] = wilder.wildmenu_renderer({
         highlighter = wilder.basic_highlighter(),
         highlights      = { accent = wilder.make_hl("WilderAccent", "Pmenu", {{ a = 1 }, { a = 1 }, { foreground = "#f4468f" }}), },
+        pumblend        = 5
     }),
 }))
 
