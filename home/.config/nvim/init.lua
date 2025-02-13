@@ -138,6 +138,12 @@ vim.api.nvim_create_autocmd("VimEnter", {
     end
 })
 
+vim.api.nvim_create_autocmd("ColorScheme", {
+  callback = function()
+    vim.api.nvim_set_hl(0, "Pmenu", { bg = "none" })
+  end
+})
+
 --==============================================================================
 -- Plugin Manager: folke/lazy.nvim
 --==============================================================================
@@ -534,10 +540,10 @@ require("lazy").setup({
                     { name = "luasnip" },
                     { name = "path" }
                 }),
-                window = {
-                    completion =    { winblend = 5 },
-                    documentation = { winblend = 5 }
-                },
+                --window = {
+                --    completion =    { winblend = 5 },
+                --    documentation = { winblend = 5 }
+                --},
             })
         end
     },
