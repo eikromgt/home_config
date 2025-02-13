@@ -2,7 +2,7 @@
 
 echo "Start install configuration files"
 
-rsync -av  home ~
+rsync -av  home/ ~/
 
 echo "Installing yazi themes"
 ya pack -a bennyyip/gruvbox-dark
