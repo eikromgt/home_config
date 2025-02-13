@@ -174,10 +174,11 @@ require("lazy").setup({
             })
         end
     },
-    { "Pocco81/auto-save.nvim",
+    { "okuuva/auto-save.nvim",
         config = function()
             require("auto-save").setup({
-                execution_message = { message = "" },
+                immediate_save = { "QuitPre", "VimSuspend" },
+                defer_save = { "InsertLeave", "TextChanged", "BufLeave", "FocusLost", },
                 debounce_delay = 1000,
             })
         end
@@ -617,7 +618,9 @@ require("lazy").setup({
                             capabilities = cmp_nvim_lsp_cap,
                             offset_encoding = "utf-8",
                             settings     = {
-                                exportPdf = "onType"
+                                formatterMode = "typstyle",
+                                exportPdf = "never",
+                                semanticTokens = "disable"
                             }
                         }
                     end,
@@ -632,11 +635,13 @@ require("lazy").setup({
                     end,
                 }
             })
+
+
         end
     },
     { "neovim/nvim-lspconfig" },
     { "lervag/vimtex",
-        lazy = false,
+        ft = "tex",
         init = function()
             vim.g.vimtex_mappings_prefix = "<Leader>e"
             vim.g.vimtex_view_method = "zathura"
