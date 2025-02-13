@@ -1,1 +1,1 @@
-Neovim configuration
+My linux user configuration

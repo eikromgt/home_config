@@ -1,0 +1,22 @@
+[user]
+    name = Luo Leifei
+    email = eikromgt@outlook.com
+[core]
+	editor = nvim
+    autocrlf = input
+	excludesFile = ~/.gitignore
+[diff]
+    tool = vscode
+[difftool "vscode"]
+    cmd = code --wait --diff $LOCAL $REMOTE
+[merge]
+    tool = vscode
+[mergetool "vscode"]
+    cmd = code --wait $MERGED
+[filter "tabspace"]
+    smudge = unexpand --tabs=4 --first-only
+    clean = expand --tabs=4 --initial
+[alias]
+    logline = log --date=format:\"[%Y-%m-%d %H:%M:%S]\" --pretty=format:\"%Cgreen%ad%C(yellow)%<(20)(%an)%Cred(%<(30)%C(cyan)%ae%C(noul red))%C(blue)[%Creset%C(bold blue)%h%C(nobold blue)]%Creset %s\"
+[submodule]
+	recurse = true
