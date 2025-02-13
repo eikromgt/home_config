@@ -18,7 +18,6 @@ export HTTPS_PROXY=$httpProxy
 
 [[ -f ~/.zshrc ]] && . ~/.zshrc
 
-if [[ -z "${DISPLAY}" && "${XDG_VTNR}" -eq 1 ]]; then
-    exec startx -- vt1 &> /dev/null
+if uwsm check may-start; then
+  exec uwsm start hyprland.desktop
 fi
-
