@@ -295,7 +295,7 @@ require("lazy").setup({
         end
     },
     { "nixprime/cpsm", build = "./install.sh" },
-    { "gelguy/wilder.nvim",
+    { "gelguy/wilder.nvim", build = ":UpdateRemotePlugins",
         dependencies = { "roxma/nvim-yarp", "romgrk/fzy-lua-native", "nixprime/cpsm" },
         config = function()
             local wilder = require("wilder")
@@ -540,10 +540,6 @@ require("lazy").setup({
                     { name = "luasnip" },
                     { name = "path" }
                 }),
-                --window = {
-                --    completion =    { winblend = 5 },
-                --    documentation = { winblend = 5 }
-                --},
             })
         end
     },
