@@ -9,6 +9,7 @@ fi
 export VISUAL=nvim
 export EDITOR=nvim
 export BROWSER=chromium
+export GOPATH="$HOME/.local/share/go"
 
 httpProxy="http://127.0.0.1:7890"
 export http_proxy=$httpProxy
@@ -19,5 +20,6 @@ export HTTPS_PROXY=$httpProxy
 [[ -f ~/.zshrc ]] && . ~/.zshrc
 
 if uwsm check may-start; then
-  exec uwsm start hyprland.desktop
+  exec uwsm start hyprland.desktop > /dev/null
 fi
+
