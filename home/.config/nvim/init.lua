@@ -41,6 +41,45 @@ PluginPath      = vim.fn.stdpath("data") .. "/lazy"
 CodePath        = "~/.config/Code"
 CodeSnippets    = CodePath .. "/User/snippets/common.code-snippets"
 
+local leetcodeCppBeforeInjection = [[
+#include <iostream>
+#include <string>
+#include <stdint.h>
+#include <memory>
+#include <cmath>
+#include <random>
+#include <vector>
+#include <list>
+#include <array>
+#include <map>
+#include <unordered_map>
+#include <set>
+#include <unordered_set>
+#include <queue>
+#include <stack>
+#include <bitset>
+#include <limits>
+#include <utility>
+#include <algorithm>
+#include <functional>
+#include <mutex>
+#include <ranges>
+using namespace std;
+]]
+
+local leetcodePythonBeforeInjection = [[
+from typing import Optional
+from typing import List
+import collections
+import itertools
+import math
+import heapq
+import bisect
+import copy
+import numpy
+import random
+]]
+
 --==============================================================================
 -- Keyboard Shortcuts and Mappings
 --==============================================================================
@@ -286,8 +325,8 @@ require("lazy").setup({
         dependencies = { "nvim-lua/plenary.nvim" },
         config = function()
             local telescope = require("telescope.builtin")
-            vim.keymap.set('n', '<leader>ff', telescope.find_files, { noremap = true })
-            vim.keymap.set('n', '<leader>fg', telescope.live_grep, { noremap = true })
+            vim.keymap.set('n', '<leader>fp', telescope.find_files, { noremap = true })
+            vim.keymap.set('n', '<leader>ff', telescope.live_grep, { noremap = true })
             vim.keymap.set('n', '<leader>fh', telescope.pickers, { noremap = true })
             vim.keymap.set('n', '<leader>fb', telescope.buffers, { noremap = true })
             vim.keymap.set('n', '<leader>fh', telescope.help_tags, { noremap = true })
@@ -686,7 +725,7 @@ require("lazy").setup({
 
             dap_vscode.json_decode = require("overseer.json").decode
 
-            dap.adapters.lldb = {
+            dap.adapters.codelldb = {
                 type = "server",
                 port = "${port}",
                 executable = {
@@ -695,9 +734,27 @@ require("lazy").setup({
                 }
             }
 
+            dap.adapters.cortex_debug = {
+                type = "server",
+                port = "${port}",
+                executable = {
+                    command = "codelldb",
+                    args = { "--port", "${port}" }
+                }
+            }
+
+            dap.adapters.arm_none_eabi_gdb = {
+                type = "server",
+                port = "${port}",
+                executable = {
+                    command = "arm-none-eabi-gdb",
+                    args = { "--port", "${port}" }
+                }
+            }
+
             vim.keymap.set("n", "<A-d>", function()
                 if vim.fn.filereadable(".vscode/launch.json") then
-                    dap_vscode.load_launchjs(nil, { lldb = { "c", "cpp", "glsl" }})
+                    dap_vscode.load_launchjs(nil, { codelldb = { "c", "cpp", "glsl" }})
                 end
                 require("dap").continue()
             end,          { noremap = true, silent = true })
@@ -749,49 +806,12 @@ require("lazy").setup({
         dependencies = { "nvim-telescope/telescope.nvim", "MunifTanjim/nui.nvim", "nvim-treesitter/nvim-treesitter",
             "rcarriga/nvim-notify", "nvim-tree/nvim-web-devicons", },
         config = function()
-            local leetcodeCppBeforeInjection = [[
-            #include <iostream>
-            #include <string>
-            #include <stdint.h>
-            #include <memory>
-            #include <cmath>
-            #include <random>
-            #include <vector>
-            #include <list>
-            #include <array>
-            #include <map>
-            #include <unordered_map>
-            #include <set>
-            #include <unordered_set>
-            #include <queue>
-            #include <stack>
-            #include <bitset>
-            #include <limits>
-            #include <utility>
-            #include <algorithm>
-            #include <functional>
-            #include <mutex>
-            #include <ranges>
-            using namespace std;
-            ]]
-
-            local leetcodePythonBeforeInjection = [[
-            from typing import Optional
-            from typing import List
-            import collections
-            import itertools
-            import math
-            import heapq
-            import bisect
-            import copy
-            ]]
-
             require("leetcode").setup({
                 arg = "leetcode",
                 cn = {
                     enabled = true,
                     translator = false,
-                    translate_problems = false,
+                    translate_problems = true,
                 },
                 injector = {
                     ["cpp"] = { before =  { leetcodeCppBeforeInjection }},
