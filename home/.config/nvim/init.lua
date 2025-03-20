@@ -137,7 +137,7 @@ vim.keymap.set("n", "<Leader>tp", function()
     end, { noremap = true, silent = true })
 
 -- copy current line git commit hash to system clipboard
-vim.keymap.set("n", "<Leader>ts", function()
+vim.keymap.set("n", "<Leader>tb", function()
         local filepath = vim.api.nvim_buf_get_name(0)
         local line = vim.api.nvim_win_get_cursor(0)[1]
 
@@ -643,6 +643,16 @@ require("lazy").setup({
                             }},
                         }
                     end,
+                    ["neocmake"] = function()
+                        require("lspconfig").neocmake.setup {
+                            capabilities = cmp_nvim_lsp_cap,
+                            init_options = {
+                                lint = {
+                                    enable = false,
+                                }
+                            },
+                        }
+                    end,
                     ["jsonls"] = function()
                         require("lspconfig").jsonls.setup {
                             capabilities = cmp_nvim_lsp_cap,
@@ -758,44 +768,32 @@ require("lazy").setup({
                 end
                 require("dap").continue()
             end,          { noremap = true, silent = true })
-            vim.keymap.set("n", "<A-n>", function() require("dap").step_over() end,         { noremap = true, silent = true })
-            vim.keymap.set("n", "<A-i>", function() require("dap").step_into() end,         { noremap = true, silent = true })
-            vim.keymap.set("n", "<A-o>", function() require("dap").step_out() end,          { noremap = true, silent = true })
-            vim.keymap.set("n", "<A-b>", function() require("dap").toggle_breakpoint() end, { noremap = true, silent = true })
+            vim.keymap.set("n", "<A-n>", function() dap.step_over() end,         { noremap = true, silent = true })
+            vim.keymap.set("n", "<A-i>", function() dap.step_into() end,         { noremap = true, silent = true })
+            vim.keymap.set("n", "<A-o>", function() dap.step_out() end,          { noremap = true, silent = true })
+            vim.keymap.set("n", "<A-b>", function() dap.toggle_breakpoint() end, { noremap = true, silent = true })
         end
     },
-    { "rcarriga/nvim-dap-ui",
-        dependencies = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
+    { "igorlfs/nvim-dap-view",
+        dependencies = {"mfussenegger/nvim-dap" },
         config = function()
             local dap = require("dap")
-            local dapui = require("dapui")
-            dapui.setup({
-                layouts = {
-                    {
-                        elements = {
-                            { id = "stacks",        size = 0.20 },
-                            { id = "scopes",        size = 0.35 },
-                            { id = "watches",       size = 0.30 },
-                            { id = "breakpoints",   size = 0.10 }
-                        },
-                        position = "right",
-                        size = 60
-                    },
-                    {
-                        elements = {
-                            { id = "repl",          size = 0.5 },
-                            { id = "console",       size = 0.5 }
-                        },
-                        position = "bottom",
-                        size = 10
-                    }
-                },
-            })
+            local dap_view = require("dap-view")
 
-            dap.listeners.before.attach.dapui_config           = function() dapui.open() end
-            dap.listeners.before.launch.dapui_config           = function() dapui.open() end
-            dap.listeners.before.event_terminated.dapui_config = function() dapui.close() end
-            dap.listeners.before.event_exited.dapui_config     = function() dapui.close() end
+            dap_view.setup({})
+
+            dap.listeners.before.attach["dap-view-config"]           = function() dap_view.open() end
+            dap.listeners.before.launch["dap-view-config"]           = function() dap_view.open() end
+            dap.listeners.before.event_terminated["dap-view-config"] = function() dap_view.close() end
+            dap.listeners.before.event_exited["dap-view-config"]     = function() dap_view.close() end
+
+            vim.keymap.set("n", "<A-S-d>", function() dap_view.toggle() end, { noremap = true, silent = true })
+        end
+    },
+    { "theHamsta/nvim-dap-virtual-text",
+        dependencies = { "mfussenegger/nvim-dap",  "nvim-treesitter/nvim-treesitter", },
+        config = function()
+            require("nvim-dap-virtual-text").setup()
         end
     },
 
