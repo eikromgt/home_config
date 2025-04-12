@@ -1,4 +1,4 @@
---==============================================================================
+--=======================================e======================================
 -- Basic Settings
 --==============================================================================
 vim.opt.encoding        = "utf-8"
@@ -112,6 +112,9 @@ vim.keymap.set("n", "<A-S-a>",   "<Cmd>%!xxd -r<CR>",   { noremap = true })
 
 vim.keymap.set("n", "<A-p>",   ":e ",                   { noremap = true })
 vim.keymap.set("n", "<A-z>",   ":vertical help ",       { noremap = true })
+
+vim.keymap.del("n", "gri",     {})
+vim.keymap.del("n", "gra",     {})
 
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(_)
