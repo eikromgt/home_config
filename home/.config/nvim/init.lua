@@ -306,7 +306,14 @@ require("lazy").setup({
                 options = {
                     globalstatus = true,
                     section_separators = "",
-                    component_separators = ""
+                    component_separators = "",
+                    disabled_filetypes = {
+                        winbar = {
+                            "dap-view",
+                            "dap-repl",
+                            "dap-view-term",
+                        },
+                    },
                 },
                 sections = {
                     lualine_a = {},
@@ -738,6 +745,10 @@ require("lazy").setup({
 
             dap_vscode.json_decode = require("overseer.json").decode
 
+            if vim.fn.filereadable(".vscode/launch.json") then
+                dap_vscode.load_launchjs(nil, { codelldb = { "c", "cpp", "glsl" }})
+            end
+
             dap.adapters.codelldb = {
                 type = "server",
                 port = "${port}",
@@ -766,9 +777,6 @@ require("lazy").setup({
             }
 
             vim.keymap.set("n", "<A-d>", function()
-                if vim.fn.filereadable(".vscode/launch.json") then
-                    dap_vscode.load_launchjs(nil, { codelldb = { "c", "cpp", "glsl" }})
-                end
                 require("dap").continue()
             end,          { noremap = true, silent = true })
             vim.keymap.set("n", "<A-n>", function() dap.step_over() end,         { noremap = true, silent = true })
@@ -783,7 +791,13 @@ require("lazy").setup({
             local dap = require("dap")
             local dap_view = require("dap-view")
 
-            dap_view.setup({})
+            dap_view.setup({
+                winbar = {
+                    show = true,
+                    sections = { "console", "watches", "exceptions", "breakpoints", "threads", "repl" },
+                    default_section = "threads",
+                },
+            })
 
             dap.listeners.before.attach["dap-view-config"]           = function() dap_view.open() end
             dap.listeners.before.launch["dap-view-config"]           = function() dap_view.open() end
