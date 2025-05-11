@@ -324,7 +324,7 @@ require("lazy").setup({
         end
     },
     { "nvimdev/dashboard-nvim", event = "VimEnter",
-        dependencies = { "nvim-tree/nvim-web-devicons"  },
+        dependencies = { "nvim-tree/nvim-web-devicons", "nvim-telescope/telescope.nvim" },
         config = true
     },
 
@@ -508,7 +508,7 @@ require("lazy").setup({
 
             vim.keymap.set("n", "<Leader>do",   ":DiffviewOpen",          { noremap = true })
             vim.keymap.set("n", "<Leader>dd",   "<Cmd>DiffviewOpen<CR>",  { noremap = true })
-            vim.keymap.set("n", "<Leader>dc",   "<Cmd>DiffviewClose<CR>", { noremap = true })
+            vim.keymap.set("n", "<Leader>dq",   "<Cmd>DiffviewClose<CR>", { noremap = true })
             vim.keymap.set("n", "<A-]>", "]c",  { noremap = true })     vim.keymap.set("n", "]c", "<Nop>",  { noremap = true })
             vim.keymap.set("n", "<A-[>", "[c",  { noremap = true })     vim.keymap.set("n", "[c", "<Nop>",  { noremap = true })
         end
