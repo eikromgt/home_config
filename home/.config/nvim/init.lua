@@ -639,6 +639,23 @@ require("lazy").setup({
             vim.keymap.set({ "n" }, "<Leader>m", "<Cmd>Mason<CR>", { noremap = true })
         end
     },
+    { "WhoIsSethDaniel/mason-tool-installer.nvim",
+        config = function()
+            require('mason-tool-installer').setup {
+                ensure_installed = {
+                    "bash-language-server",
+                    "clangd",
+                    "codelldb",
+                    "cortex-debug",
+                    "glsl_analyzer",
+                    "lua-language-server",
+                    "neocmakelsp",
+                    "python-lsp-server",
+                    "tinymist"
+                }
+            }
+        end
+    },
     { "williamboman/mason-lspconfig.nvim",
         dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig", "hrsh7th/cmp-nvim-lsp" },
         config = function()
@@ -705,7 +722,7 @@ require("lazy").setup({
                             offset_encoding = "utf-8",
                             settings     = {
                                 formatterMode = "typstyle",
-                                exportPdf = "never",
+                                exportPdf = "onType",
                                 semanticTokens = "disable"
                             }
                         }
@@ -853,7 +870,7 @@ require("lazy").setup({
                 cn = {
                     enabled = true,
                     translator = false,
-                    translate_problems = true,
+                    translate_problems = false,
                 },
                 injector = {
                     ["cpp"] = { before =  { leetcodeCppBeforeInjection }},
