@@ -722,7 +722,7 @@ require("lazy").setup({
                             offset_encoding = "utf-8",
                             settings     = {
                                 formatterMode = "typstyle",
-                                exportPdf = "onType",
+                                exportPdf = "never",
                                 semanticTokens = "disable"
                             }
                         }
@@ -771,6 +771,13 @@ require("lazy").setup({
                         vimtex_view_timer = nil
                     end, vimtex_view_debounce)
                 end
+            })
+        end
+    },
+    { "chomosuke/typst-preview.nvim", ft = "typst", version = '1.*',
+        config = function()
+            require("typst-preview").setup({
+                invert_colors = '{"rest": "auto","image": "never"}'
             })
         end
     },
