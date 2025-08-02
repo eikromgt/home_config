@@ -414,7 +414,7 @@ require("lazy").setup({
             wilder.set_option("renderer", wilder.renderer_mux({
                 [":"] = wilder.popupmenu_renderer(
                 wilder.popupmenu_palette_theme({
-                    highlighter     = { wilder.lua_pcre2_highlighter(), wilder.lua_fzy_highlighter() },
+                    highlighter     = { wilder.lua_fzy_highlighter() },
                     highlights      = { accent = wilder.make_hl("WilderAccent", "Pmenu", {{ a = 1 }, { a = 1 }, { foreground = "#f4468f" }}), },
                     left            = { " ", wilder.popupmenu_devicons() },
                     border          = "rounded",
