@@ -1,0 +1,12 @@
+program_options:
+  tray: true             # Show tray icon
+  notify: true           # Enable notifications
+  automount: true        # Enable automatic mounting
+  file_manager: dolphin  # Program to open mounted directories
+
+device_config:
+  - id_uuid: ["2A34073534070413"]
+    options: [rw, uid=1000, gid=1000, umask=022, noatime]
+    ignore: false
+    automount: true
+
