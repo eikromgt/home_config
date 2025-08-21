@@ -13,13 +13,16 @@ ya pkg add bennyyip/gruvbox-dark
 echo "Installing zathura theme"
 git clone https://github.com/eastack/zathura-gruvbox.git ~/.config/zathura/zathura-gruvbox
 
-echo "Installing zsh plugin: zsh-autosuggestions"
+echo "Installing oh-my-zsh"
+git clone https://github.com/ohmyzsh/ohmyzsh.git ~/.local/share/oh-my-zsh
+
+echo "Installing oh-my-zsh plugin: zsh-autosuggestions"
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.local/share/oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
-echo "Installing zsh plugin: zsh-syntax-highlighting"
+echo "Installing oh-my-zsh plugin: zsh-syntax-highlighting"
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.local/share/oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 
-echo "Installing zsh plugin: zsh-output-highlighting"
+echo "Installing oh-my-zsh plugin: zsh-output-highlighting"
 git clone https://github.com/l4u/zsh-output-highlighting.git ${ZSH_CUSTOM:-~/.local/share/oh-my-zsh/custom}/plugins/zsh-output-highlighting
 
 echo "Finished!"
