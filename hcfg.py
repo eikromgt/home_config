@@ -13,31 +13,32 @@ HOME_REPO_DIR = "home"  # your repo’s home folder
 repoConfigs = [
     {
         "name": "wdomitrz/kitty-gruvbox-theme",
-        "dest": os.path.expanduser("~/.config/kitty"),
+        "dest": os.path.expanduser("~/.config/kitty/kitty-gruvbox-theme"),
     },
     {
         "name": "eastack/zathura-gruvbox",
-        "dest": os.path.expanduser("~/.config/zathura"),
+        "dest": os.path.expanduser("~/.config/zathura/zathura-gruvbox"),
     },
     {
         "name": "ohmyzsh/ohmyzsh",
-        "dest": os.path.expanduser("~/.local/share"),
+        "dest": os.path.expanduser("~/.local/share/oh-my-zsh"),
     },
     {
         "name": "zsh-users/zsh-autosuggestions",
-        "dest": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins"),
+        "dest": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins/zsh-autosuggestions"),
     },
     {
         "name": "zsh-users/zsh-syntax-highlighting",
-        "dest": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins"),
+        "dest": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins/zsh-syntax-highlighting"),
     },
     {
         "name": "l4u/zsh-output-highlighting",
-        "dest": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins"),
+        "dest": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins/zsh-output-highlighting"),
     },
     {
         "name": "bennyyip/gruvbox-dark",
-        "cmd": ["ya", "pkg", "add", "bennyyip/gruvbox-dark"]
+        "cmd": ["ya", "pkg", "add", "bennyyip/gruvbox-dark"],
+        "dest": os.path.expanduser("~/.config/yazi/flavors/gruvbox-dark.yazi"),
     },
 ]
 
@@ -70,17 +71,14 @@ def UpdateConfig():
 
 
 def InstallRepo(repoConfig):
+    path = repoConfig["dest"]
+    if os.path.exists(path):
+        logging.info("Already installed %s", repoConfig["name"])
+        return
+
     if "cmd" in repoConfig:
         logging.info("Adding %s", repoConfig["name"])
         RunCmd(repoConfig["cmd"])
-        return
-
-    _, repo = repoConfig["name"].split("/", 1)
-    path = repoConfig["dest"] + "/" + repo
-
-    if os.path.exists(path):
-        logging.info("Updating %s", repoConfig["name"])
-        RunCmd(["git", "-C", path, "pull"])
     else:
         logging.info("Cloning %s", repoConfig["name"])
         url = f"https://github.com/{repoConfig["name"]}.git"
