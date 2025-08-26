@@ -80,6 +80,12 @@ import numpy
 import random
 ]]
 
+-- Install lazy.nvim
+local lazypath = PluginPath .. "/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
+end
+
 --==============================================================================
 -- Keyboard Shortcuts and Mappings
 --==============================================================================
@@ -189,10 +195,6 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 --==============================================================================
 -- Plugin Manager: folke/lazy.nvim
 --==============================================================================
-local lazypath = PluginPath .. "/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
-end
 vim.opt.runtimepath:prepend(lazypath)
 vim.keymap.set({ "n" }, "<Leader>x", "<Cmd>Lazy<CR>", { noremap = true })
 
