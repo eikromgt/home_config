@@ -90,13 +90,16 @@ def InstallConfig():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("install", action="store_true", help="Install configs into home directory")
-    parser.add_argument("update", action="store_true", help="Update repo with files from home directory")
+    subparsers = parser.add_subparsers(dest="command")
+
+    subparsers.add_parser("install", help="Install configs into home directory")
+    subparsers.add_parser("update", help="Update repo with files from home directory")
+
     args = parser.parse_args()
 
-    if args.install:
+    if args.command == "install":
         InstallConfig()
-    elif args.update:
+    elif args.command == "update":
         UpdateConfig()
 
 
