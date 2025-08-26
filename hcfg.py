@@ -2,7 +2,6 @@
 
 import os
 import subprocess
-import shutil
 import logging
 import argparse
 from concurrent.futures import ThreadPoolExecutor
