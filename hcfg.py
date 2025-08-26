@@ -35,6 +35,10 @@ repoConfigs = [
         "name": "l4u/zsh-output-highlighting",
         "dest": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins"),
     },
+    {
+        "name": "bennyyip/gruvbox-dark",
+        "cmd": ["ya", "pkg", "add", "bennyyip/gruvbox-dark"]
+    },
 ]
 
 logging.basicConfig(
@@ -66,6 +70,11 @@ def UpdateConfig():
 
 
 def InstallRepo(repoConfig):
+    if "cmd" in repoConfig:
+        logging.info("Adding %s", repoConfig["name"])
+        RunCmd(repoConfig["cmd"])
+        return
+
     _, repo = repoConfig["name"].split("/", 1)
     path = repoConfig["dest"] + "/" + repo
 
