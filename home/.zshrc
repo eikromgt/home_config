@@ -14,9 +14,12 @@ function update_vpn() {
     fi
 }
 
+export PATH="$PATH:$HOME/.local/bin"
 export ZSH="$HOME/.local/share/oh-my-zsh"
-ZSH_THEME="kolo"
+export HISTSIZE=50000
+export SAVEHIST=100000
 
+ZSH_THEME="kolo"
 #PROMPT='%B%F{magenta}%c%f%b %# '
 ZSH_THEME_GIT_PROMPT_CACHE=1
 
