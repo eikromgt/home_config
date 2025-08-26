@@ -19,10 +19,10 @@ repoConfigs = [
         "name": "eastack/zathura-gruvbox",
         "dest": os.path.expanduser("~/.config/zathura/zathura-gruvbox"),
     },
-    {
-        "name": "ohmyzsh/ohmyzsh",
-        "dest": os.path.expanduser("~/.local/share/oh-my-zsh"),
-    },
+    #{
+    #    "name": "ohmyzsh/ohmyzsh",
+    #    "dest": os.path.expanduser("~/.local/share/oh-my-zsh"),
+    #},
     {
         "name": "zsh-users/zsh-autosuggestions",
         "dest": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins/zsh-autosuggestions"),
@@ -88,6 +88,13 @@ def InstallRepo(repoConfig):
 
 def InstallConfig():
     threads = max(os.cpu_count() // 2, 2)
+
+    # HACK: git clone oh-my-zsh at first
+    repo = {
+        "name": "ohmyzsh/ohmyzsh",
+        "dest": os.path.expanduser("~/.local/share/oh-my-zsh"),
+    },
+    InstallRepo(repo)
 
     with ThreadPoolExecutor(max_workers=threads) as executor:
         executor.map(InstallRepo, repoConfigs)
