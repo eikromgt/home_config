@@ -93,7 +93,7 @@ def InstallConfig():
     repo = {
         "name": "ohmyzsh/ohmyzsh",
         "dest": os.path.expanduser("~/.local/share/oh-my-zsh"),
-    },
+    }
     InstallRepo(repo)
 
     with ThreadPoolExecutor(max_workers=threads) as executor:
