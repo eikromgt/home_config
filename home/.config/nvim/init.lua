@@ -270,7 +270,7 @@ require("lazy").setup({
         config = function()
             require("nvim-treesitter.configs").setup({
                 ensure_installed = { "c","cpp", "printf", "lua", "vim", "vimdoc", "python",
-                "cmake", "glsl", "hjson", "typst", "verilog", "query" },
+                "cmake", "glsl", "hjson", "typst", "verilog", "html", "query" },
                 additional_vim_regex_highlighting = false,
                 auto_install = true,
                 highlight = {
@@ -879,7 +879,7 @@ require("lazy").setup({
     --==============================================================================
     -- Application
     --==============================================================================
-    { "kawre/leetcode.nvim", build = ":TSUpdate html", lazy = vim.fn.argv()[1] ~= "leetcode",
+    { "kawre/leetcode.nvim", lazy = vim.fn.argv()[1] ~= "leetcode",
         dependencies = { "nvim-telescope/telescope.nvim", "MunifTanjim/nui.nvim", "nvim-treesitter/nvim-treesitter",
             "rcarriga/nvim-notify", "nvim-tree/nvim-web-devicons", },
         config = function()
