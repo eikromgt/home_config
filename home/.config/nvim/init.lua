@@ -80,12 +80,6 @@ import numpy
 import random
 ]]
 
--- Install lazy.nvim
-local lazypath = PluginPath .. "/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
-end
-
 --==============================================================================
 -- Keyboard Shortcuts and Mappings
 --==============================================================================
@@ -166,20 +160,6 @@ vim.keymap.set("n", "<Leader>ts", function()
 --==============================================================================
 -- Auto Command
 --==============================================================================
-vim.api.nvim_create_autocmd({"WinEnter", "FocusGained"}, {
-  callback = function()
-    vim.wo.cursorline = true
-    require("illuminate").resume_buf()
-  end
-})
-
-vim.api.nvim_create_autocmd({"WinLeave", "FocusLost"}, {
-  callback = function()
-    vim.wo.cursorline = false
-    require("illuminate").pause_buf()
-  end
-})
-
 vim.api.nvim_create_autocmd("VimEnter", {
     callback = function()
         vim.b.minitrailspace_disable = true;
@@ -195,6 +175,21 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 --==============================================================================
 -- Plugin Manager: folke/lazy.nvim
 --==============================================================================
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+    local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+    local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+    if vim.v.shell_error ~= 0 then
+        vim.api.nvim_echo({
+            { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+            { out, "WarningMsg" },
+            { "\nPress any key to exit..." },
+        }, true, {})
+        vim.fn.getchar()
+        os.exit(1)
+    end
+end
+
 vim.opt.runtimepath:prepend(lazypath)
 vim.keymap.set({ "n" }, "<Leader>x", "<Cmd>Lazy<CR>", { noremap = true })
 
@@ -253,6 +248,20 @@ require("lazy").setup({
             vim.api.nvim_set_hl(0, "IlluminatedWordText", { link = "Visual" })
             vim.api.nvim_set_hl(0, "IlluminatedWordRead", { link = "Visual" })
             vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { link = "Visual" })
+
+            vim.api.nvim_create_autocmd({"WinEnter", "FocusGained"}, {
+                callback = function()
+                    vim.wo.cursorline = true
+                    require("illuminate").resume_buf()
+                end
+            })
+
+            vim.api.nvim_create_autocmd({"WinLeave", "FocusLost"}, {
+                callback = function()
+                    vim.wo.cursorline = false
+                    require("illuminate").pause_buf()
+                end
+            })
         end
     },
     { "nvimdev/hlsearch.nvim", event = "BufRead", config = true },
