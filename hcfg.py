@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 
 import os
+import sys
 import subprocess
 import logging
 import argparse
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 HOME_REPO_DIR = "home"  # your repo’s home folder
 
@@ -49,10 +50,7 @@ logging.basicConfig(
 
 def RunCmd(cmd, cwd=None):
     logging.debug("Running: %s", " ".join(cmd))
-    try:
-        subprocess.run(cmd, cwd=cwd, check=True)
-    except subprocess.CalledProcessError as e:
-        logging.error("Command failed: %s", e)
+    subprocess.run(cmd, cwd=cwd, check=True)
 
 
 def UpdateConfig():
@@ -93,12 +91,28 @@ def InstallConfig():
         "name": "ohmyzsh/ohmyzsh",
         "dest": os.path.expanduser("~/.local/share/oh-my-zsh"),
     }
-    InstallRepo(repo)
+
+    try:
+        InstallRepo(repo)
+    except Exception as e:
+        logging.error("Task failed: %s", e)
+        os.exit(1)
 
     with ThreadPoolExecutor(max_workers=threads) as executor:
-        executor.map(InstallRepo, repoConfigs)
+        futures = [executor.submit(InstallRepo, r) for r in repoConfigs]
+        try:
+            for future in as_completed(futures):
+                future.result()
+        except Exception as e:
+            logging.error("Task failed: %s", e)
+            executor.shutdown(wait=False, cancel_futures=True)
+            os.exit(1)
 
-    RunCmd(["rsync", "-av", f"{HOME_REPO_DIR}/", os.path.expanduser("~/")])
+    try:
+        RunCmd(["rsync", "-av", f"{HOME_REPO_DIR}/", os.path.expanduser("~/")])
+    except Exception as e:
+        logging.error("Task failed: %s", e)
+        os.exit(1)
 
 
 def main():
