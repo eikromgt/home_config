@@ -96,7 +96,7 @@ def InstallConfig():
         InstallRepo(repo)
     except Exception as e:
         logging.error("Task failed: %s", e)
-        os.exit(1)
+        sys.exit(1)
 
     with ThreadPoolExecutor(max_workers=threads) as executor:
         futures = [executor.submit(InstallRepo, r) for r in repoConfigs]
@@ -106,13 +106,13 @@ def InstallConfig():
         except Exception as e:
             logging.error("Task failed: %s", e)
             executor.shutdown(wait=False, cancel_futures=True)
-            os.exit(1)
+            sys.exit(1)
 
     try:
         RunCmd(["rsync", "-av", f"{HOME_REPO_DIR}/", os.path.expanduser("~/")])
     except Exception as e:
         logging.error("Task failed: %s", e)
-        os.exit(1)
+        sys.exit(1)
 
 
 def main():
