@@ -269,8 +269,7 @@ require("lazy").setup({
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate",
         config = function()
             require("nvim-treesitter.configs").setup({
-                ensure_installed = { "c","cpp", "printf", "lua", "vim", "vimdoc", "python",
-                "cmake", "glsl", "hjson", "typst", "verilog", "html", "query" },
+                ensure_installed = { "python", "cmake", "glsl", "hjson", "typst", "verilog", "html" },
                 additional_vim_regex_highlighting = false,
                 auto_install = true,
                 highlight = {
@@ -654,14 +653,10 @@ require("lazy").setup({
         config = function()
             require('mason-tool-installer').setup {
                 ensure_installed = {
-                    "bash-language-server",
-                    "clangd",
                     "codelldb",
                     "cortex-debug",
                     "glsl_analyzer",
-                    "lua-language-server",
                     "neocmakelsp",
-                    "python-lsp-server",
                     "tinymist"
                 }
             }
@@ -676,34 +671,6 @@ require("lazy").setup({
                     function(server_name)
                         require("lspconfig")[server_name].setup {
                             capabilities = cmp_nvim_lsp_cap
-                        }
-                    end,
-                    ["clangd"] = function()
-                        require("lspconfig").clangd.setup {
-                            capabilities = cmp_nvim_lsp_cap,
-                            init_options = {
-                                fallbackFlags = {"--std=c++23"}
-                            },
-                        }
-                    end,
-                    ["lua_ls"] = function()
-                        require("lspconfig").lua_ls.setup {
-                            capabilities = cmp_nvim_lsp_cap,
-                            settings     = {
-                                Lua = { diagnostics = { globals = { "vim" } } }
-                            }
-                        }
-                    end,
-                    ["pylsp"] = function()
-                        require("lspconfig").pylsp.setup {
-                            capabilities = cmp_nvim_lsp_cap,
-                            settings = { pylsp = {
-                                plugins = {
-                                    pycodestyle = {
-                                        ignore = { "E501", "E306" }
-                                    }
-                                }
-                            }},
                         }
                     end,
                     ["neocmake"] = function()
@@ -753,7 +720,40 @@ require("lazy").setup({
 
         end
     },
-    { "neovim/nvim-lspconfig" },
+    { "neovim/nvim-lspconfig",
+        config = function()
+            local cmp_nvim_lsp_cap = require("cmp_nvim_lsp").default_capabilities()
+
+            require("lspconfig").clangd.setup {
+                capabilities = cmp_nvim_lsp_cap,
+                init_options = {
+                    fallbackFlags = {"--std=c++23"}
+                },
+            }
+
+            require("lspconfig").pylsp.setup {
+                capabilities = cmp_nvim_lsp_cap,
+                settings = { pylsp = {
+                    plugins = {
+                        pycodestyle = {
+                            ignore = { "E501", "E306" }
+                        }
+                    }
+                }},
+            }
+
+            require("lspconfig").lua_ls.setup {
+                capabilities = cmp_nvim_lsp_cap,
+                settings     = {
+                    Lua = { diagnostics = { globals = { "vim" } } }
+                }
+            }
+
+            require("lspconfig").bashls.setup {
+                capabilities = cmp_nvim_lsp_cap,
+            }
+        end
+    },
     { "lervag/vimtex",
         ft = "tex",
         init = function()
@@ -909,5 +909,8 @@ require("lazy").setup({
             vim.keymap.set("n", "<Leader>lq", "<Cmd>Leet exit<CR>",     { noremap = true })
         end
     },
+},
+{
+  rocks = { enabled = false, hererocks = false },
 })
 
