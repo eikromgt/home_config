@@ -1,4 +1,4 @@
---=======================================e======================================
+--==============================================================================
 -- Basic Settings
 --==============================================================================
 vim.opt.encoding        = "utf-8"
@@ -353,34 +353,8 @@ require("lazy").setup({
             vim.keymap.set("n", "<Leader>fw", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
         end
     },
-    { "nixprime/cpsm",
-        build = function(plugin)
-            vim.cmd(string.format(
-                "silent !cd %s && sed -i 's/cmake_minimum_required(VERSION 2.8.12)/cmake_minimum_required(VERSION 3.5)/' CMakeLists.txt",
-                vim.fn.shellescape(plugin.dir)
-            ))
-
-            vim.fn.system(string.format(
-                "cd %s && PY3=ON ./install.sh",
-                vim.fn.shellescape(plugin.dir)
-            ))
-
-            if vim.v.shell_error == 0 then
-                vim.notify("CPSM build completed!", "info")
-            else
-                vim.notify("CPSM build failed!", "info")
-            end
-    
-            vim.cmd(string.format(
-                "silent !cd %s && git checkout .",
-                vim.fn.shellescape(plugin.dir)
-            ))
-
-            return result
-        end
-    },
     { "gelguy/wilder.nvim", build = ":UpdateRemotePlugins",
-        dependencies = { "roxma/nvim-yarp", "romgrk/fzy-lua-native", "nixprime/cpsm" },
+        dependencies = { "roxma/nvim-yarp", "romgrk/fzy-lua-native" },
         config = function()
             local wilder = require("wilder")
             wilder.setup({
@@ -399,7 +373,7 @@ require("lazy").setup({
                         end
                     end,
                     dir_command = { "fd", "--type", "directory", "--fixed-strings" },
-                    filters     = { "cpsm_filter" }
+                    filters     = { "fuzzy_filter" }
                 }),
                 wilder.substitute_pipeline({
                     pipeline    = wilder.python_search_pipeline({
