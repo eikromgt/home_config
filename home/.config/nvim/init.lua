@@ -618,6 +618,7 @@ require("lazy").setup({
     { "WhoIsSethDaniel/mason-tool-installer.nvim",
         config = function()
             require('mason-tool-installer').setup {
+                run_on_start = false,
                 ensure_installed = {
                     "codelldb",
                     "cortex-debug",
