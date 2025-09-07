@@ -111,6 +111,7 @@ vim.keymap.set("n", "<A-a>",   "<Cmd>%!xxd<CR>",        { noremap = true })
 vim.keymap.set("n", "<A-S-a>",   "<Cmd>%!xxd -r<CR>",   { noremap = true })
 
 vim.keymap.set("n", "<A-p>",   ":e ",                   { noremap = true })
+vim.keymap.set("n", "<A-S-p>", ":",                     { noremap = true })
 vim.keymap.set("n", "<A-z>",   ":vertical help ",       { noremap = true })
 
 vim.keymap.del("n", "gri",     {})
@@ -681,8 +682,6 @@ require("lazy").setup({
                     end,
                 }
             })
-
-
         end
     },
     { "neovim/nvim-lspconfig",
