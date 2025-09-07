@@ -345,12 +345,16 @@ require("lazy").setup({
         dependencies = { "nvim-lua/plenary.nvim" },
         config = function()
             local telescope = require("telescope.builtin")
-            vim.keymap.set('n', '<leader>fp', telescope.find_files, { noremap = true })
-            vim.keymap.set('n', '<leader>ff', telescope.live_grep, { noremap = true })
-            vim.keymap.set('n', '<leader>fh', telescope.pickers, { noremap = true })
-            vim.keymap.set('n', '<leader>fb', telescope.buffers, { noremap = true })
-            vim.keymap.set('n', '<leader>fh', telescope.help_tags, { noremap = true })
+            vim.keymap.set("n", "<leader>fp", telescope.find_files, { noremap = true })
+            vim.keymap.set("n", "<leader>ff", telescope.live_grep, { noremap = true })
+            vim.keymap.set("n", "<leader>fh", telescope.pickers, { noremap = true })
+            vim.keymap.set("n", "<leader>fb", telescope.buffers, { noremap = true })
+            vim.keymap.set("n", "<leader>fh", telescope.help_tags, { noremap = true })
             vim.keymap.set("n", "<Leader>fw", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
+
+            vim.keymap.set("n", "<A-p>", telescope.find_files, { noremap = true })
+            vim.keymap.set("n", "<A-f>", telescope.live_grep, { noremap = true })
+            vim.keymap.set("n", "<A-S-f>", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
         end
     },
     { "gelguy/wilder.nvim", build = ":UpdateRemotePlugins",
@@ -359,63 +363,50 @@ require("lazy").setup({
             local wilder = require("wilder")
             wilder.setup({
                 modes       = { ":", "/", "?" },
-                interval    = 1000,
             })
 
-            wilder.set_option("pipeline", {
-                wilder.branch(
+            wilder.set_option("pipeline", { wilder.branch(
                 wilder.python_file_finder_pipeline({
-                    file_command = function(_, arg)
-                        if arg[1] == "." then
-                            return { "fd", "--type", "file", "--fixed-strings", "--unrestricted" }
-                        else
-                            return { "fd", "--type", "file", "--fixed-strings" }
-                        end
-                    end,
-                    dir_command = { "fd", "--type", "directory", "--fixed-strings" },
-                    filters     = { "fuzzy_filter" }
+                    file_command = { "fd", "-tf" },
+                    dir_command  = { "fd", "-td" },
+                    debounce     = 100
                 }),
                 wilder.substitute_pipeline({
                     pipeline    = wilder.python_search_pipeline({
                         skip_cmdtype_check  = 1,
-                        pattern             = wilder.python_fuzzy_pattern({ start_at_boundary = 0, }),
+                        pattern             = wilder.python_fuzzy_pattern(),
                     }),
+                    debounce = 100
                 }),
                 wilder.cmdline_pipeline({
                     fuzzy        = 2,
                     fuzzy_filter = wilder.lua_fzy_filter(),
+                    hide_in_substitute = true,
+                    debounce     = 100
                 }),
-                {
-                    wilder.check(function(_, x) return x == "" end),
-                    wilder.history(),
-                },
                 wilder.python_search_pipeline({
-                    pattern = wilder.python_fuzzy_pattern({ start_at_boundary = 0, }),
+                    pattern = wilder.python_fuzzy_pattern(),
+                    debounce = 100
                 })
-                )
-            })
+            )})
 
             wilder.set_option("renderer", wilder.renderer_mux({
-                [":"] = wilder.popupmenu_renderer(
-                wilder.popupmenu_palette_theme({
+                [":"] = wilder.popupmenu_renderer({
                     highlighter     = { wilder.lua_fzy_highlighter() },
                     highlights      = { accent = wilder.make_hl("WilderAccent", "Pmenu", {{ a = 1 }, { a = 1 }, { foreground = "#f4468f" }}), },
-                    left            = { " ", wilder.popupmenu_devicons() },
-                    border          = "rounded",
-                    max_height      = "75%",
-                    min_height      = 0,
-                    prompt_position = "top",
-                    reverse         = 0,
-                })
-                ),
+                    left = {' ', wilder.popupmenu_devicons()},
+                }),
                 ["/"] = wilder.wildmenu_renderer({
                     highlighter = wilder.basic_highlighter(),
-                    highlights      = { accent = wilder.make_hl("WilderAccent", "Pmenu", {{ a = 1 }, { a = 1 }, { foreground = "#f4468f" }}), },
+                    highlights  = { accent = wilder.make_hl("WilderAccent", "Pmenu", {{ a = 1 }, { a = 1 }, { foreground = "#f4468f" }}), },
+                    left        = {" ", wilder.wildmenu_spinner(), " "},
+                    right       = {" ", wilder.wildmenu_index()},
                 }),
                 ["?"] = wilder.wildmenu_renderer({
                     highlighter = wilder.basic_highlighter(),
-                    highlights      = { accent = wilder.make_hl("WilderAccent", "Pmenu", {{ a = 1 }, { a = 1 }, { foreground = "#f4468f" }}), },
-                    pumblend        = 5
+                    highlights  = { accent = wilder.make_hl("WilderAccent", "Pmenu", {{ a = 1 }, { a = 1 }, { foreground = "#f4468f" }}), },
+                    left        = {" ", wilder.wildmenu_spinner(), " "},
+                    right       = {" ", wilder.wildmenu_index()},
                 }),
             }))
         end
