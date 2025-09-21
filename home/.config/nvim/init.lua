@@ -119,17 +119,18 @@ vim.keymap.del("n", "gra",     {})
 
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(_)
-        vim.keymap.set("n",          "<Leader>q", vim.diagnostic.open_float, { noremap = true })
-        vim.keymap.set("n",          "<Leader>[", vim.diagnostic.goto_prev,  { noremap = true })
-        vim.keymap.set("n",          "<Leader>]", vim.diagnostic.goto_next,  { noremap = true })
-        vim.keymap.set("n",          "<Leader>o", vim.diagnostic.setloclist, { noremap = true })
+        vim.keymap.set("n",          "<Leader>q", vim.diagnostic.open_float,  { buffer = bufnr, noremap = true })
+        vim.keymap.set("n",          "<Leader>[", vim.diagnostic.goto_prev,   { buffer = bufnr, noremap = true })
+        vim.keymap.set("n",          "<Leader>]", vim.diagnostic.goto_next,   { buffer = bufnr, noremap = true })
+        vim.keymap.set("n",          "<Leader>o", vim.diagnostic.setloclist,  { buffer = bufnr, noremap = true })
 
-        vim.keymap.set("n",          "<A-u>",     vim.lsp.buf.declaration,   { noremap = true })
-        vim.keymap.set("n",          "<A-y>",     vim.lsp.buf.definition,    { noremap = true })
-        vim.keymap.set("n",          "<A-q>",     vim.lsp.buf.hover,         { noremap = true })
-        vim.keymap.set("n",          "<Leader>y", vim.lsp.buf.references,    { noremap = true })
-        vim.keymap.set("n",          "<Leader>r", vim.lsp.buf.rename,        { noremap = true })
-        vim.keymap.set({ "n", "v" }, "<Leader>a", vim.lsp.buf.code_action,   { noremap = true })
+        vim.keymap.set("n",          "<A-u>",     vim.lsp.buf.declaration,    { buffer = bufnr, noremap = true })
+        vim.keymap.set("n",          "<A-y>",     vim.lsp.buf.definition,     { buffer = bufnr, noremap = true })
+        vim.keymap.set("n",          "<A-;>",     vim.lsp.buf.implementation, { buffer = bufnr, noremap = true })
+        vim.keymap.set("n",          "<A-q>",     vim.lsp.buf.hover,          { buffer = bufnr, noremap = true })
+        vim.keymap.set("n",          "<Leader>y", vim.lsp.buf.references,     { buffer = bufnr, noremap = true })
+        vim.keymap.set("n",          "<Leader>r", vim.lsp.buf.rename,         { buffer = bufnr, noremap = true })
+        vim.keymap.set({ "n", "v" }, "<Leader>a", vim.lsp.buf.code_action,    { buffer = bufnr, noremap = true })
     end,
 })
 
