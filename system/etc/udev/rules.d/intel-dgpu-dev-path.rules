@@ -1,0 +1,7 @@
+KERNEL=="card*", \
+SUBSYSTEM=="drm", \
+SUBSYSTEMS=="pci", \
+DRIVERS=="i915", \
+ATTRS{vendor}=="0x8086", \
+ATTRS{boot_vga}=="1", \
+SYMLINK+="dri/amd-dgpu"

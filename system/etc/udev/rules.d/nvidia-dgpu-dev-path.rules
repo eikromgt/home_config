@@ -1,0 +1,7 @@
+KERNEL=="card*", \
+SUBSYSTEM=="drm", \
+SUBSYSTEMS=="pci", \
+DRIVERS=="nvidia", \
+ATTRS{vendor}=="0x10de", \
+ATTRS{boot_vga}=="1", \
+SYMLINK+="dri/nvidia-dgpu"

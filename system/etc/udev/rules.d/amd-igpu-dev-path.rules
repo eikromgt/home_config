@@ -1,0 +1,7 @@
+KERNEL=="card*", \
+SUBSYSTEM=="drm", \
+SUBSYSTEMS=="pci", \
+DRIVERS=="amdgpu", \
+ATTRS{vendor}=="0x1002", \
+ATTRS{boot_vga}=="0", \
+SYMLINK+="dri/amd-igpu"
