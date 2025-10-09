@@ -546,6 +546,7 @@ require("lazy").setup({
             })
         end
     },
+    { "github/copilot.vim" },
     { "hrsh7th/cmp-nvim-lsp",
         config = function()
             require("cmp_nvim_lsp").default_capabilities().textDocument.completion.completionItem.snippetSupport = false
@@ -554,7 +555,9 @@ require("lazy").setup({
     { "hrsh7th/cmp-buffer"                                                  },
     { "hrsh7th/cmp-path"                                                    },
     { "hrsh7th/nvim-cmp",
-        dependencies = { "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer", "L3MON4D3/LuaSnip"},
+        dependencies = { "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer", "L3MON4D3/LuaSnip",
+            "tzachar/cmp-ai"
+        },
         config = function()
             local luasnip = require("luasnip")
             local cmp = require("cmp")
@@ -589,7 +592,7 @@ require("lazy").setup({
                 {
                     { name = "nvim_lsp", entry_filter = function(entry, _) return cmp.lsp.CompletionItemKind.Snippet ~= entry:get_kind() end },
                     { name = "luasnip" },
-                    { name = "path" }
+                    { name = "path" },
                 }),
             })
         end
