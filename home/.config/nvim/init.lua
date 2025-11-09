@@ -414,6 +414,15 @@ require("lazy").setup({
         end
 
     },
+    { "nvim-pack/nvim-spectre",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        config = function()
+            require("spectre").setup()
+
+            vim.keymap.set("n", "<A-r>", function() require("spectre").toggle() end,
+                { desc = "Toggle Spectre" })
+        end
+    },
     { "akinsho/toggleterm.nvim", version  = "*",
         config = function()
             vim.opt.hidden          = true
