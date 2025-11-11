@@ -18,6 +18,12 @@ vim.opt.cmdheight       = 0
 vim.opt.showmode        = false
 vim.opt.splitright      = true
 vim.opt.splitkeep       = "screen"
+vim.opt.guicursor       = table.concat({
+    "n-v-c:block-blinkwait300-blinkon400-blinkoff400",
+    "i-ci:ver25-blinkwait300-blinkon400-blinkoff400",
+    "r-cr:hor20-blinkwait300-blinkon400-blinkoff400",
+    "o:hor50-blinkon400-blinkoff400",
+}, ",")
 
 vim.opt.ignorecase      = true
 vim.opt.smartcase       = true
@@ -529,7 +535,7 @@ require("lazy").setup({
             local gitsigns = require("gitsigns")
 
             gitsigns.setup {
-                current_line_blame = false,
+                current_line_blame = true,
                 current_line_blame_opts = {
                     virt_text_pos = "eol",
                     delay = 300,
