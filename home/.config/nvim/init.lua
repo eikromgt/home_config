@@ -663,22 +663,22 @@ require("lazy").setup({
             require("mason-lspconfig").setup({
                 handlers = {
                     function(server_name)
-                        require("lspconfig")[server_name].setup {
+                        vim.lsp.config(server_name, {
                             capabilities = cmp_nvim_lsp_cap
-                        }
+                        })
                     end,
                     ["neocmake"] = function()
-                        require("lspconfig").neocmake.setup {
+                        vim.lsp.cnofig("neocmake", {
                             capabilities = cmp_nvim_lsp_cap,
                             init_options = {
                                 lint = {
                                     enable = false,
                                 }
                             },
-                        }
+                        })
                     end,
                     ["jsonls"] = function()
-                        require("lspconfig").jsonls.setup {
+                        vim.lsp.cnofig("jsonls", {
                             capabilities = cmp_nvim_lsp_cap,
                             settings = {
                                 json = {
@@ -686,10 +686,10 @@ require("lazy").setup({
                                     validate = { enable = true },
                                 },
                             }
-                        }
+                        })
                     end,
                     ["tinymist"] = function()
-                        require("lspconfig").tinymist.setup {
+                        vim.lsp.cnofig("tinymist", {
                             capabilities = cmp_nvim_lsp_cap,
                             offset_encoding = "utf-8",
                             settings     = {
@@ -697,16 +697,16 @@ require("lazy").setup({
                                 exportPdf = "never",
                                 semanticTokens = "disable"
                             }
-                        }
+                        })
                     end,
                     ["verible"] = function()
-                        require("lspconfig").verible.setup {
+                        vim.lsp.cnofig("verible", {
                             capabilities = cmp_nvim_lsp_cap,
                             root_dir     = function() return vim.fn.getcwd() end,
                             handlers     = {
                                 ["textDocument/publishDiagnostics"] = nil
                             }
-                        }
+                        })
                     end,
                 }
             })
@@ -716,14 +716,19 @@ require("lazy").setup({
         config = function()
             local cmp_nvim_lsp_cap = require("cmp_nvim_lsp").default_capabilities()
 
-            require("lspconfig").clangd.setup {
+            vim.lsp.config('*', {
+                capabilities = cmp_nvim_lsp_cap,
+            })
+
+            vim.lsp.config("clangd", {
                 capabilities = cmp_nvim_lsp_cap,
                 init_options = {
                     fallbackFlags = {"--std=c++23"}
                 },
-            }
+            })
+            vim.lsp.enable("clangd")
 
-            require("lspconfig").pylsp.setup {
+            vim.lsp.config("pylsp", {
                 capabilities = cmp_nvim_lsp_cap,
                 settings = { pylsp = {
                     plugins = {
@@ -732,18 +737,21 @@ require("lazy").setup({
                         }
                     }
                 }},
-            }
+            })
+            vim.lsp.enable("pylsp")
 
-            require("lspconfig").lua_ls.setup {
+            vim.lsp.config("lua_ls", {
                 capabilities = cmp_nvim_lsp_cap,
                 settings     = {
                     Lua = { diagnostics = { globals = { "vim" } } }
                 }
-            }
+            })
+            vim.lsp.enable("lua_ls")
 
-            require("lspconfig").bashls.setup {
+            vim.lsp.config("bashls", {
                 capabilities = cmp_nvim_lsp_cap,
-            }
+            })
+            vim.lsp.enable("bashls")
         end
     },
     { "lervag/vimtex",
