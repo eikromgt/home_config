@@ -8,7 +8,7 @@
 [[ -f "${HOME}/.bash_aliases" ]] && source "${HOME}/.bash_aliases" 
 
 function update_vpn() {
-    wget -U "Mozilla/6.0" -O ~/.cache/config.yaml.download https://w2.v2free.top/link/S1D4520lMEWddwY5\?clash\=2\&rate\=false
+    wget -U "Mozilla/6.0" -O ~/.cache/config.yaml.download 'https://v2free.net/link/r3TK79md0jvu1U5OJqup5Oi2THpWrAxP6Xlp?clash=2&rate=false'
     if [[ $? == 0 ]]; then
         cp ~/.cache/config.yaml.download ~/.config/mihomo/config.yaml
     fi
