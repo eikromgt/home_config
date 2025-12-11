@@ -277,7 +277,7 @@ require("lazy").setup({
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate",
         config = function()
             require("nvim-treesitter.configs").setup({
-                ensure_installed = { "python", "cmake", "glsl", "hjson", "typst", "verilog", "html" },
+                ensure_installed = { "cmake", "hjson", },
                 additional_vim_regex_highlighting = false,
                 auto_install = true,
                 highlight = {
