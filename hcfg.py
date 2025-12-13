@@ -5,55 +5,122 @@ import sys
 import subprocess
 import logging
 import argparse
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from collections import deque
+import concurrent.futures as cf
 
-HOME_REPO_DIR = "home"  # your repo’s home folder
-
-# Config repos
-repoConfigs = [
-    {
-        "name": "wdomitrz/kitty-gruvbox-theme",
-        "dest": os.path.expanduser("~/.config/kitty/kitty-gruvbox-theme"),
-    },
-    {
-        "name": "eastack/zathura-gruvbox",
-        "dest": os.path.expanduser("~/.config/zathura/zathura-gruvbox"),
-    },
-    #{
-    #    "name": "ohmyzsh/ohmyzsh",
-    #    "dest": os.path.expanduser("~/.local/share/oh-my-zsh"),
-    #},
-    {
-        "name": "zsh-users/zsh-autosuggestions",
-        "dest": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins/zsh-autosuggestions"),
-    },
-    {
-        "name": "zsh-users/zsh-syntax-highlighting",
-        "dest": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins/zsh-syntax-highlighting"),
-    },
-    {
-        "name": "l4u/zsh-output-highlighting",
-        "dest": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins/zsh-output-highlighting"),
-    },
-    {
-        "name": "bennyyip/gruvbox-dark",
-        "cmd": ["ya", "pkg", "add", "bennyyip/gruvbox-dark"],
-        "dest": os.path.expanduser("~/.config/yazi/flavors/gruvbox-dark.yazi"),
-    },
-]
+HOME_REPO_DIR = "home"
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
 )
 
-
 def RunCmd(cmd, cwd=None):
     logging.debug("Running: %s", " ".join(cmd))
     subprocess.run(cmd, cwd=cwd, check=True)
 
 
+def GitClone(task):
+    url = f"https://github.com/{task["name"]}.git"
+    path = task["path"]
+
+    if os.path.exists(path):
+        RunCmd(["git", "pull"], cwd=path)
+        logging.info("Update %s successed!", task["name"])
+        return
+
+    os.makedirs(os.path.dirname(path))
+    RunCmd(["git", "clone", "--depth=1", url, path])
+    logging.info("Install %s successed", task["name"])
+
+
+tasks = [
+    {
+        "name": "wdomitrz/kitty-gruvbox-theme",
+        "path": os.path.expanduser("~/.config/kitty/kitty-gruvbox-theme"),
+        "func": GitClone,
+    },
+    {
+        "name": "eastack/zathura-gruvbox",
+        "path": os.path.expanduser("~/.config/zathura/zathura-gruvbox"),
+        "func": GitClone,
+    },
+    {
+        "name": "ohmyzsh/ohmyzsh",
+        "path": os.path.expanduser("~/.local/share/oh-my-zsh"),
+        "func": GitClone,
+    },
+    {
+        "name": "zsh-users/zsh-autosuggestions",
+        "path": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins/zsh-autosuggestions"),
+        "func": GitClone,
+        "depends": ["ohmyzsh/ohmyzsh"],
+    },
+    {
+        "name": "zsh-users/zsh-syntax-highlighting",
+        "path": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins/zsh-syntax-highlighting"),
+        "func": GitClone,
+        "depends": ["ohmyzsh/ohmyzsh"],
+    },
+    {
+        "name": "l4u/zsh-output-highlighting",
+        "path": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins/zsh-output-highlighting"),
+        "func": GitClone,
+        "depends": ["ohmyzsh/ohmyzsh"],
+    },
+    {
+        "name": "bennyyip/gruvbox-dark",
+        "path": os.path.expanduser("~/.config/yazi/flavors/gruvbox-dark.yazi"),
+        "func": lambda task: RunCmd(["ya", "pkg", "add", "bennyyip/gruvbox-dark"])
+    },
+]
+
+def RunInstallTasks(tasks):
+    nthread = max(os.cpu_count() // 2, 2)
+    taskDict = {task["name"]: task for task in tasks}
+    graph = {task["name"]: {"out": task.get("depends"), "in": []} for task in tasks}
+
+    for name, node in graph.items():
+        for dep in node["out"]:
+            graph[dep]["in"].append(name)
+
+    executor = cf.ThreadPoolExecutor(max_workers=nThread)
+
+    futures = {}
+    for name, node in graph.items():
+        if not node["out"]:
+            future = executor.submit(taskDict[name]["func"], taskDict[name])
+            futures[future] = name
+
+    while futures:
+        finishedFutures, _ = cf.wait(futures.keys(), return_when=cf.FIRST_COMPLETED)
+
+        for future in finishedFutures:
+            name = futures.pop(future)
+            for next in graph[name]["in"]:
+                graph[next]["out"].remove(name)
+                if graph[next]["out"]:
+                    continue
+
+                nextFuture = executor.submit(taskDict[next]["func"], taskDict[next])
+                futures[nextFuture] = next
+
+def InstallConfig():
+    try:
+        RunInstallTasks(repo)
+    except Exception as e:
+        logging.error("Task failed: %s", e)
+        sys.exit(1)
+
+    try:
+        RunCmd(["rsync", "-av", f"{HOME_REPO_DIR}/", os.path.expanduser("~/")])
+    except Exception as e:
+        logging.error("Task failed: %s", e)
+        sys.exit(1)
+
+
 def UpdateConfig():
+    threads = max(os.cpu_count() // 2, 2)
     repoHome = os.path.abspath(HOME_REPO_DIR)
     userHome = os.path.expanduser("~")
 
@@ -65,54 +132,6 @@ def UpdateConfig():
     subprocess.run(
         ["rsync", "-av", "--existing", "--files-from=-", userHome + "/", repoHome + "/"],
         input=filelist, text=True, check=True)
-
-
-def InstallRepo(repoConfig):
-    path = repoConfig["dest"]
-    if os.path.exists(path):
-        logging.info("Already installed %s", repoConfig["name"])
-        return
-
-    if "cmd" in repoConfig:
-        logging.info("Adding %s", repoConfig["name"])
-        RunCmd(repoConfig["cmd"])
-    else:
-        logging.info("Cloning %s", repoConfig["name"])
-        url = f"https://github.com/{repoConfig["name"]}.git"
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        RunCmd(["git", "clone", "--depth=1", url, path])
-
-
-def InstallConfig():
-    threads = max(os.cpu_count() // 2, 2)
-
-    # HACK: git clone oh-my-zsh at first
-    repo = {
-        "name": "ohmyzsh/ohmyzsh",
-        "dest": os.path.expanduser("~/.local/share/oh-my-zsh"),
-    }
-
-    try:
-        InstallRepo(repo)
-    except Exception as e:
-        logging.error("Task failed: %s", e)
-        sys.exit(1)
-
-    with ThreadPoolExecutor(max_workers=threads) as executor:
-        futures = [executor.submit(InstallRepo, r) for r in repoConfigs]
-        try:
-            for future in as_completed(futures):
-                future.result()
-        except Exception as e:
-            logging.error("Task failed: %s", e)
-            executor.shutdown(wait=False, cancel_futures=True)
-            sys.exit(1)
-
-    try:
-        RunCmd(["rsync", "-av", f"{HOME_REPO_DIR}/", os.path.expanduser("~/")])
-    except Exception as e:
-        logging.error("Task failed: %s", e)
-        sys.exit(1)
 
 
 def main():
