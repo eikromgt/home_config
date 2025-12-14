@@ -76,9 +76,9 @@ tasks = [
 ]
 
 def RunInstallTasks(tasks):
-    nthread = max(os.cpu_count() // 2, 2)
+    nThread = max(os.cpu_count() // 2, 2)
     taskDict = {task["name"]: task for task in tasks}
-    graph = {task["name"]: {"out": task.get("depends"), "in": []} for task in tasks}
+    graph = {task["name"]: {"out": task.get("depends", []), "in": []} for task in tasks}
 
     for name, node in graph.items():
         for dep in node["out"]:
@@ -107,7 +107,7 @@ def RunInstallTasks(tasks):
 
 def InstallConfig():
     try:
-        RunInstallTasks(repo)
+        RunInstallTasks(tasks)
     except Exception as e:
         logging.error("Task failed: %s", e)
         sys.exit(1)
