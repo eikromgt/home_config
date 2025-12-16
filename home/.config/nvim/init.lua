@@ -333,10 +333,13 @@ require("lazy").setup({
                         },
                     },
                 },
+
                 sections = {
-                    lualine_a = {},
-                    lualine_c = { "filename", "macro_recording", "%S" },
+                    lualine_a = { "branch", "diff", "lsp_status", "diagnostics" },
+                    lualine_b = { "filename", "macro_recording" },
+                    lualine_c = { "windows" },
                     lualine_x = { "overseer", "encoding", "fileformat", "filetype" },
+                    lualine_z = { "selectioncount", "location", },
                 }
             })
         end
