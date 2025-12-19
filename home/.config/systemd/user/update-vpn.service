@@ -1,0 +1,10 @@
+[Unit]
+Description=Update Mihomo config.yaml from URL
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash -c ' \
+    wget -U "Mozilla/6.0" -O %h/.cache/config.yaml.download \'https://v2free.net/link/r3TK79md0jvu1U5OJqup5Oi2THpWrAxP6Xlp?clash=2&rate=false\' \
+    && cp %h/.cache/config.yaml.download %h/.config/mihomo/config.yaml'
