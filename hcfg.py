@@ -8,74 +8,105 @@ import argparse
 from collections import deque
 import concurrent.futures as cf
 
-HOME_REPO_DIR = "home"
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
 )
 
-def RunCmd(cmd, cwd=None):
+
+def run_cmd(cmd, cwd=None):
     logging.debug("Running: %s", " ".join(cmd))
     subprocess.run(cmd, cwd=cwd, check=True)
 
 
-def GitClone(task):
+def git_clone(task):
     url = f"https://github.com/{task["name"]}.git"
     path = task["path"]
 
     if os.path.exists(path):
-        RunCmd(["git", "pull"], cwd=path)
+        run_cmd(["git", "pull"], cwd=path)
         logging.info("Update %s successed!", task["name"])
         return
 
     os.makedirs(os.path.dirname(path))
-    RunCmd(["git", "clone", "--depth=1", url, path])
+    run_cmd(["git", "clone", "--depth=1", url, path])
     logging.info("Install %s successed", task["name"])
 
 
-tasks = [
+def update_config(task):
+    dest_path = task["dest_path"]
+    src_path = task["src_path"]
+
+    filelist = subprocess.run(
+        ["fd", "-tf", "-H", "."],
+        capture_output=True, text=True, check=True, cwd=dest_path
+        ).stdout
+
+    subprocess.run(
+        ["rsync", "-av", "--existing", "--files-from=-", src_path + "/", dest_path + "/"],
+        input=filelist, text=True, check=True)
+
+
+home_install_tasks = [
+    {
+        "name": "install",
+        "func": lambda task: run_cmd(["rsync", "-av", "home/", os.path.expanduser("~/")])
+    },
     {
         "name": "wdomitrz/kitty-gruvbox-theme",
         "path": os.path.expanduser("~/.config/kitty/kitty-gruvbox-theme"),
-        "func": GitClone,
+        "func": git_clone,
     },
     {
         "name": "eastack/zathura-gruvbox",
         "path": os.path.expanduser("~/.config/zathura/zathura-gruvbox"),
-        "func": GitClone,
+        "func": git_clone,
     },
     {
         "name": "ohmyzsh/ohmyzsh",
         "path": os.path.expanduser("~/.local/share/oh-my-zsh"),
-        "func": GitClone,
+        "func": git_clone,
     },
     {
         "name": "zsh-users/zsh-autosuggestions",
         "path": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins/zsh-autosuggestions"),
-        "func": GitClone,
+        "func": git_clone,
         "depends": ["ohmyzsh/ohmyzsh"],
     },
     {
         "name": "zsh-users/zsh-syntax-highlighting",
         "path": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins/zsh-syntax-highlighting"),
-        "func": GitClone,
+        "func": git_clone,
         "depends": ["ohmyzsh/ohmyzsh"],
     },
     {
         "name": "l4u/zsh-output-highlighting",
         "path": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins/zsh-output-highlighting"),
-        "func": GitClone,
+        "func": git_clone,
         "depends": ["ohmyzsh/ohmyzsh"],
     },
     {
         "name": "bennyyip/gruvbox-dark",
         "path": os.path.expanduser("~/.config/yazi/flavors/gruvbox-dark.yazi"),
-        "func": lambda task: RunCmd(["ya", "pkg", "add", "bennyyip/gruvbox-dark"])
+        "func": lambda task: run_cmd(["ya", "pkg", "add", "bennyyip/gruvbox-dark"])
     },
 ]
 
-def RunInstallTasks(tasks):
+home_update_tasks = [
+    {
+        "name": "update",
+        "dest_path": os.path.abspath("home")
+        "src_path": os.path.expanduser("~")
+        "func": update_config
+    },
+]
+
+rootfs_install_tasks = []
+
+rootfs_update_tasks = []
+
+def run_tasks(tasks):
     nThread = max(os.cpu_count() // 2, 2)
     taskDict = {task["name"]: task for task in tasks}
     graph = {task["name"]: {"out": task.get("depends", []), "in": []} for task in tasks}
@@ -105,48 +136,35 @@ def RunInstallTasks(tasks):
                 nextFuture = executor.submit(taskDict[next]["func"], taskDict[next])
                 futures[nextFuture] = next
 
-def InstallConfig():
+
+def handle_tasks(args):
     try:
-        RunInstallTasks(tasks)
+        run_tasks(home_install_tasks)
     except Exception as e:
         logging.error("Task failed: %s", e)
         sys.exit(1)
-
-    try:
-        RunCmd(["rsync", "-av", f"{HOME_REPO_DIR}/", os.path.expanduser("~/")])
-    except Exception as e:
-        logging.error("Task failed: %s", e)
-        sys.exit(1)
-
-
-def UpdateConfig():
-    threads = max(os.cpu_count() // 2, 2)
-    repoHome = os.path.abspath(HOME_REPO_DIR)
-    userHome = os.path.expanduser("~")
-
-    filelist = subprocess.run(
-        ["fd", "-tf", "-H", "."],
-        capture_output=True, text=True, check=True, cwd=repoHome
-        ).stdout
-
-    subprocess.run(
-        ["rsync", "-av", "--existing", "--files-from=-", userHome + "/", repoHome + "/"],
-        input=filelist, text=True, check=True)
 
 
 def main():
     parser = argparse.ArgumentParser()
-    subparsers = parser.add_subparsers(dest="command")
+    subparsers = parser.add_subparsers(dest="command", required=True)
 
-    subparsers.add_parser("install", help="Install configs into home directory")
-    subparsers.add_parser("update", help="Update repo with files from home directory")
+    install_parser = subparsers.add_parser("install", help="Install command")
+    install_parser.set_defaults(func=handle_tasks, tasks=home_install_tasks)
 
-    args = parser.parse_args()
+    install_subparser = install_parser.add_subparsers()
+    p = install_subparser.add_parser("home", help="Install home configurations")
+    p.set_defaults(func=handle_tasks, tasks=home_install_tasks)
+    p = install_subparser.add_parser("rootfs", help="Install system configurations")
+    p.set_defaults(func=handle_tasks, tasks=rootfs_install_tasks)
 
-    if args.command == "install":
-        InstallConfig()
-    elif args.command == "update":
-        UpdateConfig()
+    update_parser = subparsers.add_parser("update", help="Update command")
+    install_parser.set_defaults(func=handle_tasks, tasks=home_update_tasks)
+
+    p = update_subparser.add_parser("home", help="Update configurations from home directory")
+    p.set_defaults(func=handle_tasks, tasks=home_update_tasks)
+    p = update_subparser.add_parser("rootfs", help="Update configurations from rootfs")
+    p.set_defaults(func=handle_tasks, tasks=rootfs_update_tasks)
 
 
 if __name__ == "__main__":
