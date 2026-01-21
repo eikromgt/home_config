@@ -34,6 +34,9 @@ def git_clone(task):
     logging.info("Install %s successed", task["name"])
 
 
+def install_config(task):
+    run_cmd(["rsync", "-av", task["src_path"] + "/", task["dest_path"] + "~/"])
+
 def update_config(task):
     dest_path = task["dest_path"]
     src_path = task["src_path"]
@@ -51,7 +54,9 @@ def update_config(task):
 home_install_tasks = [
     {
         "name": "install",
-        "func": lambda task: run_cmd(["rsync", "-av", "home/", os.path.expanduser("~/")]),
+        "dest_path": os.path.expanduser("~"),
+        "src_path": os.path.abspath("home"),
+        "func": install_config,
     },
     {
         "name": "wdomitrz/kitty-gruvbox-theme",
@@ -102,9 +107,23 @@ home_update_tasks = [
     },
 ]
 
-rootfs_install_tasks = []
+rootfs_install_tasks = [
+    {
+        "name": "install",
+        "dest_path": "/",
+        "src_path": os.path.abspath("rootfs"),
+        "func": install_config,
+    },
+]
 
-rootfs_update_tasks = []
+rootfs_update_tasks = [
+    {
+        "name": "update",
+        "dest_path": os.path.abspath("rootfs"),
+        "src_path": "/",
+        "func": update_config,
+    },
+]
 
 def run_tasks(tasks):
     nThread = max(os.cpu_count() // 2, 2)
