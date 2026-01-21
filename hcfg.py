@@ -51,7 +51,7 @@ def update_config(task):
 home_install_tasks = [
     {
         "name": "install",
-        "func": lambda task: run_cmd(["rsync", "-av", "home/", os.path.expanduser("~/")])
+        "func": lambda task: run_cmd(["rsync", "-av", "home/", os.path.expanduser("~/")]),
     },
     {
         "name": "wdomitrz/kitty-gruvbox-theme",
@@ -89,16 +89,16 @@ home_install_tasks = [
     {
         "name": "bennyyip/gruvbox-dark",
         "path": os.path.expanduser("~/.config/yazi/flavors/gruvbox-dark.yazi"),
-        "func": lambda task: run_cmd(["ya", "pkg", "add", "bennyyip/gruvbox-dark"])
+        "func": lambda task: run_cmd(["ya", "pkg", "add", "bennyyip/gruvbox-dark"]),
     },
 ]
 
 home_update_tasks = [
     {
         "name": "update",
-        "dest_path": os.path.abspath("home")
-        "src_path": os.path.expanduser("~")
-        "func": update_config
+        "dest_path": os.path.abspath("home"),
+        "src_path": os.path.expanduser("~"),
+        "func": update_config,
     },
 ]
 
@@ -138,8 +138,9 @@ def run_tasks(tasks):
 
 
 def handle_tasks(args):
+    tasks = args.tasks
     try:
-        run_tasks(home_install_tasks)
+        run_tasks(tasks)
     except Exception as e:
         logging.error("Task failed: %s", e)
         sys.exit(1)
@@ -159,12 +160,16 @@ def main():
     p.set_defaults(func=handle_tasks, tasks=rootfs_install_tasks)
 
     update_parser = subparsers.add_parser("update", help="Update command")
-    install_parser.set_defaults(func=handle_tasks, tasks=home_update_tasks)
+    update_parser.set_defaults(func=handle_tasks, tasks=home_update_tasks)
 
+    update_subparser = update_parser.add_subparsers()
     p = update_subparser.add_parser("home", help="Update configurations from home directory")
     p.set_defaults(func=handle_tasks, tasks=home_update_tasks)
     p = update_subparser.add_parser("rootfs", help="Update configurations from rootfs")
     p.set_defaults(func=handle_tasks, tasks=rootfs_update_tasks)
+
+    args = parser.parse_args()
+    args.func(args)
 
 
 if __name__ == "__main__":
