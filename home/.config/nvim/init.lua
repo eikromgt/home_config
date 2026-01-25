@@ -70,7 +70,16 @@ local leetcodeCppBeforeInjection = [[
 #include <functional>
 #include <mutex>
 #include <ranges>
+#include <print>
 using namespace std;
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
 
 struct TreeNode {
  int val;
@@ -186,6 +195,12 @@ vim.api.nvim_create_autocmd("VimEnter", {
 vim.api.nvim_create_autocmd("ColorScheme", {
   callback = function()
     vim.api.nvim_set_hl(0, "Pmenu", { bg = "none" })
+  end
+})
+
+vim.api.nvim_create_autocmd("VimResized", {
+  callback = function()
+    vim.cmd("wincmd =")
   end
 })
 
@@ -813,7 +828,7 @@ require("lazy").setup({
             local dap = require("dap")
             local dap_vscode = require("dap.ext.vscode")
 
-            require("overseer").patch_dap(true)
+            require("overseer").enable_dap()
 
             dap_vscode.json_decode = require("overseer.json").decode
 
