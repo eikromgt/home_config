@@ -1,122 +1,117 @@
 #!/usr/bin/bash
 
-pacstrap -K /mnt base linux linux-firmware amd-ucode intel-ucode networkmanager \
-    nvim man-db man-pages texinfo
+set -euo pipefail
+
+MOUNTPOINT="/mnt"
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+USER="beanopy"
+
+TIME_FORMAT="[%Y-%m-%d %H:%M:%S]"   # format example: [1917-01-01 00:00:00]
+
+FORE_RED='\e[1;31m'
+FORE_GREEN='\e[1;32m'
+FORE_YELLOW='\e[1;33m'
+FORE_WHITE='\e[1;37m'
+BACK_RED='\e[1;41m'
+NONE='\e[0m'
+
+# Colored log
+function LOG() {
+    local color="${1}"
+    shift
+
+    printf "${color}$(date +"${TIME_FORMAT}") ${1}${NONE}\n" "${@:2}"
+}
+
+function DEBUG()    { LOG "${FORE_WHITE}"            "${@}"; }
+function INFO()     { LOG "${FORE_GREEN}"            "${@}"; }
+function WARN()     { LOG "${FORE_YELLOW}"           "${@}"; }
+function ERROR()    { LOG "${FORE_RED}"              "${@}"; }
+function FATAl()    { LOG "${BACK_RED}${FORE_WHITE}" "${@}"; }
+
+function install_home() {
+    cd /opt
+
+    [[ ! -d /opt/home_config ]] && git clone --depth=1 https://github.com/eikromgt/home_config.git
+    home_config/hcfg.py install home
+
+    git clone --depth=1 https://aur.archlinux.org/yay-bin.git
+    cd yay-bin
+    makepkg -si --noconfirm --skippgpcheck
+    yay -S --noconfirm grub-silent swapspace zramswap kmscon-patched \
+        mihomo pacman-cleanup-hook \
+        bdf-unifont fcitx5-pinyin-moegirl nerd-fonts-noto-sans-mono nerd-fonts-sarasa-term
+    cd /opt
+
+    #systemctl --user enable update-vpn.timer
+    #
+}
+
+function install_rootfs() {
+    cd /opt/
+
+    INFO "Install system configurations to rootfs"
+    [[ ! -d /opt/home_config ]] && git clone --depth=1 https://github.com/eikromgt/home_config.git
+    home_config/hcfg.py install rootfs
+
+    locale-gen
+
+    INFO "Install packages"
+    pacman -S --noconfirm man-db man-pages texinfo \
+        arch-install-scripts efibootmgr \
+        neovim bash-language-server lua-language-server python-lsp-server tree-sitter-cli \
+        base-devel clang lldb llvm python cmake \
+        dhcpcd networkmanager wpa_supplicant \
+        bluez bluez-utils pulsemixer pipewire-alsa pipewire-jack pipewire-pulse udiskie \
+        7zip fd fzf git htop openssh zsh trash-cli yazi\
+        nvidia-open nvidia-utils \
+        hyprland uwsm hypridle xdg-desktop-portal-hyprland xorg-xwayland wl-clipboard \
+        brightnessctl swaybg swaync waybar wofi \
+        adobe-source-code-pro-fonts adobe-source-han-sans-cn-fonts \
+        noto-fonts-emoji otf-font-awesome ttf-nerd-fonts-symbols-mono \
+        kitty dolphin chromium zathura zathura-pdf-poppler \
+        fcitx5 fcitx5-configtool fcitx5-gtk fcitx5-qt \
+        fcitx5-chinese-addons fcitx5-nord fcitx5-pinyin-zhwiki
 
 
-base
-linux
-linux-firmware
+    INFO "Setup systemd services"
+    systemctl enable NetworkManager
+    systemctl enable bluetooth
+    ystemctl enable sshd
 
-amd-ucode
-intel-ucode
+    INFO "Setup user configurations"
+    id "${USER}" >/dev/null 2>&1 || useradd -m -s /usr/bin/zsh "${USER}"
+    echo "${USER} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/"${USER}"
+    chmod 440 "/etc/sudoers.d/${USER}"
+    runuser -u "${USER}" -- "${SCRIPT_PATH}" home
+    rm "/etc/sudoers.d/${USER}"
 
-base-devel
-clang
-lldb
-llvm
-python
-cmake
-efibootmgr
-man-db
-man-pages
+    #systemctl enable mihomo@beanopy
+    #
+    #systemctl disable getty@tty2.service
+    #systemctl enable kmsconvt@tty2
+    #systemctl disable getty@tty2.service
+    #systemctl enable kmsconvt@tty3
+    #
+    #systemctl enable swapspace
+    #systemctl enable zramswap
 
-dhcpcd
-bluez
-bluez-utils
-pulsemixer
-networkmanager
-mihomo
-pipewire-alsa
-pipewire-jack
-pipewire-pulse
-kmscon-patched-git
-wpa_supplicant
-udiskie
+    INFO "Reinstall system configurations to rootfs"
+    ./hcfg.py install rootfs
 
-7zip
-fd
-fzf
-git
-htop
-neovim
-ntfs-3g
-openssh
-pacman-cleanup-hook
-zsh
-
-bash-language-server
-lua-language-server
-python-lsp-server
-tree-sitter-cli
-
-nvidia-open
-nvidia-utils
+    INFO "Regenerate initramfs"
+    mkinitcpio -P
+}
 
 
-hyprland
-uwsm
-brightnessctl
-hypridle
-wl-clipboard
-trash-cli
-swaybg
-swaync
-waybar
-wofi
-xdg-desktop-portal-hyprland
-xorg-xwayland
+function main() {
+    if [[ ${1} == "home" ]]; then
+        install_home
+    else
+        install_rootfs
+    fi
+}
 
-adobe-source-code-pro-fonts
-adobe-source-han-sans-cn-fonts
-nerd-fonts-noto-sans-mono
-nerd-fonts-sarasa-term
-noto-fonts-emoji
-otf-font-awesome
-ttf-nerd-fonts-symbols-mono
-
-kitty
-dolphin
-chromium
-fcitx5
-fcitx5-chinese-addons
-fcitx5-configtool
-fcitx5-gtk
-fcitx5-nord
-fcitx5-pinyin-moegirl
-fcitx5-pinyin-zhwiki
-fcitx5-qt
-openrazer-daemon
-polychromatic
-yazi
-zathura
-zathura-pdf-poppler
-
-ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-sed -i '/en_US.UTF-8 UTF-8/s/^#//g' /etc/locale.gen
-locale-gen
-echo 'LANG=en_US.UTF-8' > /etc/locale.conf
-
-echo 'Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch'          > /etc/pacman.d/mirrorlist
-echo 'Server = https://mirrors.aliyun.com/archlinux/$repo/os/$arch'           >> /etc/pacman.d/mirrorlist
-echo 'Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch' >> /etc/pacman.d/mirrorlist
-echo 'Server = https://mirrors.bfsu.edu.cn/archlinux/$repo/os/$arch'          >> /etc/pacman.d/mirrorlist
-sed -i 's/^#ParallelDownloads = .*/ParallelDownloads = 8/' /etc/pacman.conf \
-pacman -Syu --noconfirm --needed
-pacman -S --noconfirm base-devel neovim git cmake
-clang python lua python-pynvim
-llvm bash-language-server lua-language-server python-lsp-server
-bear fd fzf ripgrep rsync openssh zsh p7zip yazi bc
-pacman -Scc --noconfirm && rm -rf /var/cache/pacman/pkg/*
-
-cd /tmp/
-git clone --depth=1 https://github.com/eikromgt/home_config.git
-cd home_config/
-./hcfg.py install
-cd /root && rm -rf /tmp/*
-
-RUN nvim --headless "+Lazy! sync" "+TSUpdate" +qa
-
-ENV SHELL=/bin/zsh
-CMD ["/bin/zsh"]
-
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi

@@ -8,16 +8,25 @@ import argparse
 from collections import deque
 import concurrent.futures as cf
 
-
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
 )
 
+def ensure_trailing_slash(path):
+    if not path.endswith("/"):
+        path += "/"
+    return path
 
-def run_cmd(cmd, cwd=None):
-    logging.debug("Running: %s", " ".join(cmd))
-    subprocess.run(cmd, cwd=cwd, check=True)
+src = ensure_trailing_slash("/etc")
+dst = ensure_trailing_slash("/backup/etc")
+
+def run_cmd(cmd, **kwargs):
+    defaults = { "check": True,  "text": True, }
+    run_kwargs = {**defaults, **kwargs}
+
+    logging.info("Running: %s", " ".join(cmd))
+    return subprocess.run(cmd, **run_kwargs)
 
 
 def git_clone(task):
@@ -35,27 +44,53 @@ def git_clone(task):
 
 
 def install_config(task):
-    run_cmd(["rsync", "-av", task["src_path"] + "/", task["dest_path"] + "~/"])
+    cmd = ["rsync", "-av", os.path.join(task["src_path"], "/"), os.path.join(task["dest_path"], "~/")]
+    for exclude in task.get("excludes", []):
+        cmd.extend(["--exclude", exclude])
+
+    run_cmd(cmd)
+
 
 def update_config(task):
-    dest_path = task["dest_path"]
-    src_path = task["src_path"]
+    dest_path = ensure_trailing_slash(task["dest_path"])
+    src_path = ensure_trailing_slash(task["src_path"])
 
-    filelist = subprocess.run(
-        ["fd", "-tf", "-H", "."],
-        capture_output=True, text=True, check=True, cwd=dest_path
-        ).stdout
+    print(dest_path)
 
-    subprocess.run(
-        ["rsync", "-av", "--existing", "--files-from=-", src_path + "/", dest_path + "/"],
-        input=filelist, text=True, check=True)
+    cmd = ["fd", "-tf", "-H", "."]
+    for exclude in task.get("excludes", []):
+        cmd.extend(["--exclude", exclude])
+    filelist = run_cmd(cmd , capture_output=True, cwd=dest_path).stdout
 
+    cmd = ["rsync", "-av", "--existing", "--files-from=-", src_path, dest_path]
+    for exclude in task.get("excludes", []):
+        cmd.extend(["--exclude", exclude])
+    print(cmd)
+    run_cmd(cmd, input=filelist)
+
+
+def install_arch(task):
+    mount_point = "/mnt"
+
+    run_cmd(["pacstrap", "-K", mount_point, "base", "linux", "linux-firmware", "amd-ucode", "intel-ucode", "git", "python"])
+
+    fstab_path = os.path.join(mount_point, "etc/fstab")
+    fstab = run_cmd(["genfstab", "-U", mount_point], capture_output=True).stdout
+
+    with open(fstab_path, "w") as f:
+        logging.info("Writing fstab to %s", fstab_path)
+        f.write(fstab)
+
+    run_cmd(["cp", "install_arch.sh", os.path.join(mount_point, "opt")])
+    run_cmd(["arch-chroot", mount_point, "/opt/install_arch.sh"])
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
 
 home_install_tasks = [
     {
         "name": "install",
         "dest_path": os.path.expanduser("~"),
-        "src_path": os.path.abspath("home"),
+        "src_path": os.path.join(os.path.dirname(os.path.abspath(__file__)), "home"),
         "func": install_config,
     },
     {
@@ -101,7 +136,7 @@ home_install_tasks = [
 home_update_tasks = [
     {
         "name": "update",
-        "dest_path": os.path.abspath("home"),
+        "dest_path": os.path.join(os.path.dirname(os.path.abspath(__file__)), "home"),
         "src_path": os.path.expanduser("~"),
         "func": update_config,
     },
@@ -111,18 +146,35 @@ rootfs_install_tasks = [
     {
         "name": "install",
         "dest_path": "/",
-        "src_path": os.path.abspath("rootfs"),
+        "excludes": ["suderes.d"],
+        "src_path": os.path.join(os.path.dirname(os.path.abspath(__file__)), "rootfs"),
         "func": install_config,
+    },
+    {
+        "dest_path": "/",
+        "src_path": os.path.join(os.path.dirname(os.path.abspath(__file__)), "rootfs"),
+        "name": "install sudoers",
+        "func": lambda task: run_cmd(["install", "-m", "440", "-o", "root", "-g", "root",
+                                      os.path.join(task["src_path"], "etc/sudoers.d/10-wheel"),
+                                      os.path.join(task["dest_path"], "etc/sudoers.d/10-wheel")]),
     },
 ]
 
 rootfs_update_tasks = [
     {
         "name": "update",
-        "dest_path": os.path.abspath("rootfs"),
+        "dest_path": os.path.join(os.path.dirname(os.path.abspath(__file__)), "rootfs"),
         "src_path": "/",
+        "excludes": ["suderes.d"],
         "func": update_config,
     },
+]
+
+arch_tasks = [
+    {
+        "name": "install arch",
+        "func": install_arch,
+    }
 ]
 
 def run_tasks(tasks):
@@ -177,6 +229,9 @@ def main():
     p.set_defaults(func=handle_tasks, tasks=home_install_tasks)
     p = install_subparser.add_parser("rootfs", help="Install system configurations")
     p.set_defaults(func=handle_tasks, tasks=rootfs_install_tasks)
+    p = install_subparser.add_parser("arch", help="install arch linux system")
+    p.set_defaults(func=handle_tasks, tasks=arch_tasks)
+
 
     update_parser = subparsers.add_parser("update", help="Update command")
     update_parser.set_defaults(func=handle_tasks, tasks=home_update_tasks)
