@@ -5,7 +5,6 @@ import sys
 import subprocess
 import logging
 import argparse
-from collections import deque
 import concurrent.futures as cf
 
 logging.basicConfig(
@@ -13,16 +12,15 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s",
 )
 
+
 def ensure_trailing_slash(path):
     if not path.endswith("/"):
         path += "/"
     return path
 
-src = ensure_trailing_slash("/etc")
-dst = ensure_trailing_slash("/backup/etc")
 
 def run_cmd(cmd, **kwargs):
-    defaults = { "check": True,  "text": True, }
+    defaults = {"check": True,  "text": True,}
     run_kwargs = {**defaults, **kwargs}
 
     logging.info("Running: %s", " ".join(cmd))
@@ -44,7 +42,8 @@ def git_clone(task):
 
 
 def install_config(task):
-    cmd = ["rsync", "-av", os.path.join(task["src_path"], "/"), os.path.join(task["dest_path"], "~/")]
+    cmd = ["rsync", "-av", os.path.join(task["src_path"], "/"),
+           os.path.join(task["dest_path"], "~/")]
     for exclude in task.get("excludes", []):
         cmd.extend(["--exclude", exclude])
 
@@ -60,7 +59,7 @@ def update_config(task):
     cmd = ["fd", "-tf", "-H", "."]
     for exclude in task.get("excludes", []):
         cmd.extend(["--exclude", exclude])
-    filelist = run_cmd(cmd , capture_output=True, cwd=dest_path).stdout
+    filelist = run_cmd(cmd, capture_output=True, cwd=dest_path).stdout
 
     cmd = ["rsync", "-av", "--existing", "--files-from=-", src_path, dest_path]
     for exclude in task.get("excludes", []):
@@ -72,7 +71,8 @@ def update_config(task):
 def install_arch(task):
     mount_point = "/mnt"
 
-    run_cmd(["pacstrap", "-K", mount_point, "base", "linux", "linux-firmware", "amd-ucode", "intel-ucode", "git", "python"])
+    run_cmd(["pacstrap", "-K", mount_point, "base", "linux", "linux-firmware",
+             "amd-ucode", "intel-ucode", "git", "python"])
 
     fstab_path = os.path.join(mount_point, "etc/fstab")
     fstab = run_cmd(["genfstab", "-U", mount_point], capture_output=True).stdout
@@ -84,7 +84,6 @@ def install_arch(task):
     run_cmd(["cp", "install_arch.sh", os.path.join(mount_point, "opt")])
     run_cmd(["arch-chroot", mount_point, "/opt/install_arch.sh"])
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
 
 home_install_tasks = [
     {
@@ -177,6 +176,7 @@ arch_tasks = [
     }
 ]
 
+
 def run_tasks(tasks):
     nThread = max(os.cpu_count() // 2, 2)
     taskDict = {task["name"]: task for task in tasks}
@@ -231,7 +231,6 @@ def main():
     p.set_defaults(func=handle_tasks, tasks=rootfs_install_tasks)
     p = install_subparser.add_parser("arch", help="install arch linux system")
     p.set_defaults(func=handle_tasks, tasks=arch_tasks)
-
 
     update_parser = subparsers.add_parser("update", help="Update command")
     update_parser.set_defaults(func=handle_tasks, tasks=home_update_tasks)
