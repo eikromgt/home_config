@@ -742,27 +742,26 @@ require("lazy").setup({
                     fallbackFlags = {"--std=c++23"}
                 },
             }
-            vim.lsp.enable("clangd")
 
             vim.lsp.config.pylsp = {
                 settings = { pylsp = {
                     plugins = {
                         pycodestyle = {
                             maxLineLength = 100,
-                            --ignore = { "E501" },
                         }
                     }
                 }},
             }
-            vim.lsp.enable("pylsp")
 
             vim.lsp.config.lua_ls = {
                 settings     = {
                     Lua = { diagnostics = { globals = { "vim" } } }
                 }
             }
-            vim.lsp.enable("lua_ls")
 
+            vim.lsp.enable("pylsp")
+            vim.lsp.enable("clangd")
+            vim.lsp.enable("lua_ls")
             vim.lsp.enable("bashls")
         end
     },
