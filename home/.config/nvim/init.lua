@@ -38,7 +38,7 @@ vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 
-vim.lsp.set_log_level("off")
+--vim.lsp.set_log_level("off")
 
 --==============================================================================
 -- Global Variables
@@ -686,54 +686,44 @@ require("lazy").setup({
     { "williamboman/mason-lspconfig.nvim",
         dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig", "hrsh7th/cmp-nvim-lsp" },
         config = function()
-            local cmp_nvim_lsp_cap = require("cmp_nvim_lsp").default_capabilities()
             require("mason-lspconfig").setup({
                 handlers = {
-                    function(server_name)
-                        vim.lsp.config(server_name, {
-                            capabilities = cmp_nvim_lsp_cap
-                        })
-                    end,
                     ["neocmake"] = function()
-                        vim.lsp.cnofig("neocmake", {
-                            capabilities = cmp_nvim_lsp_cap,
+                        vim.lsp.config.neocmake = {
                             init_options = {
                                 lint = {
                                     enable = false,
                                 }
                             },
-                        })
+                        }
                     end,
                     ["jsonls"] = function()
-                        vim.lsp.cnofig("jsonls", {
-                            capabilities = cmp_nvim_lsp_cap,
+                        vim.lsp.config.jsonls = {
                             settings = {
                                 json = {
                                     schemas = require("schemastore").json.schemas(),
                                     validate = { enable = true },
                                 },
                             }
-                        })
+                        }
                     end,
                     ["tinymist"] = function()
-                        vim.lsp.cnofig("tinymist", {
-                            capabilities = cmp_nvim_lsp_cap,
+                        vim.lsp.config.tinymist = {
                             offset_encoding = "utf-8",
                             settings     = {
                                 formatterMode = "typstyle",
                                 exportPdf = "never",
                                 semanticTokens = "disable"
                             }
-                        })
+                        }
                     end,
                     ["verible"] = function()
-                        vim.lsp.cnofig("verible", {
-                            capabilities = cmp_nvim_lsp_cap,
+                        vim.lsp.config.verible = {
                             root_dir     = function() return vim.fn.getcwd() end,
                             handlers     = {
                                 ["textDocument/publishDiagnostics"] = nil
                             }
-                        })
+                        }
                     end,
                 }
             })
@@ -747,16 +737,14 @@ require("lazy").setup({
                 capabilities = cmp_nvim_lsp_cap,
             })
 
-            vim.lsp.config("clangd", {
-                capabilities = cmp_nvim_lsp_cap,
+            vim.lsp.config.clangd = {
                 init_options = {
                     fallbackFlags = {"--std=c++23"}
                 },
-            })
+            }
             vim.lsp.enable("clangd")
 
-            vim.lsp.config("pylsp", {
-                capabilities = cmp_nvim_lsp_cap,
+            vim.lsp.config.pylsp = {
                 settings = { pylsp = {
                     plugins = {
                         pycodestyle = {
@@ -764,20 +752,16 @@ require("lazy").setup({
                         }
                     }
                 }},
-            })
+            }
             vim.lsp.enable("pylsp")
 
-            vim.lsp.config("lua_ls", {
-                capabilities = cmp_nvim_lsp_cap,
+            vim.lsp.config.lua_ls = {
                 settings     = {
                     Lua = { diagnostics = { globals = { "vim" } } }
                 }
-            })
+            }
             vim.lsp.enable("lua_ls")
 
-            vim.lsp.config("bashls", {
-                capabilities = cmp_nvim_lsp_cap,
-            })
             vim.lsp.enable("bashls")
         end
     },
