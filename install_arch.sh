@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-MOUNTPOINT="/mnt"
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 USER="beanopy"
 
@@ -59,8 +58,9 @@ function install_rootfs() {
     INFO "Install packages"
     pacman -S --noconfirm man-db man-pages texinfo \
         arch-install-scripts efibootmgr \
-        neovim bash-language-server lua-language-server python-lsp-server tree-sitter-cli \
-        python-pyflakes python-pycodestyle python-rope autopep8 \
+        neovim lua-language-server tree-sitter-cli \
+        python-lsp-server python-pyflakes python-pycodestyle python-rope autopep8 \
+        bash-language-server shellcheck shfmt \
         base-devel clang lldb llvm python cmake \
         dhcpcd networkmanager wpa_supplicant \
         bluez bluez-utils pulsemixer pipewire-alsa pipewire-jack pipewire-pulse udiskie \
