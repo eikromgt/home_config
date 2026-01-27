@@ -748,7 +748,8 @@ require("lazy").setup({
                 settings = { pylsp = {
                     plugins = {
                         pycodestyle = {
-                            ignore = { "E501", "E306" }
+                            maxLineLength = 100,
+                            --ignore = { "E501" },
                         }
                     }
                 }},
