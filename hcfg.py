@@ -20,11 +20,19 @@ def ensure_trailing_slash(path):
 
 
 def run_cmd(cmd, **kwargs):
-    defaults = {"check": True,  "text": True,}
+    defaults = {"check": True, "text": True}
     run_kwargs = {**defaults, **kwargs}
 
-    logging.info("Running: %s", " ".join(cmd))
-    return subprocess.run(cmd, **run_kwargs)
+    logging.info("Running: %s", "".join(cmd))
+    try:
+        return subprocess.run(cmd, **run_kwargs)
+    except subprocess.CalledProcessError as e:
+        logging.error("Command failed: %s", "".join(cmd))
+        if e.stdout:
+            logging.error("stdout:\n%s", e.stdout)
+        if e.stderr:
+            logging.error("stderr:\n%s", e.stderr)
+        raise
 
 
 def git_clone(task):
@@ -71,8 +79,9 @@ def update_config(task):
 def install_arch(task):
     mount_point = "/mnt"
 
-    run_cmd(["pacstrap", "-K", mount_point, "base", "linux", "linux-firmware",
-             "amd-ucode", "intel-ucode", "git", "python"])
+    if not os.path.isfile(os.path.join(mount_point, "etc/os-release")):
+        run_cmd(["pacstrap", "-K", mount_point, "base", "linux", "linux-firmware",
+                 "amd-ucode", "intel-ucode", "git", "python"])
 
     fstab_path = os.path.join(mount_point, "etc/fstab")
     fstab = run_cmd(["genfstab", "-U", mount_point], capture_output=True).stdout
@@ -199,6 +208,8 @@ def run_tasks(tasks):
 
         for future in finishedFutures:
             name = futures.pop(future)
+            future.result()
+
             for next in graph[name]["in"]:
                 graph[next]["out"].remove(name)
                 if graph[next]["out"]:

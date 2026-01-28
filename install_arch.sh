@@ -103,7 +103,7 @@ function install_rootfs() {
 
 
 function main() {
-    if [[ ${1} == "home" ]]; then
+    if [[ "${1}" == "home" ]]; then
         install_home
     else
         install_rootfs
