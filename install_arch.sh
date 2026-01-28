@@ -42,8 +42,7 @@ function install_home() {
         bdf-unifont fcitx5-pinyin-moegirl nerd-fonts-noto-sans-mono nerd-fonts-sarasa-term
     cd /opt
 
-    #systemctl --user enable update-vpn.timer
-    #
+    systemctl --user enable update-vpn.timer
 }
 
 function install_rootfs() {
@@ -87,15 +86,13 @@ function install_rootfs() {
     runuser -u "${USER}" -- "${SCRIPT_PATH}" home
     rm "/etc/sudoers.d/${USER}"
 
-    #systemctl enable mihomo@beanopy
-    #
-    #systemctl disable getty@tty2.service
-    #systemctl enable kmsconvt@tty2
-    #systemctl disable getty@tty2.service
-    #systemctl enable kmsconvt@tty3
-    #
-    #systemctl enable swapspace
-    #systemctl enable zramswap
+    systemctl disable getty@tty2.service
+    systemctl enable kmsconvt@tty2
+    systemctl disable getty@tty2.service
+    systemctl enable kmsconvt@tty3
+    systemctl enable swapspace
+    systemctl enable zramswap
+    systemctl enable mihomo@beanopy
 
     INFO "Reinstall system configurations to rootfs"
     ./hcfg.py install rootfs
