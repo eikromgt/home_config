@@ -77,6 +77,11 @@ def update_config(task):
 
 
 def install_arch(task):
+    if os.geteuid() != 0:
+        raise PermissionError(
+            "install arch must be run as root (try: sudo ./hcfg.py install arch)"
+        )
+
     mount_point = "/mnt"
 
     if not os.path.isfile(os.path.join(mount_point, "etc/os-release")):
