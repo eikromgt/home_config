@@ -31,10 +31,20 @@ function FATAl()    { LOG "${BACK_RED}${FORE_WHITE}" "${@}"; }
 function install_home() {
     cd /opt
 
-    [[ ! -d /opt/home_config ]] && git clone --depth=1 https://github.com/eikromgt/home_config.git
+    if [[ -d /opt/home_config ]]; then
+        git -C home_config pull
+    else
+        git clone --depth=1 https://github.com/eikromgt/home_config.git
+    fi
+
     home_config/hcfg.py install home
 
-    git clone --depth=1 https://aur.archlinux.org/yay-bin.git
+    if [[ -d /opt/yay-bin ]]; then
+        git -C yay-bin pull
+    else
+        git clone --depth=1 https://aur.archlinux.org/yay-bin.git
+    fi
+
     cd yay-bin
     makepkg -si --noconfirm --skippgpcheck
     yay -S --noconfirm grub-silent swapspace zramswap kmscon-patched \
@@ -77,7 +87,7 @@ function install_rootfs() {
     INFO "Setup systemd services"
     systemctl enable NetworkManager
     systemctl enable bluetooth
-    ystemctl enable sshd
+    systemctl enable sshd
 
     INFO "Setup user configurations"
     id "${USER}" >/dev/null 2>&1 || useradd -m -s /usr/bin/zsh "${USER}"
@@ -103,7 +113,9 @@ function install_rootfs() {
 
 
 function main() {
-    if [[ "${1}" == "home" ]]; then
+    local arg="${1:-}"
+
+    if [[ "${arg}" == "home" ]]; then
         install_home
     else
         install_rootfs
