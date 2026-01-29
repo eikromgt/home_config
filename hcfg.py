@@ -23,11 +23,11 @@ def run_cmd(cmd, **kwargs):
     defaults = {"check": True, "text": True}
     run_kwargs = {**defaults, **kwargs}
 
-    logging.info("Running: %s", "".join(cmd))
+    logging.info("Running: %s", " ".join(cmd))
     try:
         return subprocess.run(cmd, **run_kwargs)
     except subprocess.CalledProcessError as e:
-        logging.error("Command failed: %s", "".join(cmd))
+        logging.error("Command failed: %s", " ".join(cmd))
         if e.stdout:
             logging.error("stdout:\n%s", e.stdout)
         if e.stderr:
@@ -50,8 +50,10 @@ def git_clone(task):
 
 
 def install_config(task):
-    cmd = ["rsync", "-av", os.path.join(task["src_path"], "/"),
-           os.path.join(task["dest_path"], "~/")]
+    dest_path = ensure_trailing_slash(task["dest_path"])
+    src_path = ensure_trailing_slash(task["src_path"])
+
+    cmd = ["rsync", "-av", src_path, dest_path]
     for exclude in task.get("excludes", []):
         cmd.extend(["--exclude", exclude])
 
@@ -83,6 +85,7 @@ def install_arch(task):
         )
 
     mount_point = "/mnt"
+    repo_path = os.path.dirname(os.path.abspath(__file__))
 
     if not os.path.isfile(os.path.join(mount_point, "etc/os-release")):
         run_cmd(["pacstrap", "-K", mount_point, "base", "linux", "linux-firmware",
@@ -95,7 +98,7 @@ def install_arch(task):
         logging.info("Writing fstab to %s", fstab_path)
         f.write(fstab)
 
-    run_cmd(["cp", "install_arch.sh", os.path.join(mount_point, "opt")])
+    run_cmd(["cp", os.path.join(repo_path, "install_arch.sh"), os.path.join(mount_point, "opt")])
     run_cmd(["arch-chroot", mount_point, "/opt/install_arch.sh"])
 
 

@@ -2,8 +2,14 @@
 
 set -euo pipefail
 
-SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 USER="beanopy"
+
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+WORK_PATH="/opt"
+REPO_PATH="${WORK_PATH}/home_config"
+REPO_URL="https://github.com/eikromgt/home_config.git"
+AUR_PATH="${WORK_PATH}/yay-bin"
+AUR_URL="https://aur.archlinux.org/yay-bin.git"
 
 TIME_FORMAT="[%Y-%m-%d %H:%M:%S]"   # format example: [1917-01-01 00:00:00]
 
@@ -29,43 +35,47 @@ function ERROR()    { LOG "${FORE_RED}"              "${@}"; }
 function FATAl()    { LOG "${BACK_RED}${FORE_WHITE}" "${@}"; }
 
 function install_home() {
-    cd /opt
+    cd "${WORK_PATH}"
 
-    if [[ -d /opt/home_config ]]; then
-        git -C home_config pull
-    else
-        git clone --depth=1 https://github.com/eikromgt/home_config.git
+    if [[ ! -d "${REPO_PATH}" ]]; then
+        git clone --depth=1 "${REPO_URL}"
+    elif [[ -d "${REPO_PATH}/.git" && -O "${REPO_PATH}/.git"  ]]; then
+        git -C "${REPO_PATH}" pull
     fi
 
     home_config/hcfg.py install home
 
-    if [[ -d /opt/yay-bin ]]; then
-        git -C yay-bin pull
-    else
-        git clone --depth=1 https://aur.archlinux.org/yay-bin.git
+    if [[ ! -d "${AUR_PATH}" ]]; then
+        git clone --depth=1 "${AUR_URL}"
+    elif [[ -d "${AUR_PATH}/.git" && -O "${AUR_PATH}/.git"  ]]; then
+        git -C "${AUR_PATH}"  pull
     fi
 
-    cd yay-bin
+    cd "${AUR_PATH}"
     makepkg -si --noconfirm --skippgpcheck
-    yay -S --noconfirm grub-silent swapspace zramswap kmscon-patched \
+    yay -S --needed --noconfirm grub-silent swapspace zramswap kmscon-patched \
         mihomo pacman-cleanup-hook \
         bdf-unifont fcitx5-pinyin-moegirl nerd-fonts-noto-sans-mono nerd-fonts-sarasa-term
-    cd /opt
+    cd "${WORK_PATH}"
 
     systemctl --user enable update-vpn.timer
 }
 
 function install_rootfs() {
-    cd /opt/
+    cd "${WORK_PATH}"
 
     INFO "Install system configurations to rootfs"
-    [[ ! -d /opt/home_config ]] && git clone --depth=1 https://github.com/eikromgt/home_config.git
+    if [[ ! -d "${REPO_PATH}" ]]; then
+        git clone --depth=1 "${REPO_URL}"
+    elif [[ -d "${REPO_PATH}/.git" && -O "${REPO_PATH}/.git"  ]]; then
+        git -C "${REPO_PATH}" pull
+    fi
     home_config/hcfg.py install rootfs
 
     locale-gen
 
     INFO "Install packages"
-    pacman -S --noconfirm man-db man-pages texinfo \
+    pacman -S --needed --noconfirm man-db man-pages texinfo \
         arch-install-scripts efibootmgr \
         neovim lua-language-server tree-sitter-cli \
         python-lsp-server python-pyflakes python-pycodestyle python-rope autopep8 \
