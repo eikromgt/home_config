@@ -44,9 +44,19 @@ def git_clone(task):
         logging.info("Update %s successed!", task["name"])
         return
 
-    os.makedirs(os.path.dirname(path))
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     run_cmd(["git", "clone", "--depth=1", url, path])
     logging.info("Install %s successed", task["name"])
+
+
+def install_yazi_package(task):
+    package = task["package"]
+
+    result = run_cmd(["ya", "pkg", "list"], capture_output=True)
+    if package in result.stdout:
+        run_cmd(["ya", "pkg", "upgrade", package]),
+    else:
+        run_cmd(["ya", "pkg", "add", package]),
 
 
 def install_config(task):
@@ -86,10 +96,10 @@ def install_arch(task):
 
     mount_point = "/mnt"
     repo_path = os.path.dirname(os.path.abspath(__file__))
+    repo_name = os.path.basename(repo_path)
 
-    if not os.path.isfile(os.path.join(mount_point, "etc/os-release")):
-        run_cmd(["pacstrap", "-K", mount_point, "base", "linux", "linux-firmware",
-                 "amd-ucode", "intel-ucode", "git", "python"])
+    run_cmd(["pacstrap", "-K", mount_point, "--needed", "base", "linux", "linux-firmware",
+             "amd-ucode", "intel-ucode", "python", "rsync"])
 
     fstab_path = os.path.join(mount_point, "etc/fstab")
     fstab = run_cmd(["genfstab", "-U", mount_point], capture_output=True).stdout
@@ -98,8 +108,11 @@ def install_arch(task):
         logging.info("Writing fstab to %s", fstab_path)
         f.write(fstab)
 
-    run_cmd(["cp", os.path.join(repo_path, "install_arch.sh"), os.path.join(mount_point, "opt")])
-    run_cmd(["arch-chroot", mount_point, "/opt/install_arch.sh"])
+    run_cmd(["rsync", "-a", "--exclude=.git",
+             ensure_trailing_slash(repo_path),
+             os.path.join(mount_point, "opt", repo_name)])
+
+    run_cmd(["arch-chroot", mount_point, os.path.join("/opt", repo_name, "install_arch.sh")])
 
 
 home_install_tasks = [
@@ -145,7 +158,8 @@ home_install_tasks = [
     {
         "name": "bennyyip/gruvbox-dark",
         "path": os.path.expanduser("~/.config/yazi/flavors/gruvbox-dark.yazi"),
-        "func": lambda task: run_cmd(["ya", "pkg", "add", "bennyyip/gruvbox-dark"]),
+        "package": "bennyyip/gruvbox-dark",
+        "func": install_yazi_package,
     },
 ]
 
