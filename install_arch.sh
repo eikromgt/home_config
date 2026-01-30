@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-USER="beanopy"
+NEW_USER="beanopy"
 
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 WORK_PATH="/opt"
@@ -94,11 +94,11 @@ function install_rootfs() {
     systemctl enable sshd
 
     INFO "Setup user configurations"
-    id "${USER}" >/dev/null 2>&1 || useradd -m -s /usr/bin/zsh "${USER}"
-    echo "${USER} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/"${USER}"
-    chmod 440 "/etc/sudoers.d/${USER}"
-    runuser -u "${USER}" -- "${SCRIPT_PATH}" home
-    rm "/etc/sudoers.d/${USER}"
+    id "${NEW_USER}" >/dev/null 2>&1 || useradd -m -s /usr/bin/zsh "${NEW_USER}"
+    echo "${NEW_USER} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/"${NEW_USER}"
+    chmod 440 "/etc/sudoers.d/${NEW_USER}"
+    runuser -u "${NEW_USER}" -- "${SCRIPT_PATH}" home
+    rm "/etc/sudoers.d/${NEW_USER}"
 
     INFO "Setup aur/user related systemd services"
     systemctl disable getty@tty2.service
