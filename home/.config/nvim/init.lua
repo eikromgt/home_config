@@ -763,6 +763,7 @@ require("lazy").setup({
             vim.lsp.enable("clangd")
             vim.lsp.enable("lua_ls")
             vim.lsp.enable("bashls")
+            vim.lsp.enable("yamlls")
         end
     },
     { "lervag/vimtex",

@@ -176,7 +176,7 @@ rootfs_install_tasks = [
     {
         "name": "install",
         "dest_path": "/",
-        "excludes": ["suderes.d"],
+        "excludes": ["/etc/sudoers.d"],
         "src_path": os.path.join(os.path.dirname(os.path.abspath(__file__)), "rootfs"),
         "func": install_config,
     },
@@ -195,7 +195,7 @@ rootfs_update_tasks = [
         "name": "update",
         "dest_path": os.path.join(os.path.dirname(os.path.abspath(__file__)), "rootfs"),
         "src_path": "/",
-        "excludes": ["suderes.d"],
+        "excludes": ["/etc/sudoers.d"],
         "func": update_config,
     },
 ]

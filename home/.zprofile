@@ -11,12 +11,6 @@ export EDITOR=nvim
 export BROWSER=chromium
 export GOPATH="$HOME/.local/share/go"
 
-httpProxy="http://127.0.0.1:7890"
-export http_proxy=$httpProxy
-export https_proxy=$httpProxy
-export HTTP_PROXY=$httpProxy
-export HTTPS_PROXY=$httpProxy
-
 [[ -f ~/.zshrc ]] && . ~/.zshrc
 
 if uwsm check may-start; then

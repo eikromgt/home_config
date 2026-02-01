@@ -6,8 +6,10 @@ NEW_USER="beanopy"
 
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 WORK_PATH="/opt"
+TMP_PATH="/tmp"
+
 REPO_PATH="${WORK_PATH}/home_config"
-AUR_PATH="${WORK_PATH}/yay-bin"
+AUR_PATH="${TMP_PATH}/yay-bin"
 AUR_URL="https://aur.archlinux.org/yay-bin.git"
 
 TIME_FORMAT="[%Y-%m-%d %H:%M:%S]"   # format example: [1917-01-01 00:00:00]
@@ -34,7 +36,7 @@ function ERROR()    { LOG "${FORE_RED}"              "${@}"; }
 function FATAl()    { LOG "${BACK_RED}${FORE_WHITE}" "${@}"; }
 
 function install_home() {
-    cd "${WORK_PATH}"
+    cd "${TMP_PATH}"
 
     INFO "Install home configurations"
     "${REPO_PATH}"/hcfg.py install home
@@ -55,9 +57,10 @@ function install_home() {
     yay -S --needed --noconfirm grub-silent swapspace zramswap kmscon-patched \
         mihomo pacman-cleanup-hook \
         bdf-unifont fcitx5-pinyin-moegirl nerd-fonts-noto-sans-mono nerd-fonts-sarasa-term
-    cd "${WORK_PATH}"
+    cd "${TMP_PATH}"
 
     INFO "Setup user systemd services"
+    systemctl --user daemon-reload
     systemctl --user enable update-vpn.timer
 }
 
@@ -71,13 +74,13 @@ function install_rootfs() {
     INFO "Install packages"
     pacman -S --needed --noconfirm man-db man-pages texinfo \
         arch-install-scripts efibootmgr \
-        neovim lua-language-server tree-sitter-cli \
+        neovim tree-sitter-cli lua-language-server yaml-language-server \
         python-lsp-server python-pyflakes python-pycodestyle python-rope autopep8 \
         bash-language-server shellcheck shfmt \
         base-devel clang lldb llvm python cmake \
         dhcpcd networkmanager wpa_supplicant \
         bluez bluez-utils pulsemixer pipewire-alsa pipewire-jack pipewire-pulse udiskie \
-        rsync 7zip fd fzf git htop openssh zsh trash-cli yazi \
+        rsync 7zip fd fzf git htop openssh zsh trash-cli yazi go-yq \
         nvidia-open nvidia-utils \
         hyprland uwsm hypridle xdg-desktop-portal-hyprland xorg-xwayland wl-clipboard \
         brightnessctl swaybg swaync waybar wofi \

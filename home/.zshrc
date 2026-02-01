@@ -5,14 +5,7 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-[[ -f "${HOME}/.bash_aliases" ]] && source "${HOME}/.bash_aliases" 
-
-function update_vpn() {
-    wget -U "Mozilla/6.0" -O ~/.cache/config.yaml.download 'https://v2free.net/link/r3TK79md0jvu1U5OJqup5Oi2THpWrAxP6Xlp?clash=2&rate=false'
-    if [[ $? == 0 ]]; then
-        cp ~/.cache/config.yaml.download ~/.config/mihomo/config.yaml
-    fi
-}
+[[ -f "${HOME}/.bash_aliases" ]] && source "${HOME}/.bash_aliases"
 
 export PATH="$PATH:$HOME/.local/bin"
 export ZSH="$HOME/.local/share/oh-my-zsh"
