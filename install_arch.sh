@@ -41,17 +41,20 @@ function install_home() {
     INFO "Install home configurations"
     "${REPO_PATH}"/hcfg.py install home
 
-    if [[ ! -d "${AUR_PATH}" ]]; then
-        INFO "Clone ${AUR_URL}"
-        git clone --depth=1 "${AUR_URL}"
-    elif [[ -d "${AUR_PATH}/.git" && -O "${AUR_PATH}/.git"  ]]; then
-        INFO "Update ${AUR_URL}"
-        git -C "${AUR_PATH}"  pull
-    fi
 
-    INFO "Install yay"
-    cd "${AUR_PATH}"
-    makepkg -si --noconfirm --skippgpcheck
+    if [[ ! $(command -v yay 2>/dev/null) ]]; then
+        if [[ ! -d "${AUR_PATH}" ]]; then
+            INFO "Clone ${AUR_URL}"
+            git clone --depth=1 "${AUR_URL}"
+        elif [[ -d "${AUR_PATH}/.git" && -O "${AUR_PATH}/.git"  ]]; then
+            INFO "Update ${AUR_URL}"
+            git -C "${AUR_PATH}"  pull
+        fi
+
+        INFO "Install yay"
+        cd "${AUR_PATH}"
+        makepkg -si --noconfirm --skippgpcheck
+    fi
 
     INFO "Install aur packages"
     yay -S --needed --noconfirm grub-silent swapspace zramswap kmscon-patched \
@@ -60,7 +63,6 @@ function install_home() {
     cd "${TMP_PATH}"
 
     INFO "Setup user systemd services"
-    systemctl --user daemon-reload
     systemctl --user enable update-vpn.timer
 }
 
