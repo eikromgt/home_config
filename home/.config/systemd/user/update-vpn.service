@@ -10,7 +10,7 @@ ExecStartPre=/usr/bin/bash -c ' \
     \'https://v1.xdollar.top/link/r3TK79md0jvu1U5OJqup5Oi2THpWrAxP6Xlp?clash=2&rate=false\' \
     && cp %h/.cache/vendor.yaml.download %h/.config/mihomo/vendor.yaml'
 ExecStart=/usr/bin/bash -c '\
-  yq eval-all "select(fileIndex==0) * select(fileIndex==1)" \
+  yq eval-all "select(fileIndex==0) *+ select(fileIndex==1)" \
     "%h/.config/mihomo/vendor.yaml" \
     "%h/.config/mihomo/override.yaml" \
     > "%h/.config/mihomo/config.yaml"'
