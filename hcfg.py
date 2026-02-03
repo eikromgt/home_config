@@ -53,9 +53,7 @@ def install_yazi_package(task):
     package = task["package"]
 
     result = run_cmd(["ya", "pkg", "list"], capture_output=True)
-    if package in result.stdout:
-        run_cmd(["ya", "pkg", "upgrade", package]),
-    else:
+    if package not in result.stdout:
         run_cmd(["ya", "pkg", "add", package]),
 
 
@@ -160,6 +158,11 @@ home_install_tasks = [
         "path": os.path.expanduser("~/.config/yazi/flavors/gruvbox-dark.yazi"),
         "package": "bennyyip/gruvbox-dark",
         "func": install_yazi_package,
+    },
+    {
+        "name": "update yazi packages",
+        "func": lambda task: run_cmd(["ya", "pkg", "upgrade"]),
+        "depends": ["bennyyip/gruvbox-dark"],
     },
 ]
 
