@@ -59,7 +59,7 @@ function install_home() {
     yay -S --needed --noconfirm grub-silent swapspace zramswap \
         mihomo pacman-cleanup-hook sc-im \
         bdf-unifont fcitx5-pinyin-moegirl nerd-fonts-noto-sans-mono nerd-fonts-sarasa-term \
-        xone-dkms xone-dongle-firmware proton-ge-custom-bin
+        xone-dkms proton-ge-custom-bin
     cd "${TMP_PATH}"
 
     INFO "Setup user systemd services"
