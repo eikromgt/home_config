@@ -56,7 +56,7 @@ function install_home() {
     fi
 
     INFO "Install aur packages"
-    yay -S --needed --noconfirm grub-silent swapspace zramswap kmscon-patched \
+    yay -S --needed --noconfirm grub-silent swapspace zramswap \
         mihomo pacman-cleanup-hook \
         bdf-unifont fcitx5-pinyin-moegirl nerd-fonts-noto-sans-mono nerd-fonts-sarasa-term
     cd "${TMP_PATH}"
