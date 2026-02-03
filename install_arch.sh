@@ -41,7 +41,6 @@ function install_home() {
     INFO "Install home configurations"
     "${REPO_PATH}"/hcfg.py install home
 
-
     if [[ ! $(command -v yay 2>/dev/null) ]]; then
         if [[ ! -d "${AUR_PATH}" ]]; then
             INFO "Clone ${AUR_URL}"
@@ -84,6 +83,7 @@ function install_rootfs() {
         bluez bluez-utils pulsemixer pipewire-alsa pipewire-jack pipewire-pulse udiskie \
         rsync 7zip fd fzf git htop openssh zsh trash-cli yazi go-yq \
         nvidia-open nvidia-utils \
+        kmscon \
         hyprland uwsm hypridle xdg-desktop-portal-hyprland xorg-xwayland wl-clipboard \
         brightnessctl swaybg swaync waybar wofi \
         adobe-source-code-pro-fonts adobe-source-han-sans-cn-fonts \
