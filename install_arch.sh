@@ -57,7 +57,7 @@ function install_home() {
 
     INFO "Install aur packages"
     yay -S --needed --noconfirm grub-silent swapspace zramswap \
-        mihomo pacman-cleanup-hook sc-im \
+        mihomo pacman-cleanup-hook \
         bdf-unifont fcitx5-pinyin-moegirl nerd-fonts-noto-sans-mono nerd-fonts-sarasa-term \
         xone-dkms proton-ge-custom-bin
     cd "${TMP_PATH}"
@@ -93,7 +93,7 @@ function install_rootfs() {
         fcitx5-im fcitx5-chinese-addons fcitx5-nord fcitx5-pinyin-zhwiki \
         arm-none-eabi-gcc arm-none-eabi-gdb assimp glfw stb \
         chntpw docker github-cli \
-        kicad rpi-imager steam lib-mesa gamemode gamescope
+        kicad rpi-imager steam lib32-mesa gamemode gamescope
 
     INFO "Setup systemd services"
     systemctl enable NetworkManager
