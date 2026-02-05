@@ -121,6 +121,20 @@ function install_rootfs() {
 
     INFO "Regenerate initramfs"
     mkinitcpio -P
+
+    INFO "Install GRUB bootloader"
+    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=HOST
+
+    INFO "Generate GRUB configuration"
+    grub-mkconfig -o /boot/grub/grub.cfg
+
+    INFO "Installation done"
+
+    INFO "Please set the password for root"
+    passwd
+
+    INFO "Please set the password for user: ${NEW_USER}"
+    passwd "${NEW_USER}"
 }
 
 
