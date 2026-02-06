@@ -1,0 +1,6 @@
+{
+  "DownloadDirectory": "/home/${user_name}/dl",
+  "PromptForDownloadLocation": false,
+  "ForceDarkModeEnabled": true,
+  "DefaultZoomLevel": 2
+}
