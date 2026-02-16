@@ -74,6 +74,7 @@ function install_rootfs() {
     locale-gen
 
     INFO "Install packages"
+    pacman -Syyu --noconfirm
     pacman -S --needed --noconfirm man-db man-pages texinfo \
         arch-install-scripts efibootmgr \
         base-devel clang lldb llvm python cmake typst \

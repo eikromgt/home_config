@@ -93,8 +93,6 @@ def install_arch(task):
         )
 
     mount_point = "/mnt"
-    repo_path = os.path.dirname(os.path.abspath(__file__))
-    repo_name = os.path.basename(repo_path)
 
     run_cmd(["pacstrap", "-K", mount_point, "--needed", "base", "linux", "linux-firmware",
              "amd-ucode", "intel-ucode", "python", "rsync"])
@@ -106,9 +104,16 @@ def install_arch(task):
         logging.info("Writing fstab to %s", fstab_path)
         f.write(fstab)
 
+    src_repo_path = os.path.dirname(os.path.abspath(__file__))
+    repo_name = os.path.basename(src_repo_path)
+    dst_repo_path = os.path.join(mount_point, "opt", repo_name)
+
     run_cmd(["rsync", "-a", "--exclude=.git",
-             ensure_trailing_slash(repo_path),
-             os.path.join(mount_point, "opt", repo_name)])
+             ensure_trailing_slash(src_repo_path),
+             ensure_trailing_slash(dst_repo_path)])
+    run_cmd(["rsync", "-av", "--ignore-existing",
+             ensure_trailing_slash(os.path.expanduser("~/.config/mihomo")),
+             ensure_trailing_slash(os.path.join(dst_repo_path, "home/.config/mihomo"))])
 
     run_cmd(["arch-chroot", mount_point, os.path.join("/opt", repo_name, "install_arch.sh")])
 
