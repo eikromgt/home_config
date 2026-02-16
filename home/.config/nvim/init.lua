@@ -104,6 +104,10 @@ import numpy
 import random
 ]]
 
+local leetcodeGoBeforeInjection = [[
+package main
+]]
+
 --==============================================================================
 -- Keyboard Shortcuts and Mappings
 --==============================================================================
@@ -761,6 +765,7 @@ require("lazy").setup({
 
             vim.lsp.enable("pylsp")
             vim.lsp.enable("clangd")
+            vim.lsp.enable("gopls")
             vim.lsp.enable("lua_ls")
             vim.lsp.enable("bashls")
             vim.lsp.enable("yamlls")
@@ -904,7 +909,8 @@ require("lazy").setup({
                 },
                 injector = {
                     ["cpp"] = { before =  { leetcodeCppBeforeInjection }},
-                    ["python3"] = { before =  { leetcodePythonBeforeInjection }}
+                    ["python3"] = { before =  { leetcodePythonBeforeInjection }},
+                    ["go"] = { before =  { leetcodeGoBeforeInjection }},
                 }
             })
 
