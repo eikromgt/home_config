@@ -77,7 +77,7 @@ function install_rootfs() {
     pacman -Syyu --noconfirm
     pacman -S --needed --noconfirm man-db man-pages texinfo \
         arch-install-scripts efibootmgr \
-        base-devel clang lldb llvm python cmake typst \
+        base-devel clang lldb llvm python cmake typst go gopls \
         neovim tree-sitter-cli lua-language-server yaml-language-server python-lsp-server \
         autopep8 python-pyflakes python-pycodestyle python-rope python-pandas \
         bash-language-server shellcheck shfmt \
@@ -129,13 +129,22 @@ function install_rootfs() {
     INFO "Generate GRUB configuration"
     grub-mkconfig -o /boot/grub/grub.cfg
 
+    if passwd -S root 2>/dev/null | grep -q " NP "; then
+        INFO "Please set the password for root"
+        passwd
+    else
+        INFO "root password is already set -- skipping"
+    fi
+
+    if passwd -S "${NEW_USER}" 2>/dev/null | grep -q " NP "; then
+        INFO "Please set the password for user: ${NEW_USER}"
+        passwd "${NEW_USER}"
+    else
+        INFO "${NEW_USER} password is already set -- skipping"
+    fi
+
     INFO "Installation done"
 
-    INFO "Please set the password for root"
-    passwd
-
-    INFO "Please set the password for user: ${NEW_USER}"
-    passwd "${NEW_USER}"
 }
 
 
