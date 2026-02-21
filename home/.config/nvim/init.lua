@@ -891,8 +891,15 @@ require("lazy").setup({
     --==============================================================================
     { "kawre/leetcode.nvim", lazy = vim.fn.argv()[1] ~= "leetcode",
         dependencies = { "nvim-telescope/telescope.nvim", "MunifTanjim/nui.nvim", "nvim-treesitter/nvim-treesitter",
-            "rcarriga/nvim-notify", "nvim-tree/nvim-web-devicons", "3rd/image.nvim", },
+            "rcarriga/nvim-notify", "nvim-tree/nvim-web-devicons", "3rd/image.nvim", "github/copilot.vim"},
         config = function()
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = "leetcode.nvim",
+                callback = function()
+                    vim.cmd("Copilot disable")
+                end,
+            })
+
             require("leetcode").setup({
                 arg = "leetcode",
                 lang = "golang",
