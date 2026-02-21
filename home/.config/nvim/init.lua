@@ -321,6 +321,7 @@ require("lazy").setup({
             })
         end
     },
+    { "3rd/image.nvim", config = true },
 
     --==============================================================================
     -- Window
@@ -890,11 +891,11 @@ require("lazy").setup({
     --==============================================================================
     { "kawre/leetcode.nvim", lazy = vim.fn.argv()[1] ~= "leetcode",
         dependencies = { "nvim-telescope/telescope.nvim", "MunifTanjim/nui.nvim", "nvim-treesitter/nvim-treesitter",
-            "rcarriga/nvim-notify", "nvim-tree/nvim-web-devicons", },
+            "rcarriga/nvim-notify", "nvim-tree/nvim-web-devicons", "3rd/image.nvim", },
         config = function()
             require("leetcode").setup({
                 arg = "leetcode",
-                image_support = true,
+                lang = "go",
                 cn = {
                     enabled = true,
                     translator = false,
