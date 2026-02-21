@@ -5,10 +5,10 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStartPre=/usr/bin/bash -euxo pipefail -c ' \
-    wget -U "Mozilla/6.0" -O %h/.cache/vendor.yaml.download \
-    \'https://v1.xdollar.top/link/r3TK79md0jvu1U5OJqup5Oi2THpWrAxP6Xlp?clash=2&rate=false\' \
-    && cp %h/.cache/vendor.yaml.download %h/.config/mihomo/vendor.yaml'
+#ExecStartPre=/usr/bin/bash -euxo pipefail -c ' \
+#    wget -U "Mozilla/6.0" -O %h/.cache/vendor.yaml.download \
+#    \'https://v2free.net/link/r3TK79md0jvu1U5OJqup5Oi2THpWrAxP6Xlp?clash=2&rate=false\' \
+#    && cp %h/.cache/vendor.yaml.download %h/.config/mihomo/vendor.yaml'
 ExecStart=/usr/bin/bash -euxo pipefail -c 'yq eval-all \
     "select(fileIndex==0) as \$vendor | \
     select(fileIndex==1) as \$override | \

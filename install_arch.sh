@@ -62,8 +62,9 @@ function install_home() {
         xone-dkms proton-ge-custom-bin
     cd "${TMP_PATH}"
 
-    INFO "Setup user systemd services"
-    systemctl --user enable update-vpn.timer
+    # NOTE: The mihomo configuration need manual installation because the encryption of vendor file.
+    #INFO "Setup user systemd services"
+    #systemctl --user enable update-vpn.timer
 }
 
 function install_rootfs() {
