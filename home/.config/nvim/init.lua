@@ -816,15 +816,7 @@ require("lazy").setup({
     { "mfussenegger/nvim-dap",
         config = function()
             local dap = require("dap")
-            local dap_vscode = require("dap.ext.vscode")
-
             require("overseer").enable_dap()
-
-            dap_vscode.json_decode = require("overseer.json").decode
-
-            if vim.fn.filereadable(".vscode/launch.json") then
-                dap_vscode.load_launchjs(nil, { codelldb = { "c", "cpp", "glsl" }})
-            end
 
             dap.adapters.codelldb = {
                 type = "server",
@@ -902,6 +894,7 @@ require("lazy").setup({
         config = function()
             require("leetcode").setup({
                 arg = "leetcode",
+                image_support = true,
                 cn = {
                     enabled = true,
                     translator = false,
