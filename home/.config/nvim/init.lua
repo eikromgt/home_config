@@ -895,7 +895,7 @@ require("lazy").setup({
         config = function()
             require("leetcode").setup({
                 arg = "leetcode",
-                lang = "go",
+                lang = "golang",
                 cn = {
                     enabled = true,
                     translator = false,
