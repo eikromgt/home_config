@@ -1,6 +1,9 @@
 {
-  "DownloadDirectory": "/home/${user_name}/dl",
-  "PromptForDownloadLocation": false,
-  "ForceDarkModeEnabled": true,
-  "DefaultZoomLevel": 2
+    "DownloadDirectory": "/home/${user_name}/dl",
+    "PromptForDownloadLocation": false,
+    "ExtensionInstallForcelist": [
+        "ohahllgiabjaoigichmmfljhkcfikeof",
+        "pflnpcinjbcfefgbejjfanemlgcfjbna",
+        "hfjbmagddngcpeloejdejnfgbamkjaeg"
+    ]
 }
