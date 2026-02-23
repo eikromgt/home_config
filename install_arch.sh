@@ -65,6 +65,9 @@ function install_home() {
     # NOTE: The mihomo configuration need manual installation because the encryption of vendor file.
     #INFO "Setup user systemd services"
     #systemctl --user enable update-vpn.timer
+
+    INFO "Initialize neovim"
+    nvim --headless +qa
 }
 
 function install_rootfs() {

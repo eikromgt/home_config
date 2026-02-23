@@ -106,6 +106,18 @@ import random
 
 local leetcodeGoBeforeInjection = [[
 package main
+
+import (
+    "strings"
+    "math"
+    "math/bits"
+)
+
+type TreeNode struct {
+  Val int
+  Left *TreeNode
+  Right *TreeNode
+}
 ]]
 
 --==============================================================================
@@ -911,7 +923,7 @@ require("lazy").setup({
                 injector = {
                     ["cpp"] = { before =  { leetcodeCppBeforeInjection }},
                     ["python3"] = { before =  { leetcodePythonBeforeInjection }},
-                    ["go"] = { before =  { leetcodeGoBeforeInjection }},
+                    ["golang"] = { before =  { leetcodeGoBeforeInjection }},
                 }
             })
 
