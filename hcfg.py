@@ -111,8 +111,8 @@ def install_arch(task):
     run_cmd(["rsync", "-a", "--exclude=.git",
              ensure_trailing_slash(src_repo_path),
              ensure_trailing_slash(dst_repo_path)])
-    run_cmd(["rsync", "-av", "--ignore-existing",
-             ensure_trailing_slash(os.path.expanduser("~/.config/mihomo")),
+    run_cmd(["rsync", "-av",
+             ensure_trailing_slash("/home/beanopy/.config/mihomo"),
              ensure_trailing_slash(os.path.join(dst_repo_path, "home/.config/mihomo"))])
 
     run_cmd(["arch-chroot", mount_point, os.path.join("/opt", repo_name, "install_arch.sh")])
