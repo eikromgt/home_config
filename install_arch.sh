@@ -97,7 +97,7 @@ function install_rootfs() {
         kitty dolphin chromium zathura zathura-pdf-poppler \
         fcitx5-im fcitx5-chinese-addons fcitx5-nord fcitx5-pinyin-zhwiki \
         arm-none-eabi-gcc arm-none-eabi-gdb assimp glfw stb \
-        chntpw docker github-cli \
+        chntpw docker github-cli wireshark-qt \
         kicad rpi-imager steam lib32-mesa gamemode gamescope
 
     INFO "Setup systemd services"
@@ -111,6 +111,10 @@ function install_rootfs() {
     chmod 440 "/etc/sudoers.d/${NEW_USER}"
     runuser -u "${NEW_USER}" -- "${SCRIPT_PATH}" home
     rm "/etc/sudoers.d/${NEW_USER}"
+
+    echo "%wheel ALL=(ALL:ALL) ALL" > "/etc/sudoers.d/wheel"
+    chmod 440 "/etc/sudoers.d/wheel"
+    usermod -aG wireshark,gamemode,docker,video,uucp,input,audio,wheel "${NEW_USER}"
 
     INFO "Setup aur/user related systemd services"
     systemctl disable getty@tty2.service
