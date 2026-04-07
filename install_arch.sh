@@ -81,7 +81,7 @@ function install_rootfs() {
     pacman -Syyu --noconfirm
     pacman -S --needed --noconfirm man-db man-pages texinfo \
         arch-install-scripts efibootmgr \
-        base-devel clang lldb llvm python cmake typst go gopls \
+        base-devel ccache clang lldb llvm python cmake typst tinymist websocat go gopls \
         neovim tree-sitter-cli lua-language-server yaml-language-server python-lsp-server \
         autopep8 python-pyflakes python-pycodestyle python-rope python-pandas \
         bash-language-server shellcheck shfmt \
