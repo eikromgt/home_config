@@ -108,6 +108,7 @@ local leetcodeGoBeforeInjection = [[
 package main
 
 import (
+    "fmt"
     "strings"
     "math"
     "math/bits"
@@ -272,7 +273,7 @@ require("lazy").setup({
             require("auto-save").setup({
                 immediate_save = { "QuitPre", "VimSuspend" },
                 defer_save = { "InsertLeave", "TextChanged", "BufLeave", "FocusLost", },
-                debounce_delay = 1000,
+                debounce_delay = 500,
             })
         end
     },
@@ -316,7 +317,7 @@ require("lazy").setup({
     { "HiPhish/rainbow-delimiters.nvim" },
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate",
         config = function()
-            require("nvim-treesitter.configs").setup({
+            require("nvim-treesitter").setup({
                 ensure_installed = { "cmake", "hjson", },
                 additional_vim_regex_highlighting = false,
                 auto_install = true,
@@ -333,7 +334,7 @@ require("lazy").setup({
             })
         end
     },
-    { "3rd/image.nvim", config = true },
+    { "3rd/image.nvim", enabled = false },
 
     --==============================================================================
     -- Window
@@ -695,7 +696,6 @@ require("lazy").setup({
                     "cortex-debug",
                     "glsl_analyzer",
                     "neocmakelsp",
-                    "tinymist"
                 }
             }
         end
@@ -721,16 +721,6 @@ require("lazy").setup({
                                     schemas = require("schemastore").json.schemas(),
                                     validate = { enable = true },
                                 },
-                            }
-                        }
-                    end,
-                    ["tinymist"] = function()
-                        vim.lsp.config.tinymist = {
-                            offset_encoding = "utf-8",
-                            settings     = {
-                                formatterMode = "typstyle",
-                                exportPdf = "never",
-                                semanticTokens = "disable"
                             }
                         }
                     end,
@@ -776,10 +766,20 @@ require("lazy").setup({
                 }
             }
 
+            vim.lsp.config.tinymist = {
+                offset_encoding = "utf-8",
+                settings     = {
+                    formatterMode = "typstyle",
+                    exportPdf = "onSave",
+                    semanticTokens = "disable"
+                }
+            }
+
             vim.lsp.enable("pylsp")
             vim.lsp.enable("clangd")
             vim.lsp.enable("gopls")
             vim.lsp.enable("lua_ls")
+            vim.lsp.enable("tinymist")
             vim.lsp.enable("bashls")
             vim.lsp.enable("yamlls")
         end
@@ -818,8 +818,15 @@ require("lazy").setup({
     { "chomosuke/typst-preview.nvim", ft = "typst", version = '1.*',
         config = function()
             require("typst-preview").setup({
-                invert_colors = '{"rest": "auto","image": "never"}'
+                open_cmd = "chromium --new-window %s",
+                invert_colors = '{"rest": "auto","image": "never"}',
+                dependencies_bin = {
+                    ["tinymist"] = "tinymist",
+                    ["websocat"] = "websocat",
+                },
             })
+
+            vim.keymap.set("n", "<Leader>tt", "<Cmd>TypstPreviewToggle<CR>",     { noremap = true })
         end
     },
 
@@ -877,7 +884,7 @@ require("lazy").setup({
                 winbar = {
                     show = true,
                     sections = { "console", "watches", "exceptions", "breakpoints", "threads", "repl" },
-                    default_section = "threads",
+                    default_section = "console",
                 },
             })
 
