@@ -104,6 +104,7 @@ def install_arch(task):
         logging.info("Writing fstab to %s", fstab_path)
         f.write(fstab)
 
+    home_dir = "/home/beanopy"
     src_repo_path = os.path.dirname(os.path.abspath(__file__))
     repo_name = os.path.basename(src_repo_path)
     dst_repo_path = os.path.join(mount_point, "opt", repo_name)
@@ -111,9 +112,27 @@ def install_arch(task):
     run_cmd(["rsync", "-a", "--exclude=.git",
              ensure_trailing_slash(src_repo_path),
              ensure_trailing_slash(dst_repo_path)])
-    run_cmd(["rsync", "-av",
-             ensure_trailing_slash("/home/beanopy/.config/mihomo"),
+    run_cmd(["rsync", "-a",
+             ensure_trailing_slash(os.path.join(home_dir, ".config/mihomo")),
              ensure_trailing_slash(os.path.join(dst_repo_path, "home/.config/mihomo"))])
+
+    run_cmd(["rsync", "-a", os.path.join(home_dir, ".config/chromium/Local State"),
+             ensure_trailing_slash(os.path.join(dst_repo_path, "home/.config/chromium"))])
+    run_cmd(["rsync", "-a",
+             "--include=Preferences",
+             "--include=Secure Preferences",
+             "--include=Bookmarks",
+             "--include=Bookmarks.bak",
+             "--include=Extensions/***",
+             "--include=Extension State/***",
+             "--include=Local Extension Settings/***",
+             "--include=Login Data*",
+             "--include=Cookies*",
+             "--include=Web Data",
+             "--exclude=*",
+             ensure_trailing_slash(os.path.join(home_dir, ".config/chromium/Default")),
+             ensure_trailing_slash(os.path.join(dst_repo_path, "home/.config/chromium/Default")),
+             ])
 
     run_cmd(["arch-chroot", mount_point, os.path.join("/opt", repo_name, "install_arch.sh")])
 
