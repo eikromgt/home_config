@@ -317,7 +317,8 @@ require("lazy").setup({
     { "HiPhish/rainbow-delimiters.nvim" },
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate",
         config = function()
-            local languages = { "cpp", "python", "cmake", "hjson", "glsl" }
+            local languages = { "cpp", "python", "go", "cmake", "typst", "javascript",
+            "html", "css", "hjson", "glsl", }
 
             require("nvim-treesitter").install(languages)
             vim.api.nvim_create_autocmd("FileType", {
