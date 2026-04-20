@@ -9,3 +9,4 @@ set default-bg "rgba(29, 32, 33, 0.95)"
 set recolor-reverse-video true
 set database sqlite
 set selection-clipboard clipboard
+

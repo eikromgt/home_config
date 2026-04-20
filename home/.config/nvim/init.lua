@@ -38,7 +38,7 @@ vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 
---vim.lsp.set_log_level("off")
+vim.lsp.log.set_level("off")
 
 --==============================================================================
 -- Global Variables
@@ -317,21 +317,7 @@ require("lazy").setup({
     { "HiPhish/rainbow-delimiters.nvim" },
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate",
         config = function()
-            require("nvim-treesitter").setup({
-                ensure_installed = { "cmake", "hjson", },
-                additional_vim_regex_highlighting = false,
-                auto_install = true,
-                highlight = {
-                    enable = true,
-                    disable = function(_, buf)
-                        local max_filesize = 5 * 1024 * 1024
-                        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-                        if ok and stats and stats.size > max_filesize then
-                            return true
-                        end
-                    end,
-                },
-            })
+            require("nvim-treesitter").install({ "cmake", "hjson", })
         end
     },
     { "3rd/image.nvim", enabled = false },
@@ -394,7 +380,7 @@ require("lazy").setup({
     --==============================================================================
     -- Tool
     --==============================================================================
-    { "nvim-telescope/telescope.nvim", branch = "0.1.x",
+    { "nvim-telescope/telescope.nvim", version = "*",
         dependencies = { "nvim-lua/plenary.nvim" },
         config = function()
             local telescope = require("telescope.builtin")
@@ -815,7 +801,7 @@ require("lazy").setup({
             })
         end
     },
-    { "chomosuke/typst-preview.nvim", ft = "typst", version = '1.*',
+    { "chomosuke/typst-preview.nvim", ft = "typst", version = '*',
         config = function()
             require("typst-preview").setup({
                 open_cmd = "chromium --new-window %s",
