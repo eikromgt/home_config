@@ -244,6 +244,21 @@ vim.keymap.set({ "n" }, "<Leader>x", "<Cmd>Lazy<CR>", { noremap = true })
 
 require("lazy").setup({
     --==============================================================================
+    -- Enviroment
+    --==============================================================================
+    { "NotAShelf/direnv.nvim",
+        config = function()
+            require("direnv").setup({
+                autoload_direnv = true,
+                statusline = {
+                    enabled = true,
+                    icon = "󱚟",
+                },
+            })
+        end,
+    },
+
+    --==============================================================================
     -- Editor
     --==============================================================================
     { "vim-scripts/ReplaceWithRegister" },
@@ -356,7 +371,8 @@ require("lazy").setup({
         end
     },
     { "nvim-lualine/lualine.nvim",
-        dependencies = { "nvim-tree/nvim-web-devicons", "yavorski/lualine-macro-recording.nvim"  },
+        dependencies = { "nvim-tree/nvim-web-devicons", "yavorski/lualine-macro-recording.nvim",
+            "direnv/direnv.nvim" },
         config = function()
             require("lualine").setup({
                 options = {
@@ -373,7 +389,12 @@ require("lazy").setup({
                 },
 
                 sections = {
-                    lualine_a = { "branch", "diff", "lsp_status", "diagnostics" },
+                    lualine_a = { "branch", "diff", "lsp_status",
+                        function()
+                            return require("direnv").statusline()
+                        end,
+                        "diagnostics",
+                    },
                     lualine_b = { "filename", "macro_recording" },
                     lualine_c = { "windows" },
                     lualine_x = { "overseer", "encoding", "fileformat", "filetype" },
