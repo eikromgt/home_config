@@ -57,7 +57,7 @@ function install_home() {
 
     INFO "Install aur packages"
     yay -S --needed --noconfirm grub-silent swapspace zramswap \
-        mihomo pacman-cleanup-hook python-west \
+        mihomo flclash-bin pacman-cleanup-hook python-west \
         bdf-unifont fcitx5-pinyin-moegirl nerd-fonts-noto-sans-mono nerd-fonts-sarasa-term \
         xone-dkms proton-ge-custom-bin
     cd "${TMP_PATH}"
@@ -83,7 +83,7 @@ function install_rootfs() {
         arch-install-scripts efibootmgr \
         base-devel ccache clang lldb llvm python cmake typst tinymist websocat go gopls \
         neovim tree-sitter-cli lua-language-server yaml-language-server python-lsp-server \
-        autopep8 python-pyflakes python-pycodestyle python-rope python-pandas \
+        autopep8 python-pyflakes python-pycodestyle python-rope python-pandas python-uv \
         bash-language-server shellcheck shfmt \
         dhcpcd networkmanager wpa_supplicant ethtool inetutils \
         bluez bluez-utils pulsemixer pipewire-alsa pipewire-jack pipewire-pulse udiskie \
@@ -97,7 +97,7 @@ function install_rootfs() {
         kitty dolphin chromium zathura zathura-pdf-poppler \
         fcitx5-im fcitx5-chinese-addons fcitx5-nord fcitx5-pinyin-zhwiki \
         arm-none-eabi-gcc arm-none-eabi-gdb assimp glfw stb \
-        chntpw docker github-cli wireshark-qt \
+        chntpw docker github-cli wireshark-qt postgresql \
         kicad rpi-imager steam lib32-mesa gamemode gamescope
 
     INFO "Setup systemd services"
