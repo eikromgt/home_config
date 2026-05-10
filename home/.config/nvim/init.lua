@@ -784,17 +784,6 @@ require("lazy").setup({
                 },
             }
 
-            -- TODO: deprecate
-            --vim.lsp.config.pylsp = {
-            --    settings = { pylsp = {
-            --        plugins = {
-            --            pycodestyle = {
-            --                maxLineLength = 100,
-            --            }
-            --        }
-            --    }},
-            --}
-
             vim.lsp.config.lua_ls = {
                 settings     = {
                     Lua = { diagnostics = { globals = { "vim" } } }
@@ -818,37 +807,6 @@ require("lazy").setup({
             vim.lsp.enable({"tinymist", "bashls"})
             vim.lsp.enable({"html", "cssls", "yamlls", "dockerls", "jsonls"})
             vim.lsp.enable({"neocmake", "glsl_analyzer", "systemd_lsp", "emmet_language_server", "djlsp"})
-        end
-    },
-    { "lervag/vimtex", enabled = false, -- TODO: deprecate
-        ft = "tex",
-        init = function()
-            vim.g.vimtex_mappings_prefix = "<Leader>e"
-            vim.g.vimtex_view_method = "zathura"
-            vim.g.vimtex_compiler_method = "latexmk"
-            vim.g.vimtex_compiler_latexrun_engines = { _ = "xelatex", }
-            vim.g.vimtex_compiler_latexmk_engines = { _ = "-xelatex", }
-            vim.g.vimtex_quickfix_mode = 0
-
-            -- auto sync pdf viewer position
-            local vimtex_view_timer = nil
-            local vimtex_view_debounce = 100
-            local vimtex_view_last_line = -1
-            vim.api.nvim_create_autocmd("CursorMoved", {
-                pattern = "*.tex",
-                callback = function()
-                    local line = vim.fn.line(".")
-                    if vimtex_view_timer or line == vimtex_view_last_line then
-                        return
-                    end
-                    vimtex_view_last_line = line
-
-                    vimtex_view_timer = vim.defer_fn(function()
-                        vim.cmd("VimtexView")
-                        vimtex_view_timer = nil
-                    end, vimtex_view_debounce)
-                end
-            })
         end
     },
     { "chomosuke/typst-preview.nvim", ft = "typst", version = '*',
