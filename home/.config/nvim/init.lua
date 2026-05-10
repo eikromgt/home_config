@@ -575,6 +575,19 @@ require("lazy").setup({
             vim.keymap.set("n", "<Leader>tl", "<Cmd>LiveServerToggle<CR>",   { noremap = true })
         end
     },
+    { "kdheepak/lazygit.nvim", lazy = true,
+        dependencies = { "nvim-lua/plenary.nvim", },
+        cmd = {
+            "LazyGit",
+            "LazyGitConfig",
+            "LazyGitCurrentFile",
+            "LazyGitFilter",
+            "LazyGitFilterCurrentFile",
+        },
+        keys = {
+            { "<leader>lg", "<Cmd>LazyGit<CR>", desc = "LazyGit" }
+        }
+    },
 
     --==============================================================================
     -- Git
