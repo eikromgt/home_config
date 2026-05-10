@@ -12,7 +12,7 @@ vim.opt.shiftwidth      = 4
 
 vim.opt.termguicolors   = true
 vim.opt.cursorline      = true
-vim.opt.signcolumn      = "no"
+vim.opt.signcolumn      = "yes:1"
 vim.opt.wrap            = false
 vim.opt.cmdheight       = 0
 vim.opt.showmode        = false
@@ -38,15 +38,11 @@ vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 
-vim.lsp.log.set_level("off")
+--vim.lsp.log.set_level("off")
 
 --==============================================================================
 -- Global Variables
 --==============================================================================
-PluginPath      = vim.fn.stdpath("data") .. "/lazy"
-CodePath        = "~/.config/Code"
-CodeSnippets    = CodePath .. "/User/snippets/common.code-snippets"
-
 local leetcodeCppBeforeInjection = [[
 #include <iostream>
 #include <string>
@@ -127,23 +123,25 @@ type TreeNode struct {
 vim.keymap.set("n", "<Space>", "<Nop>",  { noremap = true })
 vim.g.mapleader         = " "
 
-vim.keymap.set("n", "<A-v>",   "<C-v>",  { noremap = true })     vim.keymap.set("n", "<C-v>",  "<Nop>", { noremap = true })
+vim.keymap.set("n", "<A-v>",   "<C-v>",  { noremap = true })
 vim.keymap.set("i", "<C-BS>",  "<C-w>",  { noremap = true })
 
-vim.keymap.set("n", "<A-W>",   "<C-w>c", { noremap = true })     vim.keymap.set("n", "<C-w>c", "<Nop>", { noremap = true })
-vim.keymap.set("n", "<A-S>",   "<C-w>v", { noremap = true })     vim.keymap.set("n", "<C-w>v", "<Nop>", { noremap = true })
-vim.keymap.set("n", "<A-l>",   "<C-w>l", { noremap = true })     vim.keymap.set("n", "<C-w>l", "<Nop>", { noremap = true })
-vim.keymap.set("n", "<A-h>",   "<C-w>h", { noremap = true })     vim.keymap.set("n", "<C-w>h", "<Nop>", { noremap = true })
-vim.keymap.set("n", "<A-k>",   "<C-w>k", { noremap = true })     vim.keymap.set("n", "<C-w>k", "<Nop>", { noremap = true })
-vim.keymap.set("n", "<A-j>",   "<C-w>j", { noremap = true })     vim.keymap.set("n", "<C-w>j", "<Nop>", { noremap = true })
-vim.keymap.set("n", "<A-L>",   "<C-w>L", { noremap = true })     vim.keymap.set("n", "<C-w>L", "<Nop>", { noremap = true })
-vim.keymap.set("n", "<A-H>",   "<C-w>H", { noremap = true })     vim.keymap.set("n", "<C-w>H", "<Nop>", { noremap = true })
-vim.keymap.set("n", "<A-K>",   "<C-w>K", { noremap = true })     vim.keymap.set("n", "<C-w>K", "<Nop>", { noremap = true })
-vim.keymap.set("n", "<A-J>",   "<C-w>J", { noremap = true })     vim.keymap.set("n", "<C-w>J", "<Nop>", { noremap = true })
-vim.keymap.set("n", "<A-S-.>", "<C-w>>", { noremap = true })     vim.keymap.set("n", "<C-w>>", "<Nop>", { noremap = true })
-vim.keymap.set("n", "<A-S-,>", "<C-w><", { noremap = true })     vim.keymap.set("n", "<C-w><", "<Nop>", { noremap = true })
-vim.keymap.set("n", "<A-S-=>", "<C-w>+", { noremap = true })     vim.keymap.set("n", "<C-w>+", "<Nop>", { noremap = true })
-vim.keymap.set("n", "<A-S-->", "<C-w>-", { noremap = true })     vim.keymap.set("n", "<C-w>-", "<Nop>", { noremap = true })
+vim.keymap.set("n", "<A-W>",   "<C-w>c", { noremap = true })
+vim.keymap.set("n", "<A-S>",   "<C-w>v", { noremap = true })
+vim.keymap.set("n", "<A-w>",   "<C-w><C-w>", { noremap = true })
+vim.keymap.set("n", "<A-l>",   "<C-w>l", { noremap = true })
+vim.keymap.set("n", "<A-h>",   "<C-w>h", { noremap = true })
+vim.keymap.set("n", "<A-k>",   "<C-w>k", { noremap = true })
+vim.keymap.set("n", "<A-j>",   "<C-w>j", { noremap = true })
+vim.keymap.set("n", "<A-L>",   "<C-w>L", { noremap = true })
+vim.keymap.set("n", "<A-L>",   "<C-w>L", { noremap = true })
+vim.keymap.set("n", "<A-H>",   "<C-w>H", { noremap = true })
+vim.keymap.set("n", "<A-K>",   "<C-w>K", { noremap = true })
+vim.keymap.set("n", "<A-J>",   "<C-w>J", { noremap = true })
+vim.keymap.set("n", "<A-S-.>", "<C-w>>", { noremap = true })
+vim.keymap.set("n", "<A-S-,>", "<C-w><", { noremap = true })
+vim.keymap.set("n", "<A-S-=>", "<C-w>+", { noremap = true })
+vim.keymap.set("n", "<A-S-->", "<C-w>-", { noremap = true })
 
 vim.keymap.set("n", "<Leader>{", "\"oddO{<CR>}<Esc>\"oP=i{",  { noremap = true })
 vim.keymap.set("v", "<Leader>{", "\"odO{<CR>}<Esc>\"oP=i{",   { noremap = true })
@@ -254,6 +252,12 @@ require("lazy").setup({
                     enabled = true,
                     icon = "󱚟",
                 },
+                keybindings = {
+                    allow = "<Leader>da",
+                    deny = "<Leader>dc",
+                    reload = "<Leader>dr",
+                    edit = "<Leader>de",
+                },
             })
         end,
     },
@@ -333,7 +337,7 @@ require("lazy").setup({
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate",
         config = function()
             local languages = { "cpp", "python", "go", "cmake", "typst", "javascript",
-            "html", "css", "hjson", "glsl", }
+            "html", "css", "json", "glsl", }
 
             require("nvim-treesitter").install(languages)
             vim.api.nvim_create_autocmd("FileType", {
@@ -372,8 +376,16 @@ require("lazy").setup({
     },
     { "nvim-lualine/lualine.nvim",
         dependencies = { "nvim-tree/nvim-web-devicons", "yavorski/lualine-macro-recording.nvim",
-            "direnv/direnv.nvim" },
+            "NotAShelf/direnv.nvim" },
         config = function()
+            local function direnv_status()
+                return require("direnv").statusline()
+            end
+
+            local function relative_filepath()
+                return vim.fn.expand("%:.")
+            end
+
             require("lualine").setup({
                 options = {
                     globalstatus = true,
@@ -389,13 +401,8 @@ require("lazy").setup({
                 },
 
                 sections = {
-                    lualine_a = { "branch", "diff", "lsp_status",
-                        function()
-                            return require("direnv").statusline()
-                        end,
-                        "diagnostics",
-                    },
-                    lualine_b = { "filename", "macro_recording" },
+                    lualine_a = { "branch", "diff", "lsp_status", direnv_status, "diagnostics" },
+                    lualine_b = { relative_filepath, "macro_recording" },
                     lualine_c = { "windows" },
                     lualine_x = { "overseer", "encoding", "fileformat", "filetype" },
                     lualine_z = { "selectioncount", "location", },
@@ -497,6 +504,7 @@ require("lazy").setup({
             require("toggleterm").setup({
                 open_mapping        = "<A-`>",
                 autochdir           = true,
+                direction           = "float",
             })
 
             vim.keymap.set({ "n", "t" }, "<A-S-`>", "<Cmd>TermSelect<CR>", { noremap = true })
@@ -562,6 +570,11 @@ require("lazy").setup({
             })
         end
     },
+    { "barrettruth/live-server.nvim",
+        config = function()
+            vim.keymap.set("n", "<Leader>tl", "<Cmd>LiveServerToggle<CR>",   { noremap = true })
+        end
+    },
 
     --==============================================================================
     -- Git
@@ -617,8 +630,10 @@ require("lazy").setup({
     --==============================================================================
     { "L3MON4D3/LuaSnip", version  = "2.*", build = "make install_jsregexp",
         config = function()
+            local code_snippets    = "~/.config/Code/User/snippets/common.code-snippets"
+
             require("luasnip.loaders.from_vscode").load_standalone({
-                path = CodeSnippets,
+                path = code_snippets,
                 lazy = true
             })
         end
@@ -675,7 +690,8 @@ require("lazy").setup({
                 }),
                 sources = cmp.config.sources(
                 {
-                    { name = "nvim_lsp", entry_filter = function(entry, _) return cmp.lsp.CompletionItemKind.Snippet ~= entry:get_kind() end },
+                    --{ name = "nvim_lsp", entry_filter = function(entry, _) return cmp.lsp.CompletionItemKind.Snippet ~= entry:get_kind() end },
+                    { name = "nvim_lsp" },
                     { name = "luasnip" },
                     { name = "path" },
                 }),
@@ -713,6 +729,7 @@ require("lazy").setup({
                     "cortex-debug",
                     "glsl_analyzer",
                     "neocmakelsp",
+                    "systemd-lsp",
                 }
             }
         end
@@ -767,15 +784,16 @@ require("lazy").setup({
                 },
             }
 
-            vim.lsp.config.pylsp = {
-                settings = { pylsp = {
-                    plugins = {
-                        pycodestyle = {
-                            maxLineLength = 100,
-                        }
-                    }
-                }},
-            }
+            -- TODO: deprecate
+            --vim.lsp.config.pylsp = {
+            --    settings = { pylsp = {
+            --        plugins = {
+            --            pycodestyle = {
+            --                maxLineLength = 100,
+            --            }
+            --        }
+            --    }},
+            --}
 
             vim.lsp.config.lua_ls = {
                 settings     = {
@@ -792,16 +810,17 @@ require("lazy").setup({
                 }
             }
 
-            vim.lsp.enable("pylsp")
-            vim.lsp.enable("clangd")
-            vim.lsp.enable("gopls")
-            vim.lsp.enable("lua_ls")
-            vim.lsp.enable("tinymist")
-            vim.lsp.enable("bashls")
-            vim.lsp.enable("yamlls")
+            vim.lsp.config.djlsp = {
+                filetypes = { "htmldjango" },
+            }
+
+            vim.lsp.enable({"clangd", "basedpyright", "ruff", "lua_ls", "gopls", "rust_analyzer", "ts_ls"})
+            vim.lsp.enable({"tinymist", "bashls"})
+            vim.lsp.enable({"html", "cssls", "yamlls", "dockerls", "jsonls"})
+            vim.lsp.enable({"neocmake", "glsl_analyzer", "systemd_lsp", "emmet_language_server", "djlsp"})
         end
     },
-    { "lervag/vimtex",
+    { "lervag/vimtex", enabled = false, -- TODO: deprecate
         ft = "tex",
         init = function()
             vim.g.vimtex_mappings_prefix = "<Leader>e"

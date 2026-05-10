@@ -12,7 +12,17 @@ export ZSH="$HOME/.local/share/oh-my-zsh"
 export HISTSIZE=50000
 export SAVEHIST=100000
 
+alias lg="lazygit"
+
 eval "$(direnv hook zsh)"
+
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	command yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
+	rm -f -- "$tmp"
+}
 
 ZSH_THEME="kolo"
 #PROMPT='%B%F{magenta}%c%f%b %# '
