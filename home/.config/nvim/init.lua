@@ -613,9 +613,9 @@ require("lazy").setup({
     { "hrsh7th/cmp-buffer"                                                  },
     { "hrsh7th/cmp-path"                                                    },
     { "hrsh7th/nvim-cmp",
-        dependencies = { "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer", "L3MON4D3/LuaSnip",
+        dependencies = { "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer",
             "hrsh7th/cmp-nvim-lsp-signature-help", "hrsh7th/cmp-cmdline", "hrsh7th/cmp-calc",
-            "hrsh7th/cmp-nvim-lsp-document-symbol",
+            "hrsh7th/cmp-nvim-lsp-document-symbol",  "saadparwaiz1/cmp_luasnip", "L3MON4D3/LuaSnip",
             "tzachar/cmp-ai", "onsails/lspkind.nvim",
         },
         config = function()
@@ -669,7 +669,7 @@ require("lazy").setup({
                     --{ name = "nvim_lsp", entry_filter = function(entry, _) return cmp.lsp.CompletionItemKind.Snippet ~= entry:get_kind() end },
                     { name = "calc" },
                     { name = "path" },
-                    { name = "cmp-nvim-lsp-signature-hel" },
+                    { name = "nvim_lsp_signature_help" },
                     { name = "nvim_lsp" },
                     { name = "luasnip" },
                 }, {
@@ -700,8 +700,6 @@ require("lazy").setup({
             })
         end
     },
-    { "saadparwaiz1/cmp_luasnip",
-        dependencies = { "L3MON4D3/LuaSnip", "hrsh7th/nvim-cmp" }           },
     { "b0o/schemastore.nvim"                                                },
 
     --==============================================================================
