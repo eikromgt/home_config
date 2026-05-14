@@ -434,61 +434,6 @@ require("lazy").setup({
             vim.keymap.set("n", "<A-S-f>", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
         end
     },
-    { "gelguy/wilder.nvim", build = ":UpdateRemotePlugins",
-        dependencies = { "roxma/nvim-yarp", "romgrk/fzy-lua-native" },
-        config = function()
-            local wilder = require("wilder")
-            wilder.setup({
-                modes       = { ":", "/", "?" },
-            })
-
-            wilder.set_option("pipeline", { wilder.branch(
-                wilder.python_file_finder_pipeline({
-                    file_command = { "fd", "-tf" },
-                    dir_command  = { "fd", "-td" },
-                    debounce     = 100
-                }),
-                wilder.substitute_pipeline({
-                    pipeline    = wilder.python_search_pipeline({
-                        skip_cmdtype_check  = 1,
-                        pattern             = wilder.python_fuzzy_pattern(),
-                    }),
-                    debounce = 100
-                }),
-                wilder.cmdline_pipeline({
-                    fuzzy        = 2,
-                    fuzzy_filter = wilder.lua_fzy_filter(),
-                    hide_in_substitute = true,
-                    debounce     = 100
-                }),
-                wilder.python_search_pipeline({
-                    pattern = wilder.python_fuzzy_pattern(),
-                    debounce = 100
-                })
-            )})
-
-            wilder.set_option("renderer", wilder.renderer_mux({
-                [":"] = wilder.popupmenu_renderer({
-                    highlighter     = { wilder.lua_fzy_highlighter() },
-                    highlights      = { accent = wilder.make_hl("WilderAccent", "Pmenu", {{ a = 1 }, { a = 1 }, { foreground = "#f4468f" }}), },
-                    left = {' ', wilder.popupmenu_devicons()},
-                }),
-                ["/"] = wilder.wildmenu_renderer({
-                    highlighter = wilder.basic_highlighter(),
-                    highlights  = { accent = wilder.make_hl("WilderAccent", "Pmenu", {{ a = 1 }, { a = 1 }, { foreground = "#f4468f" }}), },
-                    left        = {" ", wilder.wildmenu_spinner(), " "},
-                    right       = {" ", wilder.wildmenu_index()},
-                }),
-                ["?"] = wilder.wildmenu_renderer({
-                    highlighter = wilder.basic_highlighter(),
-                    highlights  = { accent = wilder.make_hl("WilderAccent", "Pmenu", {{ a = 1 }, { a = 1 }, { foreground = "#f4468f" }}), },
-                    left        = {" ", wilder.wildmenu_spinner(), " "},
-                    right       = {" ", wilder.wildmenu_index()},
-                }),
-            }))
-        end
-
-    },
     { "nvim-pack/nvim-spectre",
         dependencies = { "nvim-tree/nvim-web-devicons" },
         config = function()
@@ -669,11 +614,15 @@ require("lazy").setup({
     { "hrsh7th/cmp-path"                                                    },
     { "hrsh7th/nvim-cmp",
         dependencies = { "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer", "L3MON4D3/LuaSnip",
-            "tzachar/cmp-ai"
+            "hrsh7th/cmp-nvim-lsp-signature-help", "hrsh7th/cmp-cmdline", "hrsh7th/cmp-calc",
+            "hrsh7th/cmp-nvim-lsp-document-symbol",
+            "tzachar/cmp-ai", "onsails/lspkind.nvim",
         },
         config = function()
             local luasnip = require("luasnip")
             local cmp = require("cmp")
+            local lspkind = require("lspkind")
+
             cmp.setup({
                 snippet = {
                     expand = function(args)
@@ -701,13 +650,53 @@ require("lazy").setup({
                         end
                     end, { "i", "s" }),
                 }),
-                sources = cmp.config.sources(
-                {
+                formatting = {
+                    fields = { "abbr", "icon", "kind", "menu" },
+                    format = lspkind.cmp_format({
+                        maxwidth = {
+                            menu = function() return math.floor(0.45 * vim.o.columns) end,
+                            abbr = function() return math.floor(0.45 * vim.o.columns) end,
+                        },
+                        ellipsis_char = "...",
+                        show_labelDetails = true,
+
+                        before = function (_, vim_item)
+                            return vim_item
+                        end
+                    })
+                },
+                sources = cmp.config.sources({
                     --{ name = "nvim_lsp", entry_filter = function(entry, _) return cmp.lsp.CompletionItemKind.Snippet ~= entry:get_kind() end },
+                    { name = "calc" },
+                    { name = "path" },
+                    { name = "cmp-nvim-lsp-signature-hel" },
                     { name = "nvim_lsp" },
                     { name = "luasnip" },
-                    { name = "path" },
+                }, {
+                    { name = "buffer" },
                 }),
+            })
+
+            cmp.setup.cmdline("/", {
+                sources = cmp.config.sources({
+                    { name = "nvim_lsp_document_symbol" }
+                }, {
+                    { name = "buffer" }
+                })
+            })
+
+            cmp.setup.cmdline(":", {
+                mapping = cmp.mapping.preset.cmdline(),
+                sources = cmp.config.sources({
+                    { name = "path" }
+                }, {
+                    {
+                        name = "cmdline",
+                        option = {
+                            ignore_cmds = { "Man", "!" }
+                        }
+                    }
+                })
             })
         end
     },
