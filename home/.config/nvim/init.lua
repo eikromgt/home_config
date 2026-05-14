@@ -700,7 +700,6 @@ require("lazy").setup({
             })
         end
     },
-    { "b0o/schemastore.nvim"                                                },
 
     --==============================================================================
     -- LSP
@@ -748,16 +747,6 @@ require("lazy").setup({
                             },
                         }
                     end,
-                    ["jsonls"] = function()
-                        vim.lsp.config.jsonls = {
-                            settings = {
-                                json = {
-                                    schemas = require("schemastore").json.schemas(),
-                                    validate = { enable = true },
-                                },
-                            }
-                        }
-                    end,
                     ["verible"] = function()
                         vim.lsp.config.verible = {
                             root_dir     = function() return vim.fn.getcwd() end,
@@ -771,6 +760,7 @@ require("lazy").setup({
         end
     },
     { "neovim/nvim-lspconfig",
+        dependencies = { "b0o/schemastore.nvim" },
         config = function()
             local cmp_nvim_lsp_cap = require("cmp_nvim_lsp").default_capabilities()
 
@@ -801,6 +791,15 @@ require("lazy").setup({
 
             vim.lsp.config.djlsp = {
                 filetypes = { "htmldjango" },
+            }
+
+            vim.lsp.config.jsonls = {
+                settings = {
+                    json = {
+                        schemas = require("schemastore").json.schemas(),
+                        validate = { enable = true },
+                    },
+                }
             }
 
             vim.lsp.enable({"clangd", "basedpyright", "ruff", "lua_ls", "gopls", "rust_analyzer", "ts_ls"})
