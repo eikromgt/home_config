@@ -11,19 +11,12 @@ vim.opt.tabstop         = 4
 vim.opt.shiftwidth      = 4
 
 vim.opt.termguicolors   = true
---vim.opt.cursorline      = true
 vim.opt.signcolumn      = "yes:1"
 vim.opt.wrap            = false
 vim.opt.cmdheight       = 0
 vim.opt.showmode        = false
 vim.opt.splitright      = true
 vim.opt.splitkeep       = "screen"
-vim.opt.guicursor       = table.concat({
-    "n-v-c:block-blinkwait300-blinkon400-blinkoff400",
-    "i-ci:ver25-blinkwait300-blinkon400-blinkoff400",
-    "r-cr:hor20-blinkwait300-blinkon400-blinkoff400",
-    "o:hor50-blinkon400-blinkoff400",
-}, ",")
 
 vim.opt.ignorecase      = true
 vim.opt.smartcase       = true
