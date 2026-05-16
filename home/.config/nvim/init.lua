@@ -11,7 +11,7 @@ vim.opt.tabstop         = 4
 vim.opt.shiftwidth      = 4
 
 vim.opt.termguicolors   = true
-vim.opt.cursorline      = true
+--vim.opt.cursorline      = true
 vim.opt.signcolumn      = "yes:1"
 vim.opt.wrap            = false
 vim.opt.cmdheight       = 0
@@ -190,23 +190,9 @@ vim.keymap.set("n", "<Leader>tb", function()
         vim.notify(filepath .. ":" .. line .. " " .. sha, "info")
     end, { noremap = true, silent = true })
 
--- toggle signcolumn
-vim.keymap.set("n", "<Leader>ts", function()
-        local sc = vim.o.signcolumn
-        if (sc == "no") then sc = "number" else sc = "no" end
-        vim.notify("set signcolumn=" .. sc, "info")
-        vim.opt.signcolumn = sc
-    end,   { noremap = true })
-
 --==============================================================================
 -- Auto Command
 --==============================================================================
-vim.api.nvim_create_autocmd("VimEnter", {
-    callback = function()
-        vim.b.minitrailspace_disable = true;
-    end
-})
-
 vim.api.nvim_create_autocmd("ColorScheme", {
   callback = function()
     vim.api.nvim_set_hl(0, "Pmenu", { bg = "none" })
@@ -410,10 +396,6 @@ require("lazy").setup({
             })
         end
     },
-    { "nvimdev/dashboard-nvim", event = "VimEnter",
-        dependencies = { "nvim-tree/nvim-web-devicons", "nvim-telescope/telescope.nvim" },
-        config = true
-    },
 
     --==============================================================================
     -- Tool
@@ -532,6 +514,14 @@ require("lazy").setup({
         keys = {
             { "<leader>lg", "<Cmd>LazyGit<CR>", desc = "LazyGit" }
         }
+    },
+    {
+        'mikesmithgh/kitty-scrollback.nvim', lazy = true,
+        cmd = { 'KittyScrollbackGenerateKittens', 'KittyScrollbackCheckHealth', 'KittyScrollbackGenerateCommandLineEditing' },
+        event = { 'User KittyScrollbackLaunch' },
+        config = function()
+            require('kitty-scrollback').setup()
+        end,
     },
 
     --==============================================================================

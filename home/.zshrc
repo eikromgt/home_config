@@ -9,8 +9,19 @@
 
 export PATH="$PATH:$HOME/.local/bin"
 export ZSH="$HOME/.local/share/oh-my-zsh"
-export HISTSIZE=50000
-export SAVEHIST=100000
+
+HISTSIZE=200000
+SAVEHIST=200000
+
+setopt HIST_IGNORE_DUPS
+setopt SHARE_HISTORY
+setopt INC_APPEND_HISTORY
+
+ZSH_THEME="kolo"
+#PROMPT='%B%F{magenta}%c%f%b %# '
+ZSH_THEME_GIT_PROMPT_CACHE=1
+
+CASE_SENSITIVE="true"
 
 alias lg="lazygit"
 
@@ -23,12 +34,6 @@ function y() {
 	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
 	rm -f -- "$tmp"
 }
-
-ZSH_THEME="kolo"
-#PROMPT='%B%F{magenta}%c%f%b %# '
-ZSH_THEME_GIT_PROMPT_CACHE=1
-
-CASE_SENSITIVE="true"
 
 zstyle ':omz:plugins:alias-finder' autoload yes # disabled by default
 zstyle ':omz:plugins:alias-finder' longer yes # disabled by default
