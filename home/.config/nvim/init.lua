@@ -266,7 +266,7 @@ require("lazy").setup({
             })
         end
     },
-    { "okuuva/auto-save.nvim",
+    { "okuuva/auto-save.nvim", enabled = false,
         config = function()
             require("auto-save").setup({
                 immediate_save = { "QuitPre", "VimSuspend" },
