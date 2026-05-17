@@ -121,7 +121,7 @@ vim.keymap.set("i", "<C-BS>",  "<C-w>",  { noremap = true })
 
 vim.keymap.set("n", "<A-W>",   "<C-w>c", { noremap = true })
 vim.keymap.set("n", "<A-S>",   "<C-w>v", { noremap = true })
-vim.keymap.set("n", "<A-w>",   "<C-w><C-w>", { noremap = true })
+vim.keymap.set("n", "<A-w>",   "<C-w>", { noremap = true })
 vim.keymap.set("n", "<A-l>",   "<C-w>l", { noremap = true })
 vim.keymap.set("n", "<A-h>",   "<C-w>h", { noremap = true })
 vim.keymap.set("n", "<A-k>",   "<C-w>k", { noremap = true })
@@ -131,10 +131,6 @@ vim.keymap.set("n", "<A-L>",   "<C-w>L", { noremap = true })
 vim.keymap.set("n", "<A-H>",   "<C-w>H", { noremap = true })
 vim.keymap.set("n", "<A-K>",   "<C-w>K", { noremap = true })
 vim.keymap.set("n", "<A-J>",   "<C-w>J", { noremap = true })
-vim.keymap.set("n", "<A-S-.>", "<C-w>>", { noremap = true })
-vim.keymap.set("n", "<A-S-,>", "<C-w><", { noremap = true })
-vim.keymap.set("n", "<A-S-=>", "<C-w>+", { noremap = true })
-vim.keymap.set("n", "<A-S-->", "<C-w>-", { noremap = true })
 
 vim.keymap.set("n", "<Leader>{", "\"oddO{<CR>}<Esc>\"oP=i{",  { noremap = true })
 vim.keymap.set("v", "<Leader>{", "\"odO{<CR>}<Esc>\"oP=i{",   { noremap = true })
@@ -145,9 +141,6 @@ vim.keymap.set("n", "<A-S-a>",   "<Cmd>%!xxd -r<CR>",   { noremap = true })
 vim.keymap.set("n", "<A-p>",   ":e ",                   { noremap = true })
 vim.keymap.set("n", "<A-S-p>", ":",                     { noremap = true })
 vim.keymap.set("n", "<A-z>",   ":vertical help ",       { noremap = true })
-
-vim.keymap.del("n", "gri",     {})
-vim.keymap.del("n", "gra",     {})
 
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(_)
@@ -161,20 +154,20 @@ vim.api.nvim_create_autocmd("LspAttach", {
         vim.keymap.set("n",          "<A-;>",     vim.lsp.buf.implementation, { buffer = bufnr, noremap = true })
         vim.keymap.set("n",          "<A-q>",     vim.lsp.buf.hover,          { buffer = bufnr, noremap = true })
         vim.keymap.set("n",          "<Leader>y", vim.lsp.buf.references,     { buffer = bufnr, noremap = true })
-        vim.keymap.set("n",          "<Leader>r", vim.lsp.buf.rename,         { buffer = bufnr, noremap = true })
+        vim.keymap.set("n",          "<A-S-r>",   vim.lsp.buf.rename,         { buffer = bufnr, noremap = true })
         vim.keymap.set({ "n", "v" }, "<Leader>a", vim.lsp.buf.code_action,    { buffer = bufnr, noremap = true })
     end,
 })
 
 -- copy current filepath to system clipboard
-vim.keymap.set("n", "<Leader>tp", function()
+vim.keymap.set("n", "<Leader>tf", function()
         local filepath = vim.api.nvim_buf_get_name(0)
         vim.fn.setreg("+", filepath)
         vim.notify("filepath copied: " .. filepath, "info")
     end, { noremap = true, silent = true })
 
 -- copy current line git commit hash to system clipboard
-vim.keymap.set("n", "<Leader>tb", function()
+vim.keymap.set("n", "<Leader>tc", function()
         local filepath = vim.api.nvim_buf_get_name(0)
         local line = vim.api.nvim_win_get_cursor(0)[1]
 
@@ -217,7 +210,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 
 vim.opt.runtimepath:prepend(lazypath)
-vim.keymap.set({ "n" }, "<Leader>x", "<Cmd>Lazy<CR>", { noremap = true })
+vim.keymap.set({ "n" }, "<Leader>rx", "<Cmd>Lazy<CR>", { noremap = true })
 
 require("lazy").setup({
     --==============================================================================
@@ -266,12 +259,23 @@ require("lazy").setup({
             })
         end
     },
-    { "okuuva/auto-save.nvim", enabled = false,
+    { "okuuva/auto-save.nvim",
         config = function()
             require("auto-save").setup({
                 immediate_save = { "QuitPre", "VimSuspend" },
                 defer_save = { "InsertLeave", "TextChanged", "BufLeave", "FocusLost", },
-                debounce_delay = 500,
+                debounce_delay = 300,
+                condition = function(buf)
+                    local fn = vim.fn
+                    local utils = require("auto-save.utils.data")
+
+                    if
+                        fn.getbufvar(buf, "&modifiable") == 1 and
+                        utils.not_in(fn.getbufvar(buf, "&filetype"), {"kitty-scrollback", "zsh"}) then
+                        return true
+                    end
+                    return false
+                end,
             })
         end
     },
@@ -414,7 +418,7 @@ require("lazy").setup({
         config = function()
             require("spectre").setup()
 
-            vim.keymap.set("n", "<A-r>", function() require("spectre").toggle() end,
+            vim.keymap.set("n", "<Leader>tr", function() require("spectre").toggle() end,
                 { desc = "Toggle Spectre" })
         end
     },
@@ -440,8 +444,8 @@ require("lazy").setup({
                 }
             })
 
-            vim.keymap.set({ "n", "t" }, "<A-t>", "<Cmd>OverseerRun<CR>", { noremap = true })
-            vim.keymap.set({ "n", "t" }, "<A-S-t>", "<Cmd>OverseerToggle<CR>", { noremap = true })
+            vim.keymap.set({ "n", "t" }, "<Leader>rt", "<Cmd>OverseerRun<CR>", { noremap = true })
+            vim.keymap.set({ "n", "t" }, "<Leader>tt", "<Cmd>OverseerToggle<CR>", { noremap = true })
         end
     },
     { "jemag/telescope-diff.nvim",
@@ -505,7 +509,7 @@ require("lazy").setup({
             "LazyGitFilterCurrentFile",
         },
         keys = {
-            { "<leader>lg", "<Cmd>LazyGit<CR>", desc = "LazyGit" }
+            { "<Leader>rg", "<Cmd>LazyGit<CR>", desc = "LazyGit" }
         }
     },
     {
@@ -542,8 +546,8 @@ require("lazy").setup({
             vim.keymap.set("n", "<Leader>do",   ":DiffviewOpen",          { noremap = true })
             vim.keymap.set("n", "<Leader>dd",   "<Cmd>DiffviewOpen<CR>",  { noremap = true })
             vim.keymap.set("n", "<Leader>dq",   "<Cmd>DiffviewClose<CR>", { noremap = true })
-            vim.keymap.set("n", "<A-]>", "]c",  { noremap = true })     vim.keymap.set("n", "]c", "<Nop>",  { noremap = true })
-            vim.keymap.set("n", "<A-[>", "[c",  { noremap = true })     vim.keymap.set("n", "[c", "<Nop>",  { noremap = true })
+            vim.keymap.set("n", "<A-]>", "]c",  { noremap = true })
+            vim.keymap.set("n", "<A-[>", "[c",  { noremap = true })
         end
     },
     { "lewis6991/gitsigns.nvim",
@@ -562,7 +566,7 @@ require("lazy").setup({
                 },
             }
 
-            vim.keymap.set("n", "<Leader>b", gitsigns.toggle_current_line_blame,  { noremap = true, silent = true })
+            vim.keymap.set("n", "<Leader>tg", gitsigns.toggle_current_line_blame,  { noremap = true, silent = true })
         end
     },
 
@@ -593,10 +597,8 @@ require("lazy").setup({
             require("cmp_nvim_lsp").default_capabilities().textDocument.completion.completionItem.snippetSupport = false
         end
     },
-    { "hrsh7th/cmp-buffer"                                                  },
-    { "hrsh7th/cmp-path"                                                    },
     { "hrsh7th/nvim-cmp",
-        dependencies = { "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer",
+        dependencies = { "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer", "hrsh7th/cmp-path",
             "hrsh7th/cmp-nvim-lsp-signature-help", "hrsh7th/cmp-cmdline", "hrsh7th/cmp-calc",
             "hrsh7th/cmp-nvim-lsp-document-symbol",  "saadparwaiz1/cmp_luasnip", "L3MON4D3/LuaSnip",
             "tzachar/cmp-ai", "onsails/lspkind.nvim",
@@ -649,7 +651,6 @@ require("lazy").setup({
                     })
                 },
                 sources = cmp.config.sources({
-                    --{ name = "nvim_lsp", entry_filter = function(entry, _) return cmp.lsp.CompletionItemKind.Snippet ~= entry:get_kind() end },
                     { name = "calc" },
                     { name = "path" },
                     { name = "nvim_lsp_signature_help" },
@@ -699,7 +700,7 @@ require("lazy").setup({
                 }
             })
 
-            vim.keymap.set({ "n" }, "<Leader>m", "<Cmd>Mason<CR>", { noremap = true })
+            vim.keymap.set({ "n" }, "<Leader>rm", "<Cmd>Mason<CR>", { noremap = true })
         end
     },
     { "WhoIsSethDaniel/mason-tool-installer.nvim",
@@ -751,12 +752,6 @@ require("lazy").setup({
                 capabilities = cmp_nvim_lsp_cap,
             })
 
-            vim.lsp.config.clangd = {
-                init_options = {
-                    fallbackFlags = {"--std=c++23"}
-                },
-            }
-
             vim.lsp.config.lua_ls = {
                 settings     = {
                     Lua = { diagnostics = { globals = { "vim" } } }
@@ -802,7 +797,7 @@ require("lazy").setup({
                 },
             })
 
-            vim.keymap.set("n", "<Leader>tt", "<Cmd>TypstPreviewToggle<CR>",     { noremap = true })
+            vim.keymap.set("n", "<Leader>tp", "<Cmd>TypstPreviewToggle<CR>",     { noremap = true })
         end
     },
 
@@ -847,7 +842,7 @@ require("lazy").setup({
             vim.keymap.set("n", "<A-n>", function() dap.step_over() end,         { noremap = true, silent = true })
             vim.keymap.set("n", "<A-i>", function() dap.step_into() end,         { noremap = true, silent = true })
             vim.keymap.set("n", "<A-o>", function() dap.step_out() end,          { noremap = true, silent = true })
-            vim.keymap.set("n", "<A-b>", function() dap.toggle_breakpoint() end, { noremap = true, silent = true })
+            vim.keymap.set("n", "<Leader>tb", function() dap.toggle_breakpoint() end, { noremap = true, silent = true })
         end
     },
     { "igorlfs/nvim-dap-view",
@@ -869,7 +864,7 @@ require("lazy").setup({
             dap.listeners.before.event_terminated["dap-view-config"] = function() dap_view.close() end
             dap.listeners.before.event_exited["dap-view-config"]     = function() dap_view.close() end
 
-            vim.keymap.set("n", "<A-S-d>", function() dap_view.toggle() end, { noremap = true, silent = true })
+            vim.keymap.set("n", "<Leader>td", function() dap_view.toggle() end, { noremap = true, silent = true })
         end
     },
     { "theHamsta/nvim-dap-virtual-text",
@@ -886,7 +881,7 @@ require("lazy").setup({
     --==============================================================================
     { "kawre/leetcode.nvim", lazy = vim.fn.argv()[1] ~= "leetcode",
         dependencies = { "nvim-telescope/telescope.nvim", "MunifTanjim/nui.nvim", "nvim-treesitter/nvim-treesitter",
-            "rcarriga/nvim-notify", "nvim-tree/nvim-web-devicons", "3rd/image.nvim", "github/copilot.vim"},
+            "rcarriga/nvim-notify", "nvim-tree/nvim-web-devicons", "3rd/image.nvim", },
         config = function()
             vim.api.nvim_create_autocmd("FileType", {
                 pattern = "leetcode.nvim",
