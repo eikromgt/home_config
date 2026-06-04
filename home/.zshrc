@@ -16,6 +16,7 @@ SAVEHIST=200000
 setopt HIST_IGNORE_DUPS
 setopt SHARE_HISTORY
 setopt INC_APPEND_HISTORY
+setopt COMPLETE_ALIASES
 
 ZSH_THEME="kolo"
 #PROMPT='%B%F{magenta}%c%f%b %# '
@@ -24,6 +25,7 @@ ZSH_THEME_GIT_PROMPT_CACHE=1
 CASE_SENSITIVE="true"
 
 alias lg="lazygit"
+alias cssh='TERM=xterm-256color ct autossh -M 0 -t'
 
 eval "$(direnv hook zsh)"
 
