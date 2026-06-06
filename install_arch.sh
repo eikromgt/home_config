@@ -88,7 +88,7 @@ function install_rootfs() {
         vscode-html-languageserver vscode-css-languageserver vscode-json-languageserver \
         rust-analyzer \
         shellcheck shfmt \
-        dhcpcd networkmanager wpa_supplicant ethtool inetutils \
+        dhcpcd networkmanager wpa_supplicant ethtool inetutils wireless-regdb \
         bluez bluez-utils pulsemixer pipewire-alsa pipewire-jack pipewire-pulse udiskie \
         rsync 7zip fd fzf wget git openssh zsh go-yq \
         htop trash-cli yazi lazygit screen kmscon \
