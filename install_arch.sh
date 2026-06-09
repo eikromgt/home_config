@@ -90,7 +90,7 @@ function install_rootfs() {
         shellcheck shfmt \
         dhcpcd networkmanager wpa_supplicant ethtool inetutils wireless-regdb \
         bluez bluez-utils pulsemixer pipewire-alsa pipewire-jack pipewire-pulse udiskie \
-        rsync 7zip fd fzf wget git openssh zsh go-yq \
+        rsync 7zip fd fzf wget git openssh zsh go-yq direnv \
         htop trash-cli yazi lazygit screen kmscon \
         nvidia-open nvidia-utils libva-nvidia-driver \
         hyprland uwsm hypridle xdg-desktop-portal-hyprland xorg-xwayland wl-clipboard \
