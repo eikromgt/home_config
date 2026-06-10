@@ -57,11 +57,12 @@ function install_home() {
 
     INFO "Install aur packages"
     yay -S --needed --noconfirm grub-silent swapspace zramswap \
-        basedpyright-bin \
-        mihomo flclash-bin pacman-cleanup-hook python-west \
+        mihomo flclash-bin pacman-cleanup-hook \
         bdf-unifont fcitx5-pinyin-moegirl nerd-fonts-noto-sans-mono nerd-fonts-sarasa-term \
         xone-dkms proton-ge-custom-bin
     cd "${TMP_PATH}"
+
+    uv tool install basedpyright
 
     # NOTE: The mihomo configuration need manual installation because the encryption of vendor file.
     #INFO "Setup user systemd services"
@@ -83,7 +84,7 @@ function install_rootfs() {
     pacman -S --needed --noconfirm man-db man-pages texinfo \
         arch-install-scripts efibootmgr \
         base-devel ccache clang lldb llvm python cmake typst tinymist websocat go gopls \
-        neovim tree-sitter-cli lua-language-server yaml-language-server ruff python-uv \
+        neovim tree-sitter-cli lua-language-server yaml-language-server python-uv \
         bash-language-server typescript-language-server dockerfile-language-server \
         vscode-html-languageserver vscode-css-languageserver vscode-json-languageserver \
         rust-analyzer \
