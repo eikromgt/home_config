@@ -99,7 +99,7 @@ function install_rootfs() {
         adobe-source-code-pro-fonts adobe-source-han-sans-cn-fonts \
         noto-fonts-emoji otf-font-awesome ttf-nerd-fonts-symbols-mono \
         kitty dolphin chromium zathura zathura-pdf-poppler \
-        fcitx5-im fcitx5-chinese-addons fcitx5-nord fcitx5-pinyin-zhwiki \
+        fcitx5-im fcitx5-rime rime-pinyin-zhwiki \
         arm-none-eabi-gcc arm-none-eabi-gdb assimp glfw stb \
         chntpw docker github-cli wireshark-qt postgresql \
         kicad rpi-imager steam lib32-mesa gamemode gamescope

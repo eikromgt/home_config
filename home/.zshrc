@@ -9,6 +9,8 @@
 
 export PATH="$PATH:$HOME/.local/bin"
 export ZSH="$HOME/.local/share/oh-my-zsh"
+export EDITOR=helix
+export VISUAL=helix
 
 HISTSIZE=200000
 SAVEHIST=200000
@@ -47,3 +49,4 @@ plugins=(sudo zsh-autosuggestions zsh-syntax-highlighting zsh-output-highlightin
     copypath cp fzf)
 
 source $ZSH/oh-my-zsh.sh
+
