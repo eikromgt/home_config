@@ -57,7 +57,7 @@ function install_home() {
 
     INFO "Install aur packages"
     yay -S --needed --noconfirm grub-silent swapspace zramswap \
-        mihomo-bin pacman-cleanup-hook \
+        mihomo-bin pacman-cleanup-hook rime-ice-pinyin-git \
         bdf-unifont nerd-fonts-noto-sans-mono nerd-fonts-sarasa-term \
         xone-dkms proton-ge-custom-bin
     cd "${TMP_PATH}"
@@ -99,7 +99,7 @@ function install_rootfs() {
         adobe-source-code-pro-fonts adobe-source-han-sans-cn-fonts \
         noto-fonts-emoji otf-font-awesome ttf-nerd-fonts-symbols-mono \
         kitty dolphin chromium zathura zathura-pdf-poppler \
-        fcitx5-im fcitx5-rime rime-pinyin-zhwiki \
+        fcitx5-im fcitx5-rime \
         arm-none-eabi-gcc arm-none-eabi-gdb assimp glfw stb \
         chntpw docker github-cli wireshark-qt postgresql \
         kicad rpi-imager steam lib32-mesa gamemode gamescope
