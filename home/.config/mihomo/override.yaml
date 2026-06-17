@@ -1,3 +1,5 @@
+external-controller: 0.0.0.0:9090
+external-ui: /usr/share/metacubexd
 geox-url:
   geoip: "https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/geoip.dat"
   geosite: "https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geosite.dat"
