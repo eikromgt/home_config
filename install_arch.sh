@@ -57,7 +57,7 @@ function install_home() {
 
     INFO "Install aur packages"
     yay -S --needed --noconfirm grub-silent swapspace zramswap \
-        mihomo-bin pacman-cleanup-hook rime-ice-pinyin-git \
+        mihomo-bin pacman-cleanup-hook rime-ice-pinyin-git metacubexg-bin \
         bdf-unifont nerd-fonts-noto-sans-mono nerd-fonts-sarasa-term \
         xone-dkms proton-ge-custom-bin
     cd "${TMP_PATH}"
