@@ -444,8 +444,8 @@ require("lazy").setup({
                 }
             })
 
-            vim.keymap.set({ "n", "t" }, "<Leader>rt", "<Cmd>OverseerRun<CR>", { noremap = true })
-            vim.keymap.set({ "n", "t" }, "<Leader>tt", "<Cmd>OverseerToggle<CR>", { noremap = true })
+            vim.keymap.set({ "n" }, "<Leader>rt", "<Cmd>OverseerRun<CR>", { noremap = true })
+            vim.keymap.set({ "n" }, "<Leader>tt", "<Cmd>OverseerToggle<CR>", { noremap = true })
         end
     },
     { "jemag/telescope-diff.nvim",
