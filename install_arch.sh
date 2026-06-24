@@ -58,7 +58,7 @@ function install_home() {
     INFO "Install aur packages"
     yay -S --needed --noconfirm grub-silent swapspace zramswap \
         mihomo-bin pacman-cleanup-hook rime-ice-pinyin-git metacubexg-bin \
-        bdf-unifont nerd-fonts-noto-sans-mono nerd-fonts-sarasa-term \
+        bdf-unifont nerd-fonts-sarasa-term \
         xone-dkms proton-ge-custom-bin
     cd "${TMP_PATH}"
 
@@ -96,7 +96,7 @@ function install_rootfs() {
         nvidia-open nvidia-utils libva-nvidia-driver \
         hyprland uwsm hypridle xdg-desktop-portal-hyprland xorg-xwayland wl-clipboard \
         brightnessctl swaybg swaync waybar wofi \
-        adobe-source-code-pro-fonts adobe-source-han-sans-cn-fonts \
+        noto-fonts noto-fonts-cjk adobe-source-code-pro-fonts \
         noto-fonts-emoji otf-font-awesome ttf-nerd-fonts-symbols-mono \
         kitty dolphin chromium zathura zathura-pdf-poppler \
         fcitx5-im fcitx5-rime \
