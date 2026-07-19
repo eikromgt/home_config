@@ -67,7 +67,7 @@ hl.monitor({ output   = "", mode     = "preferred", position = "auto", scale    
 -- Set programs that you use
 local terminal    = "uwsm-app -- kitty"
 local fileManager = "uwsm-app -- dolphin"
-local menu        = [[ uwsm app -- "$(wofi --show drun,run --define=drun-print_desktop_file=true | sed -E "s/(\.desktop) /\1:/")" ]]
+local menu        = [[ uwsm app -- "$(wofi --show drun --define=drun-print_desktop_file=true | sed -E "s/(\.desktop) /\1:/")" ]]
 
 -------------------
 ---- AUTOSTART ----
@@ -85,7 +85,7 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("uwsm-app -- waybar")
     hl.exec_cmd("uwsm-app -- swaync")
     hl.exec_cmd("uwsm-app -- fcitx5")
-    hl.exec_cmd("uwsm-app -- chromium")
+    hl.exec_cmd("uwsm-app -- qutebrowser")
 end)
 
 

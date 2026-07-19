@@ -59,6 +59,7 @@ function install_home() {
     yay -S --needed --noconfirm grub-silent swapspace zramswap \
         mihomo-bin pacman-cleanup-hook rime-ice-pinyin-git metacubexg-bin \
         bdf-unifont nerd-fonts-sarasa-term \
+        emmet-language-server \
         xone-dkms proton-ge-custom-bin
     cd "${TMP_PATH}"
 
@@ -83,11 +84,11 @@ function install_rootfs() {
     pacman -Syyu --noconfirm
     pacman -S --needed --noconfirm man-db man-pages texinfo \
         arch-install-scripts efibootmgr \
-        base-devel ccache clang lldb llvm python cmake typst tinymist websocat go gopls \
+        base-devel ccache clang lldb llvm python cmake ninja typst tinymist websocat go gopls \
         neovim tree-sitter-cli lua-language-server yaml-language-server python-uv \
         bash-language-server typescript-language-server dockerfile-language-server \
         vscode-html-languageserver vscode-css-languageserver vscode-json-languageserver \
-        rust-analyzer \
+        rust-analyzer systemd-lsp \
         shellcheck shfmt \
         dhcpcd networkmanager wpa_supplicant ethtool inetutils wireless-regdb \
         bluez bluez-utils pulsemixer pipewire-alsa pipewire-jack pipewire-pulse udiskie \
