@@ -2,8 +2,10 @@ config.load_autoconfig(False)
 
 config.source("base16-gruvbox-dark-hard.config.py")
 
-config.bind("<Ctrl+d>", "scroll down ;; scroll down ;; scroll down ;; scroll down ;; scroll down ;; scroll down ;; scroll down ;; scroll down ;; scroll down ;; scroll down")
-config.bind("<Ctrl+u>", "scroll up ;; scroll up ;; scroll up ;; scroll up ;; scroll up ;; scroll up ;; scroll up ;; scroll up ;; scroll up ;; scroll up")
+config.bind("d", "scroll down ;; scroll down ;; scroll down ;; scroll down ;; scroll down ;; scroll down ;; scroll down ;; scroll down ;; scroll down ;; scroll down")
+config.bind("u", "scroll up ;; scroll up ;; scroll up ;; scroll up ;; scroll up ;; scroll up ;; scroll up ;; scroll up ;; scroll up ;; scroll up")
+config.bind("D", "tab-close")
+config.bind("U", "undo")
 
 c.auto_save.session = True
 

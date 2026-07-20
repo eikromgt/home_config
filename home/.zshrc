@@ -7,10 +7,8 @@
 
 [[ -f "${HOME}/.bash_aliases" ]] && source "${HOME}/.bash_aliases"
 
-export PATH="$PATH:$HOME/.local/bin"
-export ZSH="$HOME/.local/share/oh-my-zsh"
-export EDITOR=helix
-export VISUAL=helix
+[[ -d "$HOME/.local/bin" ]] && export PATH="$HOME/.local/bin:$PATH"
+[[ -d "$HOME/.cargo/bin" ]] && export PATH="$HOME/.cargo/bin:$PATH"
 
 HISTSIZE=200000
 SAVEHIST=200000
