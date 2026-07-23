@@ -1,0 +1,33 @@
+FROM archlinux:latest
+WORKDIR /root
+
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && sed -i '/en_US.UTF-8 UTF-8/s/^#//g' /etc/locale.gen \
+    && locale-gen \
+    && echo 'LANG=en_US.UTF-8' > /etc/locale.conf
+
+RUN echo 'Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch'              > /etc/pacman.d/mirrorlist \
+    && echo 'Server = https://mirrors.aliyun.com/archlinux/$repo/os/$arch'           >> /etc/pacman.d/mirrorlist \
+    && echo 'Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch' >> /etc/pacman.d/mirrorlist \
+    && echo 'Server = https://mirrors.bfsu.edu.cn/archlinux/$repo/os/$arch'          >> /etc/pacman.d/mirrorlist \
+    && sed -i 's/^#ParallelDownloads = .*/ParallelDownloads = 8/' /etc/pacman.conf \
+    && pacman -Syu --noconfirm --needed \
+    && pacman -S --noconfirm base-devel helix git cmake \
+       clang python python-uv lua \
+       llvm bash-language-server lua-language-server python-lsp-server gopls rust-analyzer \
+       typescript-language-server vscode-css-languageserver vscode-html-languageserver \
+       vscode-json-languageserver yaml-language-server \
+       bear fd fzf ripgrep rsync openssh zsh p7zip yazi mtd-utils direnv tmux \
+    && pacman -Scc --noconfirm && rm -rf /var/cache/pacman/pkg/*
+
+RUN uv tool install chromaterm
+
+RUN mkdir -p /root/repo/ \
+    && git clone --depth=1 https://github.com/eikromgt/home_config.git /root/repo/home_config \
+    && cd /root/repo/home_config/ \
+    && ./hcfg.py install
+
+ENV COLORTERM="truecolor"
+ENV SHELL="/bin/zsh"
+
+CMD ["/bin/zsh"]
