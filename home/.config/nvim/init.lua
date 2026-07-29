@@ -790,7 +790,7 @@ require("lazy").setup({
         config = function()
             require("typst-preview").setup({
                 open_cmd = "chromium --new-window %s",
-                invert_colors = '{"rest": "auto","image": "never"}',
+                invert_colors = '{"rest": "always","image": "never"}',
                 dependencies_bin = {
                     ["tinymist"] = "tinymist",
                     ["websocat"] = "websocat",

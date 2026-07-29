@@ -1,7 +1,6 @@
 theme = "gruvbox_dark_hard"
 
 [editor]
-default-yank-register = "+"
 line-number = "relative"
 continue-comments = false
 trim-trailing-whitespace = true
