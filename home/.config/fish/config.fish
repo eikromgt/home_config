@@ -1,3 +1,4 @@
+set -x VISUAL helix
 set -x EDITOR helix
 set -x BROWSER qutebrowser
 set -x GOPATH $HOME/.local/share/go
@@ -8,3 +9,24 @@ end
 if test -d "$HOME/.cargo/bin"
     fish_add_path "$HOME/.cargo/bin"
 end
+
+direnv hook fish | source
+
+alias lg "lazygit"
+alias cssh 'TERM=xterm-256color ct autossh -M 0 -t'
+
+function y
+	set tmp (mktemp -t "yazi-cwd.XXXXXX")
+	command yazi $argv --cwd-file="$tmp"
+	if read -z cwd < "$tmp"; and [ "$cwd" != "$PWD" ]; and test -d "$cwd"
+		builtin cd -- "$cwd"
+	end
+	command rm -f -- "$tmp"
+end
+
+if status is-login
+    if command -v uwsm >/dev/null && uwsm check may-start
+        exec uwsm start hyprland.desktop > /dev/null
+    end
+end
+

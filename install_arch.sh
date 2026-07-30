@@ -92,7 +92,7 @@ function install_rootfs() {
         shellcheck shfmt \
         dhcpcd networkmanager wpa_supplicant ethtool inetutils wireless-regdb \
         bluez bluez-utils pulsemixer pipewire-alsa pipewire-jack pipewire-pulse udiskie \
-        rsync 7zip fd fzf wget git openssh zsh go-yq direnv \
+        rsync 7zip fd fzf wget git openssh fish go-yq direnv \
         htop trash-cli yazi lazygit screen kmscon \
         nvidia-open nvidia-utils libva-nvidia-driver \
         hyprland uwsm hypridle xdg-desktop-portal-hyprland xorg-xwayland wl-clipboard \
@@ -111,7 +111,7 @@ function install_rootfs() {
     systemctl enable sshd
 
     INFO "Setup user configurations"
-    id "${NEW_USER}" >/dev/null 2>&1 || useradd -m -s /usr/bin/zsh "${NEW_USER}"
+    id "${NEW_USER}" >/dev/null 2>&1 || useradd -m -s /usr/bin/fish "${NEW_USER}"
     echo "${NEW_USER} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/"${NEW_USER}"
     chmod 440 "/etc/sudoers.d/${NEW_USER}"
     runuser -u "${NEW_USER}" -- "${SCRIPT_PATH}" home

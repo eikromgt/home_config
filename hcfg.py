@@ -159,29 +159,6 @@ home_install_tasks = [
         "func": git_clone,
     },
     {
-        "name": "ohmyzsh/ohmyzsh",
-        "path": os.path.expanduser("~/.local/share/oh-my-zsh"),
-        "func": git_clone,
-    },
-    {
-        "name": "zsh-users/zsh-autosuggestions",
-        "path": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins/zsh-autosuggestions"),
-        "func": git_clone,
-        "depends": ["ohmyzsh/ohmyzsh"],
-    },
-    {
-        "name": "zsh-users/zsh-syntax-highlighting",
-        "path": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins/zsh-syntax-highlighting"),
-        "func": git_clone,
-        "depends": ["ohmyzsh/ohmyzsh"],
-    },
-    {
-        "name": "l4u/zsh-output-highlighting",
-        "path": os.path.expanduser("~/.local/share/oh-my-zsh/custom/plugins/zsh-output-highlighting"),
-        "func": git_clone,
-        "depends": ["ohmyzsh/ohmyzsh"],
-    },
-    {
         "name": "bennyyip/gruvbox-dark",
         "path": os.path.expanduser("~/.config/yazi/flavors/gruvbox-dark.yazi"),
         "package": "bennyyip/gruvbox-dark",
