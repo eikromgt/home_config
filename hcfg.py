@@ -116,10 +116,6 @@ def install_arch(task):
              ensure_trailing_slash(os.path.join(home_dir, ".config/mihomo")),
              ensure_trailing_slash(os.path.join(dst_repo_path, "home/.config/mihomo"))])
 
-    path = os.path.join(home_dir, ".config/chromium/Local State")
-    if os.path.isdir(path):
-        run_cmd(["rsync", "-a", path, ensure_trailing_slash(os.path.join(dst_repo_path, "home/.config/chromium"))])
-
     run_cmd(["arch-chroot", mount_point, os.path.join("/opt", repo_name, "install_arch.sh")])
 
 
