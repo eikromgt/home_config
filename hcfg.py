@@ -130,27 +130,6 @@ home_install_tasks = [
         "src_path": os.path.join(os.path.dirname(os.path.abspath(__file__)), "home"),
         "func": install_config,
     },
-    {
-        "name": "wdomitrz/kitty-gruvbox-theme",
-        "path": os.path.expanduser("~/.config/kitty/kitty-gruvbox-theme"),
-        "func": git_clone,
-    },
-    {
-        "name": "eastack/zathura-gruvbox",
-        "path": os.path.expanduser("~/.config/zathura/zathura-gruvbox"),
-        "func": git_clone,
-    },
-    {
-        "name": "bennyyip/gruvbox-dark",
-        "path": os.path.expanduser("~/.config/yazi/flavors/gruvbox-dark.yazi"),
-        "package": "bennyyip/gruvbox-dark",
-        "func": install_yazi_package,
-    },
-    {
-        "name": "update yazi packages",
-        "func": lambda task: run_cmd(["ya", "pkg", "upgrade"]),
-        "depends": ["bennyyip/gruvbox-dark"],
-    },
 ]
 
 home_update_tasks = [
