@@ -120,24 +120,6 @@ def install_arch(task):
     if os.path.isdir(path):
         run_cmd(["rsync", "-a", path, ensure_trailing_slash(os.path.join(dst_repo_path, "home/.config/chromium"))])
 
-    path = ensure_trailing_slash(os.path.join(home_dir, ".config/chromium/Default"))
-    if os.path.isdir(path):
-        run_cmd(["rsync", "-a",
-                 "--include=Preferences",
-                 "--include=Secure Preferences",
-                 "--include=Bookmarks",
-                 "--include=Bookmarks.bak",
-                 "--include=Extensions/***",
-                 "--include=Extension State/***",
-                 "--include=Local Extension Settings/***",
-                 "--include=Login Data*",
-                 "--include=Cookies*",
-                 "--include=Web Data",
-                 "--exclude=*",
-                 path,
-                 ensure_trailing_slash(os.path.join(dst_repo_path, "home/.config/chromium/Default")),
-                 ])
-
     run_cmd(["arch-chroot", mount_point, os.path.join("/opt", repo_name, "install_arch.sh")])
 
 
