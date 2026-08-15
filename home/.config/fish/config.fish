@@ -24,6 +24,12 @@ function y
 	command rm -f -- "$tmp"
 end
 
+if status is-interactive && not set -q TMUX
+    if not tmux has-session -t dev 2>/dev/null
+        tmux new-session -d -s dev -c $HOME
+    end
+end
+
 if status is-login
     if command -v uwsm >/dev/null && uwsm check may-start
         exec uwsm start hyprland.desktop > /dev/null

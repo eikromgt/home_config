@@ -34,15 +34,16 @@ if exists("/dev/dri/nvidia-dgpu") then
     hl.env("NVD_BACKEND", "direct")
 end
 
-hl.env("QT_QPA_PLATFORM", "wayland")
 hl.env("CLUTTER_BACKEND", "wayland")
+hl.env("GDK_BACKEND", "wayland")
 hl.env("SDL_VIDEODRIVER", "wayland")
 hl.env("XDG_SESSION_TYPE", "wayland")
-hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
+hl.env("ELECTRON_OZONE_PLATFORM_HINT", "wayland")
 hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
+
 hl.env("QT_IM_MODULE", "fcitx")
 hl.env("QT_IM_MODULES", "fcitx")
 hl.env("GTK_IM_MODULE", "fcitx")
@@ -163,6 +164,9 @@ hl.config({
 
     animations = {
         enabled = true,
+    },
+    xwayland = {
+      force_zero_scaling = true
     },
 })
 
@@ -317,13 +321,15 @@ hl.bind(mainMod .. " + P",          hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + B",          hl.dsp.exec_cmd("killall -SIGUSR1 waybar"))
 hl.bind(mainMod .. " + SLASH",      hl.dsp.exec_cmd("swaync-client -t -sw"))
 hl.bind(mainMod .. " + T",          hl.dsp.window.pseudo())
-hl.bind(mainMod .. " + J",          hl.dsp.layout("togglesplit"))    -- dwindle only
 
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + H",          hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + L",          hl.dsp.focus({ direction = "right" }))
 hl.bind(mainMod .. " + K",          hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + J",          hl.dsp.focus({ direction = "down" }))
+
+hl.bind(mainMod .. " + SHIFT + H",          hl.dsp.layout("rollnext"))
+hl.bind(mainMod .. " + SHIFT + L",          hl.dsp.layout("rollprev"))
 
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
