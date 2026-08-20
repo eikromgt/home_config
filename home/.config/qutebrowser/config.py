@@ -26,6 +26,7 @@ c.colors.tabs.selected.odd.fg = c.colors.tabs.selected.even.fg
 c.colors.completion.odd.bg = c.colors.completion.even.bg
 
 c.content.javascript.clipboard = "access"
+c.content.javascript.can_open_tabs_automatically = True
 
 c.zoom.default = "150%"
 
