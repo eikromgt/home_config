@@ -17,7 +17,7 @@ RUN echo 'Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch'        
        llvm bash-language-server lua-language-server python-lsp-server gopls rust-analyzer \
        typescript-language-server vscode-css-languageserver vscode-html-languageserver \
        vscode-json-languageserver yaml-language-server \
-       bear fd fzf ripgrep rsync openssh fish p7zip yazi mtd-utils direnv tmux \
+       bear fd fzf ripgrep rsync openssh fish p7zip yazi mtd-utils direnv tmux inetutils \
     && pacman -Scc --noconfirm && rm -rf /var/cache/pacman/pkg/*
 
 RUN uv tool install chromaterm
