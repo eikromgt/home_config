@@ -20,7 +20,12 @@ RUN echo 'Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch'        
        bear fd fzf ripgrep rsync openssh fish p7zip yazi mtd-utils direnv tmux inetutils \
     && pacman -Scc --noconfirm && rm -rf /var/cache/pacman/pkg/*
 
-RUN uv tool install chromaterm
+RUN chsh -s /usr/bin/fish
+
+RUN echo "root:colemak" | chpasswd \
+    && ssh-keygen -A \
+    && sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config \
+    && sed -i 's/#Port 22/Port 10022/' /etc/ssh/sshd_config
 
 RUN mkdir -p /root/repo/ \
     && git clone --depth=1 https://github.com/eikromgt/home_config.git /root/repo/home_config \
@@ -28,6 +33,7 @@ RUN mkdir -p /root/repo/ \
     && ./hcfg.py install
 
 ENV COLORTERM="truecolor"
-ENV SHELL="/usr/bin/fish"
 
-CMD ["/usr/bin/fish"]
+EXPOSE 10022
+
+CMD ["/usr/sbin/sshd", "-D"]
