@@ -8,7 +8,7 @@ import argparse
 import concurrent.futures as cf
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="%(asctime)s [%(levelname)s] %(message)s",
 )
 
@@ -23,7 +23,7 @@ def run_cmd(cmd, **kwargs):
     defaults = {"check": True, "text": True}
     run_kwargs = {**defaults, **kwargs}
 
-    logging.info("Running: %s", " ".join(cmd))
+    logging.debug("Running: %s", " ".join(cmd))
     try:
         return subprocess.run(cmd, **run_kwargs)
     except subprocess.CalledProcessError as e:
@@ -67,6 +67,16 @@ def install_config(task):
 
     run_cmd(cmd)
 
+def install_sudoers_config(task):
+    sudoers_path = os.path.join(task["dest_path"], "etc/sudoers.d")
+    if not os.path.exists(sudoers_path):
+        os.mkdir(sudoers_path)
+        os.chmod(sudoers_path, 0o755)
+
+    run_cmd(["install", "-m", "440", "-o", "root", "-g", "root",
+             os.path.join(task["src_path"], "etc/sudoers.d/10-wheel"),
+             os.path.join(task["dest_path"], "etc/sudoers.d/10-wheel")])
+
 
 def update_config(task):
     dest_path = ensure_trailing_slash(task["dest_path"])
@@ -86,37 +96,92 @@ def update_config(task):
     run_cmd(cmd, input=filelist)
 
 
+def check_device_safe(device):
+    logging.info(f"Device: {device}")
+
+    if not os.path.exists(device):
+        logging.error(f"Device {device} does not exist")
+        return False
+
+    result = run_cmd(["lsblk", "-no", "TYPE", device], capture_output=True)
+    block_type = result.stdout.partition("\n")[0]
+
+    if block_type != "disk":
+        logging.error(f"Device {device} is not a disk")
+        return False
+
+    result = run_cmd(["lsblk", "-no", "MOUNTPOINT", device], capture_output=True)
+    mountpoints = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+    if mountpoints:
+        logging.error(f"Device {device} has partitions mounted at: {', '.join(mountpoints)}, please unmount them first")
+        return False
+
+    logging.info(f"Device {device} safety check passed")
+    return True
+
+
+def get_partition_path(device, number):
+    if device[-1].isdigit():
+        return f"{device}p{number}"
+    else:
+        return f"{device}{number}"
+
+
 def install_arch(task):
     if os.geteuid() != 0:
-        raise PermissionError(
-            "install arch must be run as root (try: sudo ./hcfg.py install arch)"
-        )
+        raise PermissionError("install arch must be run as root (try: sudo ./hcfg.py install arch)")
 
-    mount_point = "/mnt"
+    device = task["args"].device
 
-    run_cmd(["pacstrap", "-K", mount_point, "--needed", "base", "linux", "linux-firmware",
-             "amd-ucode", "intel-ucode", "python", "rsync"])
+    if not check_device_safe(device):
+        raise ValueError("Device %s checking failed")
 
-    fstab_path = os.path.join(mount_point, "etc/fstab")
-    fstab = run_cmd(["genfstab", "-U", mount_point], capture_output=True).stdout
+    run_cmd(["parted", "-s", device, "mklabel", "gpt"])
+    run_cmd(["parted", "-s", device, "mkpart", "primary", "fat32", "1MiB", "512MiB"])
+    run_cmd(["parted", "-s", device, "mkpart", "primary", "ext4", "512MiB", "100%"])
 
-    with open(fstab_path, "w") as f:
-        logging.info("Writing fstab to %s", fstab_path)
-        f.write(fstab)
+    run_cmd(["parted", "-s", device, "set", "1", "esp", "on"])
 
-    home_dir = os.path.expanduser("~")
-    src_repo_path = os.path.dirname(os.path.abspath(__file__))
-    repo_name = os.path.basename(src_repo_path)
-    dst_repo_path = os.path.join(mount_point, "opt", repo_name)
+    efi_partition = get_partition_path(device, 1)
+    root_partition = get_partition_path(device, 2)
 
-    run_cmd(["rsync", "-a", "--exclude=.git",
-             ensure_trailing_slash(src_repo_path),
-             ensure_trailing_slash(dst_repo_path)])
-    run_cmd(["rsync", "-a",
-             ensure_trailing_slash(os.path.join(home_dir, ".config/mihomo")),
-             ensure_trailing_slash(os.path.join(dst_repo_path, "home/.config/mihomo"))])
+    run_cmd(["mkfs.fat", "-F32", efi_partition])
+    run_cmd(["mkfs.ext4", "-F", root_partition])
 
-    run_cmd(["arch-chroot", mount_point, os.path.join("/opt", repo_name, "install_arch.sh")])
+    root_mount = "/mnt"
+    efi_mount = f"{root_mount}/boot"
+
+    try:
+        run_cmd(["mount", root_partition, root_mount])
+        os.makedirs(efi_mount, exist_ok=True)
+        run_cmd(["mount", efi_partition, efi_mount])
+
+        run_cmd(["pacstrap", "-K", root_mount, "--needed", "base", "linux", "linux-firmware",
+                 "amd-ucode", "intel-ucode", "python", "rsync"])
+
+        fstab_path = os.path.join(root_mount, "etc/fstab")
+        fstab = run_cmd(["genfstab", "-U", root_mount], capture_output=True).stdout
+
+        with open(fstab_path, "w") as f:
+            logging.info("Writing fstab to %s", fstab_path)
+            f.write(fstab)
+
+        home_dir = os.path.expanduser("~")
+        src_repo_path = os.path.dirname(os.path.abspath(__file__))
+        repo_name = os.path.basename(src_repo_path)
+        dst_repo_path = os.path.join(root_mount, "opt", repo_name)
+
+        run_cmd(["rsync", "-a", "--exclude=.git",
+                 ensure_trailing_slash(src_repo_path),
+                 ensure_trailing_slash(dst_repo_path)])
+        run_cmd(["rsync", "-a",
+                 ensure_trailing_slash(os.path.join(home_dir, ".config/mihomo")),
+                 ensure_trailing_slash(os.path.join(dst_repo_path, "home/.config/mihomo"))])
+
+        run_cmd(["arch-chroot", root_mount, os.path.join("/opt", repo_name, "install_arch.sh")])
+    finally:
+        run_cmd(["umount", root_mount], check=False)
+        run_cmd(["umount", efi_mount], check=False)
 
 
 home_install_tasks = [
@@ -127,6 +192,7 @@ home_install_tasks = [
         "func": install_config,
     },
 ]
+
 
 home_update_tasks = [
     {
@@ -149,9 +215,7 @@ rootfs_install_tasks = [
         "dest_path": "/",
         "src_path": os.path.join(os.path.dirname(os.path.abspath(__file__)), "rootfs"),
         "name": "install sudoers",
-        "func": lambda task: run_cmd(["install", "-m", "440", "-o", "root", "-g", "root",
-                                      os.path.join(task["src_path"], "etc/sudoers.d/10-wheel"),
-                                      os.path.join(task["dest_path"], "etc/sudoers.d/10-wheel")]),
+        "func": install_sudoers_config,
     },
 ]
 
@@ -208,6 +272,10 @@ def run_tasks(tasks):
 
 def handle_tasks(args):
     tasks = args.tasks
+
+    for task in tasks:
+        task["args"] = args;
+
     try:
         run_tasks(tasks)
     except Exception as e:
@@ -227,7 +295,8 @@ def main():
     p.set_defaults(func=handle_tasks, tasks=home_install_tasks)
     p = install_subparser.add_parser("rootfs", help="Install system configurations")
     p.set_defaults(func=handle_tasks, tasks=rootfs_install_tasks)
-    p = install_subparser.add_parser("arch", help="install arch linux system")
+    p = install_subparser.add_parser("arch", help="Install arch linux system")
+    p.add_argument("device", help="Target base disk, e.g., /dev/sdb")
     p.set_defaults(func=handle_tasks, tasks=arch_tasks)
 
     update_parser = subparsers.add_parser("update", help="Update command")

@@ -59,11 +59,13 @@ function install_home() {
     yay -S --needed --noconfirm grub-silent swapspace zramswap \
         mihomo-bin pacman-cleanup-hook rime-ice-pinyin-git metacubexg-bin \
         bdf-unifont nerd-fonts-sarasa-term \
-        emmet-language-server \
-        xone-dkms proton-ge-custom-bin
+        emmet-language-server
+        #xone-dkms proton-ge-custom-bin
     cd "${TMP_PATH}"
 
     uv tool install basedpyright
+
+    ln -s "/run/media/${NEW_USER}" "/home/${NEW_USER}/mnt"
 
     # NOTE: The mihomo configuration need manual installation because the encryption of vendor file.
     #INFO "Setup user systemd services"
@@ -83,7 +85,7 @@ function install_rootfs() {
     INFO "Install packages"
     pacman -Syyu --noconfirm
     pacman -S --needed --noconfirm man-db man-pages texinfo \
-        arch-install-scripts efibootmgr \
+        arch-install-scripts efibootmgr dosfstools \
         base-devel ccache clang lldb llvm python cmake ninja typst tinymist websocat go gopls \
         neovim tree-sitter-cli lua-language-server yaml-language-server python-uv \
         bash-language-server typescript-language-server dockerfile-language-server \
@@ -94,12 +96,12 @@ function install_rootfs() {
         bluez bluez-utils pulsemixer pipewire-alsa pipewire-jack pipewire-pulse udiskie \
         rsync 7zip fd fzf wget git openssh fish go-yq direnv \
         htop trash-cli yazi lazygit screen kmscon \
-        nvidia-open nvidia-utils libva-nvidia-driver \
+        nvidia-open nvidia-utils libva-nvidia-driver vulkan-radeon \
         hyprland uwsm hypridle xdg-desktop-portal-hyprland xorg-xwayland wl-clipboard \
         brightnessctl swaybg swaync waybar wofi \
         noto-fonts noto-fonts-cjk adobe-source-code-pro-fonts \
         noto-fonts-emoji otf-font-awesome ttf-nerd-fonts-symbols-mono \
-        kitty dolphin chromium zathura zathura-pdf-poppler \
+        kitty chromium zathura zathura-pdf-poppler \
         fcitx5-im fcitx5-rime \
         arm-none-eabi-gcc arm-none-eabi-gdb assimp glfw stb \
         chntpw docker github-cli wireshark-qt postgresql \
