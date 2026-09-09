@@ -20,3 +20,5 @@
     logline = log --date=format:\"[%Y-%m-%d %H:%M:%S]\" --pretty=format:\"%Cgreen%ad%C(yellow)%<(20)(%an)%Cred(%<(30)%C(cyan)%ae%C(noul red))%C(blue)[%Creset%C(bold blue)%h%C(nobold blue)]%Creset %s\"
 [submodule]
 	recurse = true
+[credential]
+    helper = cache
