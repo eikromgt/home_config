@@ -8,9 +8,11 @@
 # Retrieved:  2022-06-04 14:39:52 UTC
 # Last Check: 2022-06-04 13:52:50 UTC
 
-Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch
+Server = http://127.0.0.1:9129/repo/archlinux/$repo/os/$arch
+
 Server = https://mirrors.aliyun.com/archlinux/$repo/os/$arch
 Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch
+Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch
 Server = https://mirrors.bfsu.edu.cn/archlinux/$repo/os/$arch
 #Server = https://mirrors.cqu.edu.cn/archlinux/$repo/os/$arch
 #Server = https://mirrors.dgut.edu.cn/archlinux/$repo/os/$arch
