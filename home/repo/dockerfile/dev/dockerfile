@@ -1,0 +1,47 @@
+FROM archlinux:latest
+
+EXPOSE 22
+
+ENV COLORTERM="truecolor"
+
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && sed -i '/en_US.UTF-8 UTF-8/s/^#//g' /etc/locale.gen \
+    && locale-gen \
+    && echo 'LANG=en_US.UTF-8' > /etc/locale.conf
+
+RUN echo 'Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch'              > /etc/pacman.d/mirrorlist \
+    && echo 'Server = https://mirrors.aliyun.com/archlinux/$repo/os/$arch'           >> /etc/pacman.d/mirrorlist \
+    && echo 'Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch' >> /etc/pacman.d/mirrorlist \
+    && echo 'Server = https://mirrors.bfsu.edu.cn/archlinux/$repo/os/$arch'          >> /etc/pacman.d/mirrorlist \
+    && sed -i 's/^#ParallelDownloads = .*/ParallelDownloads = 8/' /etc/pacman.conf \
+    && pacman -Syu --noconfirm --needed \
+    && pacman -S --noconfirm base-devel neovim helix git cmake \
+       clang python python-uv lua tree-sitter-cli \
+       llvm bash-language-server lua-language-server python-lsp-server gopls rust-analyzer \
+       typescript-language-server vscode-css-languageserver vscode-html-languageserver \
+       vscode-json-languageserver yaml-language-server \
+       bear fd fzf ripgrep rsync openssh fish p7zip yazi mtd-utils direnv tmux inetutils \
+       docker python-j2cli wget dpkg \
+    && pacman -Scc --noconfirm && rm -rf /var/cache/pacman/pkg/*
+
+RUN ssh-keygen -A
+
+RUN useradd -m -s /usr/bin/fish beanopy \
+    && usermod -aG docker beanopy \
+    && echo "beanopy:colemak" | chpasswd \
+    && echo "beanopy ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/beanopy \
+    && chmod 440 /etc/sudoers.d/beanopy
+
+USER beanopy
+
+RUN mkdir -p /home/beanopy/repo/ \
+    && git clone --depth=1 https://github.com/eikromgt/home_config.git /home/beanopy/repo/home_config \
+    && cd /home/beanopy/repo/home_config/ \
+    && ./hcfg.py install
+
+USER root
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/usr/sbin/sshd", "-D"]
