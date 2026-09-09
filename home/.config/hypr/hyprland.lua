@@ -58,7 +58,7 @@ hl.env("XMODIFIERS", "@im=fcitx")
 
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
 hl.monitor({ output   = "", mode     = "preferred", position = "auto", scale    = "auto", })
-hl.monitor({ output   = "", mode     = "preferred", position = "auto", scale    = "auto", })
+-- hl.monitor({ output   = "", mode     = "preferred", position = "auto", scale    = "auto", })
 
 
 ---------------------
@@ -67,7 +67,7 @@ hl.monitor({ output   = "", mode     = "preferred", position = "auto", scale    
 
 -- Set programs that you use
 local terminal    = "uwsm-app -- kitty"
-local fileManager = "uwsm-app -- dolphin"
+local fileManager = "uwsm-app -- kitty yazi"
 local menu        = [[ uwsm app -- "$(wofi --show drun --define=drun-print_desktop_file=true | sed -E "s/(\.desktop) /\1:/")" ]]
 
 -------------------
@@ -80,13 +80,13 @@ local menu        = [[ uwsm app -- "$(wofi --show drun --define=drun-print_deskt
 -- Or execute your favorite apps at launch like this:
 --
 hl.on("hyprland.start", function ()
-    hl.exec_cmd("uwsm-app -- udiskie")
-    hl.exec_cmd("uwsm-app -- swaybg --mode fill --image $(fd --type file --full-path $HOME/media/wallpaper/3840x2160/ | shuf -n1)")
-    hl.exec_cmd("uwsm-app -- hypridle")
-    hl.exec_cmd("uwsm-app -- waybar")
-    hl.exec_cmd("uwsm-app -- swaync")
-    hl.exec_cmd("uwsm-app -- fcitx5")
-    hl.exec_cmd("uwsm-app -- qutebrowser")
+    hl.exec_cmd("uwsm-app -t service -- udiskie")
+    hl.exec_cmd("uwsm-app -t service -- swaybg --mode fill --image $(fd --type file --full-path $HOME/media/wallpaper/3840x2160/ | shuf -n1)")
+    hl.exec_cmd("uwsm-app -t service -- hypridle")
+    hl.exec_cmd("uwsm-app -t service -- waybar")
+    hl.exec_cmd("uwsm-app -t service -- swaync")
+    hl.exec_cmd("uwsm-app -t service -- fcitx5")
+    hl.exec_cmd("uwsm-app -- chromium")
 end)
 
 

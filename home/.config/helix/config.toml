@@ -4,6 +4,7 @@ theme = "gruvbox_dark_hard"
 line-number = "relative"
 continue-comments = false
 trim-trailing-whitespace = true
+default-yank-register = "+"
 
 [editor.cursor-shape]
 insert = "bar"
@@ -19,3 +20,4 @@ layout = ["diagnostics", "line-numbers", "diff"]
 
 [editor.gutters.line-numbers]
 min-width = 1
+
