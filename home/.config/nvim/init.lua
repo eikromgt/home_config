@@ -10,6 +10,7 @@ vim.opt.expandtab       = true
 vim.opt.tabstop         = 4
 vim.opt.shiftwidth      = 4
 
+vim.opt.background      = "dark"
 vim.opt.termguicolors   = true
 vim.opt.signcolumn      = "yes:1"
 vim.opt.wrap            = false
