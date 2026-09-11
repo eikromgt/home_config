@@ -16,19 +16,17 @@ RUN echo 'Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch'        
     && echo 'Server = https://mirrors.bfsu.edu.cn/archlinux/$repo/os/$arch'          >> /etc/pacman.d/mirrorlist \
     && sed -i 's/^#ParallelDownloads = .*/ParallelDownloads = 8/' /etc/pacman.conf \
     && pacman -Syu --noconfirm --needed \
-    && pacman -S --noconfirm base-devel neovim helix git cmake \
+    && pacman -S --noconfirm base-devel helix git neovim cmake \
        clang python python-uv lua tree-sitter-cli \
        llvm bash-language-server lua-language-server python-lsp-server gopls rust-analyzer \
        typescript-language-server vscode-css-languageserver vscode-html-languageserver \
        vscode-json-languageserver yaml-language-server \
        bear fd fzf ripgrep rsync openssh fish p7zip yazi mtd-utils direnv tmux inetutils \
-       docker python-j2cli wget dpkg \
     && pacman -Scc --noconfirm && rm -rf /var/cache/pacman/pkg/*
 
 RUN ssh-keygen -A
 
 RUN useradd -m -s /usr/bin/fish beanopy \
-    && usermod -aG docker beanopy \
     && echo "beanopy:colemak" | chpasswd \
     && echo "beanopy ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/beanopy \
     && chmod 440 /etc/sudoers.d/beanopy
@@ -40,7 +38,14 @@ RUN mkdir -p /home/beanopy/repo/ \
     && cd /home/beanopy/repo/home_config/ \
     && ./hcfg.py install
 
+RUN nvim --headless +qa
+
 USER root
+
+RUN pacman -S --noconfirm docker python-j2cli wget dpkg libvirt qemu-base \
+    && pacman -Scc --noconfirm && rm -rf /var/cache/pacman/pkg/*
+
+RUN usermod -aG docker,libvirt,qemu beanopy
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
