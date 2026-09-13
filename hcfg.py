@@ -6,6 +6,11 @@ import subprocess
 import logging
 import argparse
 import concurrent.futures as cf
+from pathlib import Path
+
+NEW_USER = "beanopy"
+ROOT_MOUNT = "/mnt"
+EFI_MOUNT = "/mnt/boot"
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -61,11 +66,12 @@ def install_config(task):
     dest_path = ensure_trailing_slash(task["dest_path"])
     src_path = ensure_trailing_slash(task["src_path"])
 
-    cmd = ["rsync", "-av", src_path, dest_path]
+    cmd = ["rsync", "-av", "--no-owner", "--no-group", src_path, dest_path]
     for exclude in task.get("excludes", []):
         cmd.extend(["--exclude", exclude])
 
     run_cmd(cmd)
+
 
 def install_sudoers_config(task):
     sudoers_path = os.path.join(task["dest_path"], "etc/sudoers.d")
@@ -76,6 +82,26 @@ def install_sudoers_config(task):
     run_cmd(["install", "-m", "440", "-o", "root", "-g", "root",
              os.path.join(task["src_path"], "etc/sudoers.d/10-wheel"),
              os.path.join(task["dest_path"], "etc/sudoers.d/10-wheel")])
+
+
+def get_rootfs_partition_uuid():
+    device = run_cmd(["findmnt", "-n", "-o", "SOURCE", "/"], capture_output=True).stdout.strip()
+    uuid = run_cmd(["blkid", "-s", "UUID", "-o", "value", device], capture_output=True).stdout.strip()
+
+    return uuid
+
+
+def render_template(task):
+    value = task["value_func"]()
+
+    for file in task["files"]:
+        filepath = Path(file).resolve()
+        content = filepath.read_text(encoding="utf-8")
+        newContent = content.replace(task["placeholder"], value)
+
+        if newContent != content:
+            print(f"Replace {task["placeholder"]} with {value} in {filepath}")
+            filepath.write_text(newContent, encoding="utf-8")
 
 
 def update_config(task):
@@ -148,8 +174,8 @@ def install_arch(task):
     run_cmd(["mkfs.fat", "-F32", efi_partition])
     run_cmd(["mkfs.ext4", "-F", root_partition])
 
-    root_mount = "/mnt"
-    efi_mount = f"{root_mount}/boot"
+    root_mount = task["root_mount"]
+    efi_mount = task["efi_mount"]
 
     try:
         run_cmd(["mount", root_partition, root_mount])
@@ -174,14 +200,23 @@ def install_arch(task):
         run_cmd(["rsync", "-a", "--exclude=.git",
                  ensure_trailing_slash(src_repo_path),
                  ensure_trailing_slash(dst_repo_path)])
+
         run_cmd(["rsync", "-a",
                  ensure_trailing_slash(os.path.join(home_dir, ".config/mihomo")),
                  ensure_trailing_slash(os.path.join(dst_repo_path, "home/.config/mihomo"))])
 
         run_cmd(["arch-chroot", root_mount, os.path.join("/opt", repo_name, "install_arch.sh")])
+
+        for user in task["users"]:
+            logging.info(f"Syncing password for {user}")
+            shadow = run_cmd(["getent", "shadow", user], capture_output=True).stdout
+            hash = shadow.split(":", 2)[1]
+
+            run_cmd(["chpasswd", "-e", "-R", root_mount], input=f"{user}:{hash}\n")
     finally:
-        run_cmd(["umount", root_mount], check=False)
+        run_cmd(["pkill", "-x", "gpg-agent"])
         run_cmd(["umount", efi_mount], check=False)
+        run_cmd(["umount", root_mount], check=False)
 
 
 home_install_tasks = [
@@ -212,10 +247,18 @@ rootfs_install_tasks = [
         "func": install_config,
     },
     {
+        "name": "install sudoers",
         "dest_path": "/",
         "src_path": os.path.join(os.path.dirname(os.path.abspath(__file__)), "rootfs"),
-        "name": "install sudoers",
         "func": install_sudoers_config,
+    },
+    {
+        "name": "template ROOTFS_PARTITION_UUID",
+        "depends": ["install"],
+        "placeholder": "$$ROOTFS_PARTITION_UUID$$",
+        "value_func": get_rootfs_partition_uuid,
+        "files": ["/boot/loader/entries/arch.conf"],
+        "func": render_template,
     },
 ]
 
@@ -232,8 +275,11 @@ rootfs_update_tasks = [
 arch_tasks = [
     {
         "name": "install arch",
+        "users": ["root", NEW_USER],
+        "root_mount": ROOT_MOUNT,
+        "efi_mount": EFI_MOUNT,
         "func": install_arch,
-    }
+    },
 ]
 
 

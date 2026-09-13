@@ -35,6 +35,18 @@ function WARN()     { LOG "${FORE_YELLOW}"           "${@}"; }
 function ERROR()    { LOG "${FORE_RED}"              "${@}"; }
 function FATAl()    { LOG "${BACK_RED}${FORE_WHITE}" "${@}"; }
 
+function set_user_password() {
+    local user=${1:-root}
+
+    status=$(passwd -S "${user}" | awk '{print $2}')
+    if [[ "${status}" != "P" ]]; then
+        INFO "Please set the password for ${user}"
+        passwd "${user}"
+    else
+        INFO "${user} password is already set -- skipping"
+    fi
+}
+
 function install_home() {
     cd "${TMP_PATH}"
 
@@ -56,7 +68,7 @@ function install_home() {
     fi
 
     INFO "Install aur packages"
-    yay -S --needed --noconfirm grub-silent swapspace zramswap \
+    yay -S --needed --noconfirm swapspace zramswap \
         mihomo-bin pacman-cleanup-hook rime-ice-pinyin-git metacubexg-bin \
         bdf-unifont nerd-fonts-sarasa-term \
         emmet-language-server
@@ -66,10 +78,6 @@ function install_home() {
     uv tool install basedpyright
 
     ln -s "/run/media/${NEW_USER}" "/home/${NEW_USER}/mnt"
-
-    # NOTE: The mihomo configuration need manual installation because the encryption of vendor file.
-    #INFO "Setup user systemd services"
-    #systemctl --user enable update-vpn.timer
 
     INFO "Initialize neovim"
     nvim --headless +qa
@@ -84,6 +92,7 @@ function install_rootfs() {
 
     INFO "Install packages"
     pacman -Syyu --noconfirm
+
     pacman -S --needed --noconfirm man-db man-pages texinfo \
         arch-install-scripts efibootmgr dosfstools \
         base-devel ccache clang lldb llvm python cmake ninja typst tinymist websocat go gopls \
@@ -94,8 +103,8 @@ function install_rootfs() {
         shellcheck shfmt \
         dhcpcd networkmanager wpa_supplicant ethtool inetutils wireless-regdb \
         bluez bluez-utils pulsemixer pipewire-alsa pipewire-jack pipewire-pulse udiskie \
-        rsync 7zip fd fzf wget git openssh fish go-yq direnv \
-        htop trash-cli yazi lazygit screen kmscon \
+        rsync 7zip fd fzf wget git openssh fish go-yq direnv docker \
+        htop trash-cli yazi lazygit \
         nvidia-open nvidia-utils libva-nvidia-driver vulkan-radeon \
         hyprland uwsm hypridle xdg-desktop-portal-hyprland xorg-xwayland wl-clipboard \
         brightnessctl swaybg swaync waybar wofi \
@@ -104,8 +113,9 @@ function install_rootfs() {
         kitty chromium zathura zathura-pdf-poppler \
         fcitx5-im fcitx5-rime \
         arm-none-eabi-gcc arm-none-eabi-gdb assimp glfw stb \
-        chntpw docker github-cli wireshark-qt postgresql \
-        kicad rpi-imager steam lib32-mesa gamemode gamescope
+        chntpw github-cli wireshark-qt postgresql \
+        kicad rpi-imager \
+        steam lib32-mesa gamemode gamescope
 
     INFO "Setup systemd services"
     systemctl enable NetworkManager
@@ -124,44 +134,20 @@ function install_rootfs() {
     usermod -aG wireshark,gamemode,docker,video,uucp,input,audio,wheel "${NEW_USER}"
 
     INFO "Setup aur/user related systemd services"
-    systemctl disable getty@tty2.service
-    systemctl enable kmsconvt@tty2
-    systemctl disable getty@tty2.service
-    systemctl enable kmsconvt@tty3
     systemctl enable swapspace
     systemctl enable zramswap
     systemctl enable mihomo@beanopy
 
-    INFO "Reinstall system configurations to rootfs"
-    "${REPO_PATH}"/hcfg.py install rootfs
-
     INFO "Regenerate initramfs"
     mkinitcpio -P
 
-    INFO "Install GRUB bootloader"
-    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=HOST
-
-    INFO "Generate GRUB configuration"
-    grub-mkconfig -o /boot/grub/grub.cfg
-
-    if passwd -S root 2>/dev/null | grep -q " NP "; then
-        INFO "Please set the password for root"
-        passwd
-    else
-        INFO "root password is already set -- skipping"
-    fi
-
-    if passwd -S "${NEW_USER}" 2>/dev/null | grep -q " NP "; then
-        INFO "Please set the password for user: ${NEW_USER}"
-        passwd "${NEW_USER}"
-    else
-        INFO "${NEW_USER} password is already set -- skipping"
-    fi
+    INFO "Install systemd-boot bootloader"
+    mkdir -p /boot/EFI/BOOT
+    cp /usr/lib/systemd/boot/efi/systemd-bootx64.efi /boot/EFI/BOOT/BOOTX64.EFI
+    bootctl --no-pager
 
     INFO "Installation done"
-
 }
-
 
 function main() {
     local arg="${1:-}"
