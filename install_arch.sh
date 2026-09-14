@@ -69,7 +69,7 @@ function install_home() {
 
     INFO "Install aur packages"
     yay -S --needed --noconfirm swapspace zramswap \
-        mihomo-bin pacman-cleanup-hook rime-ice-pinyin-git metacubexg-bin \
+        mihomo-bin pacman-cleanup-hook metacubexg-bin \
         bdf-unifont nerd-fonts-sarasa-term \
         emmet-language-server
         #xone-dkms proton-ge-custom-bin

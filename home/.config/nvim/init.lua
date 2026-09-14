@@ -32,7 +32,7 @@ vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 
---vim.lsp.log.set_level("off")
+vim.lsp.log.set_level("off")
 
 --==============================================================================
 -- Global Variables
@@ -116,6 +116,8 @@ type TreeNode struct {
 --==============================================================================
 vim.keymap.set("n", "<Space>", "<Nop>",  { noremap = true })
 vim.g.mapleader         = " "
+
+vim.keymap.set("x", "p",       "\"_dP")
 
 vim.keymap.set("n", "<A-v>",   "<C-v>",  { noremap = true })
 vim.keymap.set("i", "<C-BS>",  "<C-w>",  { noremap = true })
@@ -238,7 +240,6 @@ require("lazy").setup({
     --==============================================================================
     -- Editor
     --==============================================================================
-    { "vim-scripts/ReplaceWithRegister" },
     { "smoka7/hop.nvim", version  = "*",
         config = function()
             local hop = require("hop")
