@@ -35,18 +35,6 @@ function WARN()     { LOG "${FORE_YELLOW}"           "${@}"; }
 function ERROR()    { LOG "${FORE_RED}"              "${@}"; }
 function FATAl()    { LOG "${BACK_RED}${FORE_WHITE}" "${@}"; }
 
-function set_user_password() {
-    local user=${1:-root}
-
-    status=$(passwd -S "${user}" | awk '{print $2}')
-    if [[ "${status}" != "P" ]]; then
-        INFO "Please set the password for ${user}"
-        passwd "${user}"
-    else
-        INFO "${user} password is already set -- skipping"
-    fi
-}
-
 function install_home() {
     cd "${TMP_PATH}"
 
@@ -68,11 +56,10 @@ function install_home() {
     fi
 
     INFO "Install aur packages"
-    yay -S --needed --noconfirm swapspace zramswap \
-        mihomo-bin pacman-cleanup-hook metacubexg-bin \
-        bdf-unifont nerd-fonts-sarasa-term \
+    yay -S --needed --noconfirm bdf-unifont nerd-fonts-sarasa-term \
+        mihomo-bin metacubexg-bin \
         emmet-language-server
-        #xone-dkms proton-ge-custom-bin
+
     cd "${TMP_PATH}"
 
     uv tool install basedpyright
@@ -93,7 +80,7 @@ function install_rootfs() {
     INFO "Install packages"
     pacman -Syyu --noconfirm
 
-    pacman -S --needed --noconfirm man-db man-pages texinfo \
+    pacman -S --needed --noconfirm man-db man-pages texinfo pacman-contrib \
         arch-install-scripts efibootmgr dosfstools \
         base-devel ccache clang lldb llvm python cmake ninja typst tinymist websocat go gopls \
         neovim tree-sitter-cli lua-language-server yaml-language-server python-uv \
@@ -117,10 +104,23 @@ function install_rootfs() {
         kicad rpi-imager \
         steam lib32-mesa gamemode gamescope
 
+    INFO "Regenerate initramfs"
+    mkinitcpio -P
+
+    INFO "Install systemd-boot bootloader"
+    mkdir -p /boot/EFI/BOOT
+    cp /usr/lib/systemd/boot/efi/systemd-bootx64.efi /boot/EFI/BOOT/BOOTX64.EFI
+    bootctl --no-pager
+
+    INFO "Setup swapfile"
+    mkswap -U clear --size 8G --file /swapfile
+    swapon /swapfile
+
     INFO "Setup systemd services"
     systemctl enable NetworkManager
     systemctl enable bluetooth
     systemctl enable sshd
+    systemctl enable paccache.timer
 
     INFO "Setup user configurations"
     id "${NEW_USER}" >/dev/null 2>&1 || useradd -m -s /usr/bin/fish "${NEW_USER}"
@@ -134,17 +134,7 @@ function install_rootfs() {
     usermod -aG wireshark,gamemode,docker,video,uucp,input,audio,wheel "${NEW_USER}"
 
     INFO "Setup aur/user related systemd services"
-    systemctl enable swapspace
-    systemctl enable zramswap
     systemctl enable mihomo@beanopy
-
-    INFO "Regenerate initramfs"
-    mkinitcpio -P
-
-    INFO "Install systemd-boot bootloader"
-    mkdir -p /boot/EFI/BOOT
-    cp /usr/lib/systemd/boot/efi/systemd-bootx64.efi /boot/EFI/BOOT/BOOTX64.EFI
-    bootctl --no-pager
 
     INFO "Installation done"
 }
