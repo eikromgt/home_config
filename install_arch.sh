@@ -64,7 +64,7 @@ function install_home() {
 
     uv tool install basedpyright
 
-    ln -s "/run/media/${NEW_USER}" "/home/${NEW_USER}/mnt"
+    [[ ! -L "/home/${NEW_USER}/mnt" ]] && ln -s "/run/media/${NEW_USER}" "/home/${NEW_USER}/mnt"
 
     INFO "Initialize neovim"
     nvim --headless +qa
@@ -113,8 +113,8 @@ function install_rootfs() {
     bootctl --no-pager
 
     INFO "Setup swapfile"
-    mkswap -U clear --size 8G --file /swapfile
-    swapon /swapfile
+    mkswap -U clear --size 8G --file /.swapfile.install
+    mv /.swapfile.install /swapfile
 
     INFO "Setup systemd services"
     systemctl enable NetworkManager

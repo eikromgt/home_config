@@ -214,7 +214,11 @@ def install_arch(task):
 
             run_cmd(["chpasswd", "-e", "-R", root_mount], input=f"{user}:{hash}\n")
     finally:
-        run_cmd(["pkill", "-x", "gpg-agent"])
+        result = run_cmd(["pkill", "-x", "gpg-agent"], check=False)
+        if result.returncode not in (0, 1):
+            logging.info("Running: pkill -x gpg-agent failed")
+            raise subprocess.CalledProcessError(result.returncode, result.args)
+
         run_cmd(["umount", efi_mount], check=False)
         run_cmd(["umount", root_mount], check=False)
 
