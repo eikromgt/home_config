@@ -83,7 +83,7 @@ function install_rootfs() {
     pacman -S --needed --noconfirm man-db man-pages texinfo pacman-contrib \
         arch-install-scripts efibootmgr dosfstools \
         base-devel ccache clang lldb llvm python cmake ninja typst tinymist websocat go gopls \
-        neovim tree-sitter-cli lua-language-server yaml-language-server python-uv \
+        neovim helix tree-sitter-cli lua-language-server yaml-language-server python-uv \
         bash-language-server typescript-language-server dockerfile-language-server \
         vscode-html-languageserver vscode-css-languageserver vscode-json-languageserver \
         rust-analyzer systemd-lsp \
@@ -91,7 +91,7 @@ function install_rootfs() {
         dhcpcd networkmanager wpa_supplicant ethtool inetutils wireless-regdb \
         bluez bluez-utils pulsemixer pipewire-alsa pipewire-jack pipewire-pulse udiskie \
         rsync 7zip fd fzf wget git openssh fish go-yq direnv docker \
-        htop trash-cli yazi lazygit \
+        htop trash-cli yazi lazygit tmux \
         nvidia-open nvidia-utils libva-nvidia-driver vulkan-radeon \
         hyprland uwsm hypridle xdg-desktop-portal-hyprland xorg-xwayland wl-clipboard \
         brightnessctl swaybg swaync waybar wofi \
@@ -108,9 +108,7 @@ function install_rootfs() {
     mkinitcpio -P
 
     INFO "Install systemd-boot bootloader"
-    mkdir -p /boot/EFI/BOOT
-    cp /usr/lib/systemd/boot/efi/systemd-bootx64.efi /boot/EFI/BOOT/BOOTX64.EFI
-    bootctl --no-pager
+    bootctl install --variables=no
 
     INFO "Setup swapfile"
     mkswap -U clear --size 8G --file /.swapfile.install

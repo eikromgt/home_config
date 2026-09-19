@@ -259,7 +259,7 @@ rootfs_install_tasks = [
     {
         "name": "template ROOTFS_PARTITION_UUID",
         "depends": ["install"],
-        "placeholder": "$$ROOTFS_PARTITION_UUID$$",
+        "placeholder": "{{ROOTFS_PARTITION_UUID}}",
         "value_func": get_rootfs_partition_uuid,
         "files": ["/boot/loader/entries/arch.conf"],
         "func": render_template,
@@ -271,7 +271,7 @@ rootfs_update_tasks = [
         "name": "update",
         "dest_path": os.path.join(os.path.dirname(os.path.abspath(__file__)), "rootfs"),
         "src_path": "/",
-        "excludes": ["/etc/sudoers.d"],
+        "excludes": ["/etc/sudoers.d", "/boot/loader/entries/arch.conf"],
         "func": update_config,
     },
 ]
