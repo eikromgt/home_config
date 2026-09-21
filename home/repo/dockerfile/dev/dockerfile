@@ -43,11 +43,13 @@ RUN nvim --headless +qa
 USER root
 
 RUN pacman -S --noconfirm docker python-j2cli wget dpkg libvirt qemu-base \
+    less npm htop just \
     && pacman -Scc --noconfirm && rm -rf /var/cache/pacman/pkg/*
 
-RUN usermod -aG docker,libvirt,qemu beanopy
+RUN usermod -aG docker,libvirt,qemu,kvm beanopy
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/sbin/sshd", "-D"]
+
