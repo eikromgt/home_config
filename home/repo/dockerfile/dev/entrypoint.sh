@@ -13,9 +13,22 @@ if [[ "$HOST_REPO" && -d "$HOST_REPO" ]]; then
     [[ -e /home/beanopy/hrepo ]] || ln -s "$HOST_REPO" /home/beanopy/hrepo
 fi
 
+if [[ -c /dev/kvm ]]; then
+    KVM_GID=$(stat -c %g /dev/kvm)
+    groupadd -g $KVM_GID host_user 2>/dev/null || true
+    usermod -aG $KVM_GID beanopy
+fi
+
 if [[ "$COLOR_MODE" == "light"  ]]; then
     sed -i 's/vim.opt.background      = "dark"/vim.opt.background      = "light"/' /home/beanopy/.config/nvim/init.lua
     sed -i 's/theme = "gruvbox_dark_hard"/theme = "gruvbox_light_hard"/' /home/beanopy/.config/helix/config.toml
 fi
+
+sed -i '1i set -x SONIC_DPKG_CACHE_METHOD rwcache' /home/beanopy/.config/fish/config.fish
+sed -i '1i set -x SONIC_DPKG_CACHE_SOURCE $HOME/hrepo/cache/dpkg' /home/beanopy/.config/fish/config.fish
+
+mkdir -p /var/cache/sonic/artifacts
+chown beanopy: /var/cache/sonic/artifacts
+chmod 777 /var/cache/sonic/artifacts
 
 exec "$@"
