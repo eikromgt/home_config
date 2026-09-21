@@ -65,10 +65,12 @@ function install_home() {
     INFO "Intall python packages"
     uv tool install basedpyright
 
-    INFO "Intall yuhao lingming input method"
-    wget "https://github.com/forfudan/yuhao-ime-release/releases/download/v3.12.0/lingming_v3.12.0.zip"
-    7z x -g "lingming_v3.12.0.zip" -o"lingming"
-    rsync -a --exclude="default.custom.yaml" "lingming/schema/" "$HOME/.local/share/fcitx5/rime/"
+    if [[ ! -f "$HOME/.local/share/fcitx5/rime/yuling.schema.yaml" ]]; then
+        INFO "Intall yuhao lingming input method"
+        wget "https://github.com/forfudan/yuhao-ime-release/releases/download/v3.12.0/lingming_v3.12.0.zip"
+        7z x "lingming_v3.12.0.zip" -o"lingming"
+        rsync -a --exclude="default.custom.yaml" "lingming/schema/" "$HOME/.local/share/fcitx5/rime/"
+    fi
 
     [[ ! -L "/home/${NEW_USER}/mnt" ]] && ln -s "/run/media/${NEW_USER}" "/home/${NEW_USER}/mnt"
 
