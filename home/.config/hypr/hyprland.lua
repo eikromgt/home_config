@@ -81,6 +81,7 @@ local menu        = [[ uwsm app -- "$(wofi --show drun --define=drun-print_deskt
 --
 hl.on("hyprland.start", function ()
     hl.exec_cmd("uwsm-app -t service -- udiskie")
+    hl.exec_cmd("uwsm-app -t service -- wl-clip-persist --clipboard regular")
     hl.exec_cmd("uwsm-app -t service -- swaybg --mode fill --image $(fd --type file --full-path $HOME/media/wallpaper/3840x2160/ | shuf -n1)")
     hl.exec_cmd("uwsm-app -t service -- hypridle")
     hl.exec_cmd("uwsm-app -t service -- waybar")
@@ -321,8 +322,7 @@ hl.bind(mainMod .. " + P",          hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + B",          hl.dsp.exec_cmd("killall -SIGUSR1 waybar"))
 hl.bind(mainMod .. " + SLASH",      hl.dsp.exec_cmd("swaync-client -t -sw"))
 hl.bind(mainMod .. " + T",          hl.dsp.window.pseudo())
-hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd([[grim -g "$(slurp)" - | satty -f -]]))
-
+hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd([[grim -g "$(slurp)" - | satty --early-exit -f - --copy-command wl-copy]]))
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + H",          hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + L",          hl.dsp.focus({ direction = "right" }))
@@ -378,6 +378,10 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 -- See https://wiki.hypr.land/Configuring/Basics/Window-Rules/
 -- and https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
 
+hl.window_rule({ name = "float-workspace6",  match = { workspace = 6, },  float = true, })
+hl.window_rule({ name = "float-workspace9",  match = { workspace = 9, },  float = true, })
+hl.window_rule({ name = "float-workspace10", match = { workspace = 10, }, float = true, })
+
 -- Example window rules that are useful
 
 hl.window_rule({
@@ -432,17 +436,9 @@ hl.window_rule({
     float = true,
 })
 
-
 hl.window_rule({
     name = "center-float-windows",
     match = { class = [[^(com\.gabm\.satty|hyprland-share-picker)$]] },
-    float  = true,
-    center = true,
-})
-
-hl.window_rule({
-    name = "center-float-windows-title",
-    match = { title = [[^(Picture|Feishu Mettings)$]] },
     float  = true,
     center = true,
 })
@@ -470,3 +466,4 @@ hl.window_rule({
     },
     tile = true,
 })
+
