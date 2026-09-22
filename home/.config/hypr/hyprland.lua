@@ -25,7 +25,7 @@ end
 ---- ENVIRONMENT VARIABLES ----
 -------------------------------
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/
-hl.env("AQ_DRM_DEVICES", "/dev/dri/nvidia-dgpu:/dev/dri/amd-dgpu:/dev/dri/intel-dgpu:/dev/dri/amd-igpu:/dev/dri/intel-igpu")
+hl.env("AQ_DRM_DEVICES", "/dev/dri/nvidia-dgpu:/dev/dri/amd-dgpu:/dev/dri/intel-dgpu:/dev/dri/amd-igpu:/dev/dri/intel-igpu:/dev/dri/amd-gpu:/dev/dri/intel-gpu")
 
 if exists("/dev/dri/nvidia-dgpu") then
     hl.env("GBM_BACKEND", "nvidia-drm")
@@ -58,7 +58,7 @@ hl.env("XMODIFIERS", "@im=fcitx")
 
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
 hl.monitor({ output   = "", mode     = "preferred", position = "auto", scale    = "auto", })
--- hl.monitor({ output   = "", mode     = "preferred", position = "auto", scale    = "auto", })
+hl.monitor({ output   = "", mode     = "preferred", position = "auto-center-left", scale    = "auto", })
 
 
 ---------------------
@@ -340,8 +340,8 @@ for i = 1, 10 do
 end
 
 -- Move current workspace to adjacent monitor
-hl.bind(mainMod .. " + SHIFT + COMMA",  hl.dsp.window.move({ monitor = "l" }))
-hl.bind(mainMod .. " + SHIFT + PERIOD", hl.dsp.window.move({ monitor = "r" }))
+hl.bind(mainMod .. " + SHIFT + COMMA",  hl.dsp.workspace.move({ monitor = "l" }))
+hl.bind(mainMod .. " + SHIFT + PERIOD", hl.dsp.workspace.move({ monitor = "r" }))
 
 -- Example special workspace (scratchpad)
 hl.bind(mainMod .. " + GRAVE",         hl.dsp.workspace.toggle_special("magic"))

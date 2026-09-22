@@ -1,0 +1,6 @@
+KERNEL=="card*", \
+SUBSYSTEM=="drm", \
+SUBSYSTEMS=="pci", \
+DRIVERS=="amdgpu", \
+ATTRS{vendor}=="0x1002", \
+SYMLINK+="dri/amd-gpu"
