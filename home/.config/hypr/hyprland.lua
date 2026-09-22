@@ -321,6 +321,7 @@ hl.bind(mainMod .. " + P",          hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + B",          hl.dsp.exec_cmd("killall -SIGUSR1 waybar"))
 hl.bind(mainMod .. " + SLASH",      hl.dsp.exec_cmd("swaync-client -t -sw"))
 hl.bind(mainMod .. " + T",          hl.dsp.window.pseudo())
+hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd([[grim -g "$(slurp)" - | satty -f -]]))
 
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + H",          hl.dsp.focus({ direction = "left" }))
@@ -429,6 +430,21 @@ hl.window_rule({
     name = "float-windows-title",
     match = { title = "^(OpenGL)$" },
     float = true,
+})
+
+
+hl.window_rule({
+    name = "center-float-windows",
+    match = { class = [[^(com\.gabm\.satty|hyprland-share-picker)$]] },
+    float  = true,
+    center = true,
+})
+
+hl.window_rule({
+    name = "center-float-windows-title",
+    match = { title = [[^(Picture|Feishu Mettings)$]] },
+    float  = true,
+    center = true,
 })
 
 hl.window_rule({
