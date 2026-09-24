@@ -63,7 +63,7 @@ function install_home() {
     cd "${TMP_PATH}"
 
     INFO "Intall python packages"
-    uv tool install basedpyright
+    uv tool install basedpyright chromaterm2
 
     if [[ ! -f "$HOME/.local/share/fcitx5/rime/yuling.schema.yaml" ]]; then
         INFO "Intall yuhao lingming input method"
