@@ -105,7 +105,7 @@ function install_rootfs() {
         brightnessctl swaybg swaync waybar wofi wl-clip-persist grim slurp satty \
         noto-fonts noto-fonts-cjk adobe-source-code-pro-fonts \
         noto-fonts-emoji otf-font-awesome ttf-nerd-fonts-symbols-mono \
-        kitty chromium zathura zathura-pdf-poppler \
+        kitty chromium zathura zathura-pdf-poppler opencode \
         fcitx5-im fcitx5-nord fcitx5-rime \
         arm-none-eabi-gcc arm-none-eabi-gdb assimp glfw stb \
         chntpw github-cli wireshark-qt postgresql \

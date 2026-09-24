@@ -3,5 +3,8 @@
   "theme": {
     "name": "system"
   },
+  "keybinds": {
+    "leader": "alt+r"
+  },
   "animations": true
 }
