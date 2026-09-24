@@ -80,10 +80,10 @@ local menu        = [[ uwsm app -- "$(wofi --show drun --define=drun-print_deskt
 -- Or execute your favorite apps at launch like this:
 --
 hl.on("hyprland.start", function ()
-    hl.exec_cmd("uwsm-app -t service -- udiskie")
-    hl.exec_cmd("uwsm-app -t service -- wl-clip-persist --clipboard regular")
-    hl.exec_cmd("uwsm-app -t service -- swaybg --mode fill --image $(fd --type file --full-path $HOME/media/wallpaper/3840x2160/ | shuf -n1)")
     hl.exec_cmd("uwsm-app -t service -- hypridle")
+    hl.exec_cmd("uwsm-app -t service -- udiskie")
+    hl.exec_cmd("uwsm-app -t service -- swaybg --mode fill --image $(fd --type file --full-path $HOME/media/wallpaper/3840x2160/ | shuf -n1)")
+    hl.exec_cmd("uwsm-app -t service -- wl-clip-persist --clipboard regular")
     hl.exec_cmd("uwsm-app -t service -- waybar")
     hl.exec_cmd("uwsm-app -t service -- swaync")
     hl.exec_cmd("uwsm-app -t service -- fcitx5")
@@ -468,3 +468,5 @@ hl.window_rule({
     tile = true,
 })
 
+hl.workspace_rule({ workspace = "4", on_created_empty = "kitty -e tmux new-session -A -s dev" })
+hl.workspace_rule({ workspace = "7", on_created_empty = "kitty -e tmux new-session -A -s remote" })
