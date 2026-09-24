@@ -80,10 +80,10 @@ local menu        = [[ uwsm app -- "$(wofi --show drun --define=drun-print_deskt
 -- Or execute your favorite apps at launch like this:
 --
 hl.on("hyprland.start", function ()
-    hl.exec_cmd("uwsm-app -t service -- hypridle")
     hl.exec_cmd("uwsm-app -t service -- udiskie")
-    hl.exec_cmd("uwsm-app -t service -- swaybg --mode fill --image $(fd --type file --full-path $HOME/media/wallpaper/3840x2160/ | shuf -n1)")
     hl.exec_cmd("uwsm-app -t service -- wl-clip-persist --clipboard regular")
+    hl.exec_cmd("uwsm-app -t service -- swaybg --mode fill --image $(fd --type file --full-path $HOME/media/wallpaper/3840x2160/ | shuf -n1)")
+    hl.exec_cmd("uwsm-app -t service -- hypridle")
     hl.exec_cmd("uwsm-app -t service -- waybar")
     hl.exec_cmd("uwsm-app -t service -- swaync")
     hl.exec_cmd("uwsm-app -t service -- fcitx5")
@@ -247,8 +247,9 @@ hl.config({
     misc = {
         force_default_wallpaper = -1,    -- Set to 0 or 1 to disable the anime mascot wallpapers
         disable_hyprland_logo   = false, -- If true disables the random hyprland logo / anime girl background. :(
-        mouse_move_enables_dpms = true,
+        mouse_move_enables_dpms = false,
         key_press_enables_dpms = true,
+        on_focus_under_fullscreen = 1,
         exit_window_retains_fullscreen = true,
     },
 })
@@ -306,6 +307,12 @@ hl.device({
 ---- KEYBINDINGS ----
 ---------------------
 
+hl.config({
+    binds = {
+        movefocus_cycles_fullscreen = true,
+    }
+})
+
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
@@ -315,10 +322,11 @@ hl.bind(mainMod .. " + SHIFT + W",  hl.dsp.window.kill())
 hl.bind(mainMod .. " + SHIFT + Q",  hl.dsp.exec_cmd("uwsm stop"))
 hl.bind(mainMod .. " + SHIFT + R",  hl.dsp.exec_cmd("systemctl reboot"))
 hl.bind(mainMod .. " + SHIFT + X",  hl.dsp.exec_cmd("systemctl poweroff"))
-hl.bind(mainMod .. " + SHIFT + D",  hl.dsp.exec_cmd([[sleep 0.3 && hyprctl dispatch 'hl.dsp.dpms({action = "off"})']]))
+hl.bind(mainMod .. " + SHIFT + D",  hl.dsp.exec_cmd([[sleep 0.5 && hyprctl dispatch 'hl.dsp.dpms({action = "off"})']]))
 hl.bind(mainMod .. " + T",          hl.dsp.window.float({ action = "unset" }))
 hl.bind(mainMod .. " + V",          hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + F",          hl.dsp.window.fullscreen({ action = "toggle", mode = "fullscreen" }))
+hl.bind(mainMod .. " + M",          hl.dsp.window.fullscreen({ action = "toggle", mode = "maximized" }))
 hl.bind(mainMod .. " + E",          hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + P",          hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + B",          hl.dsp.exec_cmd("killall -SIGUSR1 waybar"))
