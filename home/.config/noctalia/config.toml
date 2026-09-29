@@ -1,0 +1,13 @@
+[shell]
+font_family = "SourceCodePro,NotoSansCJK"
+
+[theme]
+builtin = "Gruvbox"
+
+[wallpaper]
+directory = "~/media/wallpaper/3840x2160"
+
+[idle.behavior.screen-off]
+timeout = 300
+action = "screen_off"
+enabled = true
