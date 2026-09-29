@@ -60,16 +60,6 @@ hl.env("XMODIFIERS", "@im=fcitx")
 hl.monitor({ output   = "", mode     = "preferred", position = "auto", scale    = "auto", })
 hl.monitor({ output   = "", mode     = "preferred", position = "auto-center-left", scale    = "auto", })
 
-
----------------------
----- MY PROGRAMS ----
----------------------
-
--- Set programs that you use
-local terminal    = "uwsm-app -- kitty"
-local fileManager = "uwsm-app -- kitty yazi"
-local menu        = [[ uwsm app -- "$(wofi --show drun --define=drun-print_desktop_file=true | sed -E "s/(\.desktop) /\1:/")" ]]
-
 -------------------
 ---- AUTOSTART ----
 -------------------
@@ -80,13 +70,15 @@ local menu        = [[ uwsm app -- "$(wofi --show drun --define=drun-print_deskt
 -- Or execute your favorite apps at launch like this:
 --
 hl.on("hyprland.start", function ()
-    hl.exec_cmd("uwsm-app -t service -- udiskie")
-    hl.exec_cmd("uwsm-app -t service -- wl-clip-persist --clipboard regular")
-    hl.exec_cmd("uwsm-app -t service -- swaybg --mode fill --image $(fd --type file --full-path $HOME/media/wallpaper/3840x2160/ | shuf -n1)")
-    hl.exec_cmd("uwsm-app -t service -- hypridle")
-    hl.exec_cmd("uwsm-app -t service -- waybar")
-    hl.exec_cmd("uwsm-app -t service -- swaync")
-    hl.exec_cmd("uwsm-app -t service -- fcitx5")
+    hl.exec_cmd("uwsm-app -- noctalia")
+
+    --hl.exec_cmd("uwsm-app -- hypridle")
+    hl.exec_cmd("uwsm-app -- udiskie")
+    --hl.exec_cmd("uwsm-app -- swaybg --mode fill --image $(fd --type file --full-path $HOME/media/wallpaper/3840x2160/ | shuf -n1)")
+    hl.exec_cmd("uwsm-app -- wl-clip-persist --clipboard regular")
+    --hl.exec_cmd("uwsm-app -- waybar")
+    --hl.exec_cmd("uwsm-app -- swaync")
+    hl.exec_cmd("uwsm-app -- fcitx5")
     hl.exec_cmd("uwsm-app -- chromium")
 end)
 
@@ -247,9 +239,8 @@ hl.config({
     misc = {
         force_default_wallpaper = -1,    -- Set to 0 or 1 to disable the anime mascot wallpapers
         disable_hyprland_logo   = false, -- If true disables the random hyprland logo / anime girl background. :(
-        mouse_move_enables_dpms = false,
+        mouse_move_enables_dpms = true,
         key_press_enables_dpms = true,
-        on_focus_under_fullscreen = 1,
         exit_window_retains_fullscreen = true,
     },
 })
@@ -307,31 +298,28 @@ hl.device({
 ---- KEYBINDINGS ----
 ---------------------
 
-hl.config({
-    binds = {
-        movefocus_cycles_fullscreen = true,
-    }
-})
-
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
+local ipc = "noctalia msg "
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
-hl.bind(mainMod .. " + RETURN",     hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + RETURN",     hl.dsp.exec_cmd("uwsm-app -- kitty"))
 hl.bind(mainMod .. " + W",          hl.dsp.window.close())
 hl.bind(mainMod .. " + SHIFT + W",  hl.dsp.window.kill())
 hl.bind(mainMod .. " + SHIFT + Q",  hl.dsp.exec_cmd("uwsm stop"))
 hl.bind(mainMod .. " + SHIFT + R",  hl.dsp.exec_cmd("systemctl reboot"))
 hl.bind(mainMod .. " + SHIFT + X",  hl.dsp.exec_cmd("systemctl poweroff"))
-hl.bind(mainMod .. " + SHIFT + D",  hl.dsp.exec_cmd([[sleep 0.5 && hyprctl dispatch 'hl.dsp.dpms({action = "off"})']]))
+hl.bind(mainMod .. " + SHIFT + D",  hl.dsp.exec_cmd([[sleep 0.3 && hyprctl dispatch 'hl.dsp.dpms({action = "off"})']]))
 hl.bind(mainMod .. " + T",          hl.dsp.window.float({ action = "unset" }))
 hl.bind(mainMod .. " + V",          hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + F",          hl.dsp.window.fullscreen({ action = "toggle", mode = "fullscreen" }))
-hl.bind(mainMod .. " + M",          hl.dsp.window.fullscreen({ action = "toggle", mode = "maximized" }))
-hl.bind(mainMod .. " + E",          hl.dsp.exec_cmd(fileManager))
-hl.bind(mainMod .. " + P",          hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + B",          hl.dsp.exec_cmd("killall -SIGUSR1 waybar"))
-hl.bind(mainMod .. " + SLASH",      hl.dsp.exec_cmd("swaync-client -t -sw"))
-hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd([[grim -g "$(slurp)" - | satty --early-exit -f - --copy-command wl-copy]]))
+hl.bind(mainMod .. " + E",          hl.dsp.exec_cmd("uwsm-app -- kitty yazi"))
+hl.bind(mainMod .. " + P",          hl.dsp.exec_cmd(ipc .. "panel-toggle launcher"))
+hl.bind(mainMod .. " + B",          hl.dsp.exec_cmd(ipc .. "bar-toggle"))
+hl.bind(mainMod .. " + SLASH",      hl.dsp.exec_cmd("noctalia msg panel-toggle control-center notifications"))
+hl.bind(mainMod .. " + SHIFT + C",  hl.dsp.exec_cmd([[grim -g "$(slurp)" - | satty --early-exit -f - --copy-command wl-copy]]))
+hl.bind(mainMod .. " + Z",          hl.dsp.exec_cmd(ipc .. "panel-toggle control-center"))
+hl.bind(mainMod .. " + X",          hl.dsp.exec_cmd(ipc .. "settings-toggle"))
+
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + H",          hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + L",          hl.dsp.focus({ direction = "right" }))
@@ -434,6 +422,12 @@ hl.window_rule({
 })
 
 hl.window_rule({
+    match = { class = "dev.noctalia.Noctalia" },
+    float = true,
+    size = { 1080, 920 },
+})
+
+hl.window_rule({
     name = "float-windows",
     match = { class = "^(steam|bean|OpenGL)$" },
     float = true,
@@ -474,6 +468,17 @@ hl.window_rule({
          title = "^(Steam)$",
     },
     tile = true,
+})
+
+hl.layer_rule({
+    name = "noctalia",
+    match = {
+        namespace = "^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd|window-switcher)$",
+    },
+    no_anim = true,
+    ignore_alpha = 0.5,
+    blur = true,
+    blur_popups = true,
 })
 
 hl.workspace_rule({ workspace = "4", on_created_empty = "kitty -e tmux new-session -A -s dev" })
