@@ -370,7 +370,7 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 -- Mouse mode
 hl.bind(mainMod .. " + M", hl.dsp.submap("mouse"))
 
-hc.define_submap("mouse", function()
+hl.define_submap("mouse", function()
     -- Mouse movement
 
     hl.bind("SHIFT + F", hl.dsp.exec_cmd("ydotool mousemove -x 0 -y -100"), { repeating = true})

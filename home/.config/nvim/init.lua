@@ -158,7 +158,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         vim.keymap.set("n",          "<A-q>",     vim.lsp.buf.hover,          { buffer = bufnr, noremap = true })
         vim.keymap.set("n",          "<Leader>y", vim.lsp.buf.references,     { buffer = bufnr, noremap = true })
         vim.keymap.set("n",          "<A-S-r>",   vim.lsp.buf.rename,         { buffer = bufnr, noremap = true })
-        vim.keymap.set({ "n", "v" }, "<Leader>a", vim.lsp.buf.code_action,    { buffer = bufnr, noremap = true })
+        vim.keymap.set({ "n", "v" }, "<Leader>v", vim.lsp.buf.code_action,    { buffer = bufnr, noremap = true })
     end,
 })
 
@@ -361,7 +361,7 @@ require("lazy").setup({
     },
     { "nvim-lualine/lualine.nvim",
         dependencies = { "nvim-tree/nvim-web-devicons", "yavorski/lualine-macro-recording.nvim",
-            "NotAShelf/direnv.nvim" },
+            "NotAShelf/direnv.nvim", "nickjvandyke/opencode.nvim" },
         config = function()
             local function direnv_status()
                 return require("direnv").statusline()
@@ -386,7 +386,7 @@ require("lazy").setup({
                 },
 
                 sections = {
-                    lualine_a = { "branch", "diff", "lsp_status", direnv_status, "diagnostics" },
+                    lualine_a = { "branch", "diff", "lsp_status", require("opencode").statusline, direnv_status, "diagnostics" },
                     lualine_b = { relative_filepath, "macro_recording" },
                     lualine_c = { "windows" },
                     lualine_x = { "overseer", "encoding", "fileformat", "filetype" },
@@ -496,7 +496,7 @@ require("lazy").setup({
             })
         end
     },
-    { "barrettruth/live-server.nvim",
+    { "https://forge.barrettruth.com/barrettruth/live-server.nvim",
         config = function()
             vim.keymap.set("n", "<Leader>tl", "<Cmd>LiveServerToggle<CR>",   { noremap = true })
         end
@@ -575,7 +575,7 @@ require("lazy").setup({
     --==============================================================================
     -- Completion
     --==============================================================================
-    { "L3MON4D3/LuaSnip", version  = "2.*", build = "make install_jsregexp",
+    { "L3MON4D3/LuaSnip", build = "make install_jsregexp",
         config = function()
             local code_snippets    = "~/.config/Code/User/snippets/common.code-snippets"
 
@@ -587,104 +587,54 @@ require("lazy").setup({
     },
     { "github/copilot.vim",
         config = function()
-            vim.keymap.set("i", "<A-Tab>", "copilot#Accept('\\<CR>')", {
+            vim.keymap.set("i", "<A-S-Tab>", "copilot#Accept('\\<CR>')", {
                 expr = true,
                 replace_keycodes = false
             })
             vim.g.copilot_no_tab_map = true
         end
     },
-    { "hrsh7th/cmp-nvim-lsp",
+    { "nickjvandyke/opencode.nvim",
         config = function()
-            require("cmp_nvim_lsp").default_capabilities().textDocument.completion.completionItem.snippetSupport = false
-        end
+            vim.keymap.set({ "n", "x" }, "<Leader>aa",   function() require("opencode").ask("@this: ") end,                    { desc = "Ask OpenCode…" })
+            vim.keymap.set({ "n", "x" }, "<Leader>as",   function() require("opencode").select() end,                          { desc = "Select OpenCode…" })
+            vim.keymap.set({ "n", "x" }, "<Leader>ar",   function() return require("opencode").operator("@this") end,         { desc = "Send range to OpenCode", expr = true })
+            vim.keymap.set({ "n" },      "<Leader>al",   function() return require("opencode").operator("@this") .. "_" end,  { desc = "Send line to OpenCode", expr = true })
+        end,
     },
-    { "hrsh7th/nvim-cmp",
-        dependencies = { "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer", "hrsh7th/cmp-path",
-            "hrsh7th/cmp-nvim-lsp-signature-help", "hrsh7th/cmp-cmdline", "hrsh7th/cmp-calc",
-            "hrsh7th/cmp-nvim-lsp-document-symbol",  "saadparwaiz1/cmp_luasnip", "L3MON4D3/LuaSnip",
-            "tzachar/cmp-ai", "onsails/lspkind.nvim",
-        },
-        config = function()
-            local luasnip = require("luasnip")
-            local cmp = require("cmp")
-            local lspkind = require("lspkind")
-
-            cmp.setup({
-                snippet = {
-                    expand = function(args)
-                        luasnip.lsp_expand(args.body)
-                    end,
-                },
-                mapping = cmp.mapping.preset.insert({
-                    ["<CR>"]      = cmp.mapping.confirm({ select = true }),
-                    ["<Tab>"]     = cmp.mapping(function(fallback)
-                        if cmp.visible() then
-                            cmp.select_next_item()
-                        elseif luasnip.expand_or_jumpable() then
-                            luasnip.expand_or_jump()
-                        else
-                            fallback()
+    { "saghen/blink.cmp",
+        dependencies = { "saghen/blink.lib", "L3MON4D3/LuaSnip" },
+        opts = {
+            keymap = {
+                preset      = "default",
+                ["<A-Tab>"]  = { "accept", "fallback" },
+                ["<Tab>"]   = { "select_next", "snippet_forward", "fallback" },
+                ["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
+            },
+            completion = {
+                documentation = { auto_show = true, auto_show_delay_ms = 300 },
+                menu = { auto_show_delay_ms = 300, draw = { treesitter = { "lsp" } } },
+            },
+            sources   = {
+                default = { "lsp", "path", "snippets", "buffer" },
+                providers = {
+                    cmdline = {
+                        min_keyword_length = function(ctx)
+                            if ctx.mode == 'cmdline' and string.find(ctx.line, ' ') == nil then
+                                return 3
+                            end
+                            return 0
                         end
-                    end, { "i", "s" }),
-                    ["<S-Tab>"]   = cmp.mapping(function(fallback)
-                        if cmp.visible() then
-                            cmp.select_prev_item()
-                        elseif luasnip.jumpable(-1) then
-                            luasnip.jump(-1)
-                        else
-                            fallback()
-                        end
-                    end, { "i", "s" }),
-                }),
-                formatting = {
-                    fields = { "abbr", "icon", "kind", "menu" },
-                    format = lspkind.cmp_format({
-                        maxwidth = {
-                            menu = function() return math.floor(0.45 * vim.o.columns) end,
-                            abbr = function() return math.floor(0.45 * vim.o.columns) end,
-                        },
-                        ellipsis_char = "...",
-                        show_labelDetails = true,
-
-                        before = function (_, vim_item)
-                            return vim_item
-                        end
-                    })
-                },
-                sources = cmp.config.sources({
-                    { name = "calc" },
-                    { name = "path" },
-                    { name = "nvim_lsp_signature_help" },
-                    { name = "nvim_lsp" },
-                    { name = "luasnip" },
-                }, {
-                    { name = "buffer" },
-                }),
-            })
-
-            cmp.setup.cmdline("/", {
-                sources = cmp.config.sources({
-                    { name = "nvim_lsp_document_symbol" }
-                }, {
-                    { name = "buffer" }
-                })
-            })
-
-            cmp.setup.cmdline(":", {
-                mapping = cmp.mapping.preset.cmdline(),
-                sources = cmp.config.sources({
-                    { name = "path" }
-                }, {
-                    {
-                        name = "cmdline",
-                        option = {
-                            ignore_cmds = { "Man", "!" }
-                        }
                     }
-                })
-            })
-        end
+                }
+            },
+            snippets  = { preset = "luasnip" },
+            signature = { enabled = true },
+            cmdline   = {
+                keymap     = { preset = "inherit" },
+                completion = { menu = { auto_show = true } },
+            },
+        },
     },
 
     --==============================================================================
@@ -720,7 +670,7 @@ require("lazy").setup({
         end
     },
     { "williamboman/mason-lspconfig.nvim",
-        dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig", "hrsh7th/cmp-nvim-lsp" },
+        dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
         config = function()
             require("mason-lspconfig").setup({
                 handlers = {
@@ -748,10 +698,8 @@ require("lazy").setup({
     { "neovim/nvim-lspconfig",
         dependencies = { "b0o/schemastore.nvim" },
         config = function()
-            local cmp_nvim_lsp_cap = require("cmp_nvim_lsp").default_capabilities()
-
             vim.lsp.config('*', {
-                capabilities = cmp_nvim_lsp_cap,
+                capabilities = require("blink.cmp").get_lsp_capabilities(),
             })
 
             vim.lsp.config.lua_ls = {
