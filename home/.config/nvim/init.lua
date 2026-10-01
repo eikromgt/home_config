@@ -463,18 +463,18 @@ end)
 --==============================================================================
 -- Completion
 --==============================================================================
---plugin("https://github.com/github/copilot.vim", function()
---    vim.keymap.set("i", "<A-S-Tab>", "copilot#Accept('\\<CR>')", {
---        expr = true,
---        replace_keycodes = false
---    })
---    vim.g.copilot_no_tab_map = true
---end)
+plugin("https://github.com/github/copilot.vim", function()
+    vim.keymap.set("i", "<A-S-Tab>", "copilot#Accept('\\<CR>')", {
+        expr = true,
+        replace_keycodes = false
+    })
+    vim.g.copilot_no_tab_map = true
+end)
 
 plugin("https://github.com/milanglacier/minuet-ai.nvim", function()
     require("minuet").setup {
         virtualtext = {
-            auto_trigger_ft = { "*" },
+            auto_trigger_ft = {},
             keymap = {
                 accept = "<A-S-a>",
                 accept_line = "<A-S-Tab>",
