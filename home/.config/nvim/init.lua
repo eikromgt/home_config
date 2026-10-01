@@ -478,6 +478,8 @@ plugin("https://github.com/milanglacier/minuet-ai.nvim", function()
             keymap = {
                 accept = "<A-S-a>",
                 accept_line = "<A-S-Tab>",
+                prev = "<Leader>ap",
+                next = "<Leader>an",
                 dismiss = "<Leader>ad"
             },
         },
