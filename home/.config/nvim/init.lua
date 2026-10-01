@@ -61,9 +61,6 @@ vim.keymap.set("n", "<A-J>",   "<C-w>J", { noremap = true })
 vim.keymap.set("n", "<Leader>{", "\"oddO{<CR>}<Esc>\"oP=i{",  { noremap = true })
 vim.keymap.set("v", "<Leader>{", "\"odO{<CR>}<Esc>\"oP=i{",   { noremap = true })
 
-vim.keymap.set("n", "<A-a>",   "<Cmd>%!xxd<CR>",        { noremap = true })
-vim.keymap.set("n", "<A-S-a>",   "<Cmd>%!xxd -r<CR>",   { noremap = true })
-
 vim.keymap.set("n", "<A-p>",   ":e ",                   { noremap = true })
 vim.keymap.set("n", "<A-S-p>", ":",                     { noremap = true })
 vim.keymap.set("n", "<A-z>",   ":vertical help ",       { noremap = true })
@@ -274,6 +271,10 @@ plugin("https://github.com/kylechui/nvim-surround", function()
     require("nvim-surround").setup()
 end)
 
+plugin("https://github.com/DamianVCechov/hexview.nvim", function()
+    require("hexview").setup()
+end)
+
 --==============================================================================
 -- Window
 --==============================================================================
@@ -462,12 +463,42 @@ end)
 --==============================================================================
 -- Completion
 --==============================================================================
-plugin("https://github.com/github/copilot.vim", function()
-    vim.keymap.set("i", "<A-S-Tab>", "copilot#Accept('\\<CR>')", {
-        expr = true,
-        replace_keycodes = false
-    })
-    vim.g.copilot_no_tab_map = true
+--plugin("https://github.com/github/copilot.vim", function()
+--    vim.keymap.set("i", "<A-S-Tab>", "copilot#Accept('\\<CR>')", {
+--        expr = true,
+--        replace_keycodes = false
+--    })
+--    vim.g.copilot_no_tab_map = true
+--end)
+
+plugin("https://github.com/milanglacier/minuet-ai.nvim", function()
+    require("minuet").setup {
+        virtualtext = {
+            auto_trigger_ft = { "*" },
+            keymap = {
+                accept = "<A-S-a>",
+                accept_line = "<A-S-Tab>",
+                dismiss = "<Leader>ad"
+            },
+        },
+        provider = "openai_fim_compatible",
+        request_timeout = 2.5,
+        throttle = 1500,
+        debounce = 600,
+        provider_options = {
+            openai_fim_compatible = {
+                api_key = "DEEPSEEK_API_KEY",
+                end_point ="https://api.deepseek.com/beta/completions",
+                model = "deepseek-flash",
+                name = "Deepseek",
+                optional = {
+                    max_tokens = 256,
+                    top_p = 0.9,
+                    thinking = { type = "disabled" },
+                },
+            },
+        },
+    }
 end)
 
 plugin("https://github.com/saghen/blink.cmp", function()
@@ -475,7 +506,7 @@ plugin("https://github.com/saghen/blink.cmp", function()
     require("blink.cmp").setup({
         keymap = {
             preset      = "default",
-            ["<A-Tab>"] = { "accept", "fallback" },
+            ["<A-a>"] = { "accept", "fallback" },
             ["<Tab>"]   = { "select_next", "snippet_forward", "fallback" },
             ["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
         },
