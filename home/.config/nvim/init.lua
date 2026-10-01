@@ -478,15 +478,12 @@ plugin("https://github.com/milanglacier/minuet-ai.nvim", function()
             keymap = {
                 accept = "<A-S-a>",
                 accept_line = "<A-S-Tab>",
-                prev = "<Leader>ap",
-                next = "<Leader>an",
-                dismiss = "<Leader>ad"
             },
         },
         provider = "openai_fim_compatible",
         request_timeout = 2.5,
-        throttle = 1500,
-        debounce = 600,
+        throttle = 3000,
+        debounce = 1500,
         provider_options = {
             openai_fim_compatible = {
                 api_key = "DEEPSEEK_API_KEY",
