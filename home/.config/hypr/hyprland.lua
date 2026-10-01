@@ -276,7 +276,7 @@ hl.config({
     },
     cursor = {
         inactive_timeout = 3,
-        hide_on_key_press = true,
+        hide_on_key_press = false,
     },
 })
 
@@ -367,6 +367,28 @@ hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tr
 hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
 
+-- Mouse mode
+hl.bind(mainMod .. " + M", hl.dsp.submap("mouse"))
+
+hc.define_submap("mouse", function()
+    -- Mouse movement
+
+    hl.bind("SHIFT + F", hl.dsp.exec_cmd("ydotool mousemove -x 0 -y -100"), { repeating = true})
+    hl.bind("SHIFT + S", hl.dsp.exec_cmd("ydotool mousemove -x 0 -y 100"), { repeating = true})
+    hl.bind("SHIFT + R", hl.dsp.exec_cmd("ydotool mousemove -x -100 -y 0"), { repeating = true})
+    hl.bind("SHIFT + T", hl.dsp.exec_cmd("ydotool mousemove -x 100 -y 0"), { repeating = true})
+    hl.bind("F", hl.dsp.exec_cmd("ydotool mousemove -x 0 -y -10"), { repeating = true})
+    hl.bind("S", hl.dsp.exec_cmd("ydotool mousemove -x 0 -y 10"), { repeating = true})
+    hl.bind("R", hl.dsp.exec_cmd("ydotool mousemove -x -10 -y 0"), { repeating = true})
+    hl.bind("T", hl.dsp.exec_cmd("ydotool mousemove -x 10 -y 0"), { repeating = true})
+
+    hl.bind("N", hl.dsp.exec_cmd("ydotool click 0xc0"))
+    hl.bind("E", hl.dsp.exec_cmd("ydotool click 0xc2"))
+    hl.bind("I", hl.dsp.exec_cmd("ydotool click 0xc1"))
+
+    ---- Exit mouse mode
+    hl.bind("Escape", hl.dsp.submap("reset"))
+end)
 
 --------------------------------
 ---- WINDOWS AND WORKSPACES ----
