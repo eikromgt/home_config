@@ -195,681 +195,574 @@ vim.api.nvim_create_autocmd("VimResized", {
 })
 
 --==============================================================================
--- Plugin Manager: folke/lazy.nvim
+-- Plugin Manager: built-in vim.pack
 --==============================================================================
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-    local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-    local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-    if vim.v.shell_error ~= 0 then
-        vim.api.nvim_echo({
-            { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-            { out, "WarningMsg" },
-            { "\nPress any key to exit..." },
-        }, true, {})
-        vim.fn.getchar()
-        os.exit(1)
+-- Install, update (:packupdate), and delete (:packdelete) plugins. Plugins live
+-- in stdpath("data")/site/pack/core/opt/<name> and are all loaded at startup
+-- (eagerly). Configuration is done by calling require(...).setup() below. Plugin
+-- revisions are tracked in the pack lockfile at stdpath("data")/packlock.
+vim.pack.add({
+    -- Environment
+    "https://github.com/NotAShelf/direnv.nvim",
+    -- Editor
+    "https://github.com/smoka7/hop.nvim",
+    "https://github.com/windwp/nvim-autopairs",
+    "https://github.com/okuuva/auto-save.nvim",
+    "https://github.com/kylechui/nvim-surround",
+    -- Decoration
+    "https://github.com/ellisonleao/gruvbox.nvim",
+    "https://github.com/RRethy/vim-illuminate",
+    "https://github.com/nvimdev/hlsearch.nvim",
+    "https://github.com/HiPhish/rainbow-delimiters.nvim",
+    "https://github.com/nvim-treesitter/nvim-treesitter",
+    -- Window
+    "https://github.com/nvim-tree/nvim-tree.lua",
+    "https://github.com/nvim-tree/nvim-web-devicons",
+    "https://github.com/nvim-lualine/lualine.nvim",
+    "https://github.com/yavorski/lualine-macro-recording.nvim",
+    -- Tool
+    "https://github.com/nvim-telescope/telescope.nvim",
+    "https://github.com/nvim-lua/plenary.nvim",
+    "https://github.com/nvim-pack/nvim-spectre",
+    "https://github.com/akinsho/toggleterm.nvim",
+    "https://github.com/stevearc/overseer.nvim",
+    "https://github.com/jemag/telescope-diff.nvim",
+    "https://github.com/rcarriga/nvim-notify",
+    "https://github.com/echasnovski/mini.nvim",
+    "https://forge.barrettruth.com/barrettruth/live-server.nvim",
+    "https://github.com/kdheepak/lazygit.nvim",
+    "https://github.com/mikesmithgh/kitty-scrollback.nvim",
+    -- Git
+    "https://github.com/sindrets/diffview.nvim",
+    "https://github.com/lewis6991/gitsigns.nvim",
+    -- Completion
+    "https://github.com/L3MON4D3/LuaSnip",
+    "https://github.com/github/copilot.vim",
+    "https://github.com/nickjvandyke/opencode.nvim",
+    "https://github.com/saghen/blink.lib",
+    "https://github.com/saghen/blink.cmp",
+    -- LSP
+    "https://github.com/williamboman/mason.nvim",
+    "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim",
+    "https://github.com/williamboman/mason-lspconfig.nvim",
+    "https://github.com/neovim/nvim-lspconfig",
+    "https://github.com/b0o/schemastore.nvim",
+    "https://github.com/chomosuke/typst-preview.nvim",
+    -- DAP
+    "https://github.com/mfussenegger/nvim-dap",
+    "https://github.com/igorlfs/nvim-dap-view",
+    "https://github.com/theHamsta/nvim-dap-virtual-text",
+    -- Application
+    "https://github.com/MunifTanjim/nui.nvim",
+    "https://github.com/kawre/leetcode.nvim",
+}, { confirm = false })
+
+vim.keymap.set({ "n" }, "<Leader>rx", function() vim.pack.update() end, { noremap = true, desc = "Update plugins" })
+
+--==============================================================================
+-- Environment
+--==============================================================================
+require("direnv").setup({
+    autoload_direnv = true,
+    statusline = {
+        enabled = true,
+        icon = "󱚟",
+    },
+    keybindings = {
+        allow = "<Leader>da",
+        deny = "<Leader>dc",
+        reload = "<Leader>dr",
+        edit = "<Leader>de",
+    },
+})
+
+--==============================================================================
+-- Editor
+--==============================================================================
+do
+    local hop = require("hop")
+    local directions = require("hop.hint").HintDirection
+    hop.setup()
+
+    vim.keymap.set({ "n", "v" }, "f", function() hop.hint_char1({ direction = directions.AFTER_CURSOR,  current_line_only = true })                    end, { remap = true })
+    vim.keymap.set({ "n", "v" }, "F", function() hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true })                    end, { remap = true })
+    vim.keymap.set({ "n", "v" }, "t", function() hop.hint_char1({ direction = directions.AFTER_CURSOR,  current_line_only = true, hint_offset = -1 })  end, { remap = true })
+    vim.keymap.set({ "n", "v" }, "T", function() hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true, hint_offset = 1 })   end, { remap = true })
+    vim.keymap.set({ "n", "v" }, "<Leader>w", "<Cmd>HopWord<CR>",  { noremap = true })
+    vim.keymap.set({ "n", "v" }, "<Leader>c", "<Cmd>HopChar1<CR>", { noremap = true })
+end
+
+require("nvim-autopairs").setup({
+    enable_bracket_in_quote = false,
+})
+
+require("auto-save").setup({
+    immediate_save = { "QuitPre", "VimSuspend" },
+    defer_save = { "InsertLeave", "TextChanged", "BufLeave", "FocusLost", },
+    debounce_delay = 300,
+    condition = function(buf)
+        local fn = vim.fn
+        local utils = require("auto-save.utils.data")
+        if
+            fn.getbufvar(buf, "&modifiable") == 1 and
+            utils.not_in(fn.getbufvar(buf, "&filetype"), {"kitty-scrollback", "zsh"}) then
+            return true
+        end
+        return false
+    end,
+})
+
+require("nvim-surround").setup()
+
+--==============================================================================
+-- Decoration
+--==============================================================================
+require("gruvbox").setup({
+    transparent_mode = true,
+})
+vim.cmd.colorscheme("gruvbox")
+
+require("hlsearch").setup()
+
+-- vim-illuminate auto-starts from its plugin/ file. It defines its highlight
+-- groups with `:hi default`, so our links (set here) win regardless of order.
+vim.api.nvim_set_hl(0, "IlluminatedWordText", { link = "Visual" })
+vim.api.nvim_set_hl(0, "IlluminatedWordRead", { link = "Visual" })
+vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { link = "Visual" })
+
+vim.api.nvim_create_autocmd({"WinEnter", "FocusGained"}, {
+    callback = function()
+        vim.wo.cursorline = true
+        require("illuminate").resume_buf()
+    end
+})
+vim.api.nvim_create_autocmd({"WinLeave", "FocusLost"}, {
+    callback = function()
+        vim.wo.cursorline = false
+        require("illuminate").pause_buf()
+    end
+})
+
+do
+    local languages = { "cpp", "c", "python", "go", "cmake", "typst", "javascript", "html", "css", "json", "glsl", }
+    require("nvim-treesitter").install(languages)
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = languages,
+        callback = function()
+            vim.treesitter.start()
+        end,
+    })
+end
+
+--==============================================================================
+-- Window
+--==============================================================================
+require("nvim-tree").setup({
+    view = {
+        signcolumn = "auto",
+        side       = "right"
+    },
+    renderer = {
+        indent_width = 1
+    },
+    filters = {
+        git_ignored = false,
+        dotfiles = false
+    },
+})
+vim.keymap.set({ "n" }, "<A-e>", "<Cmd>NvimTreeFindFileToggle<CR>", { noremap = true })
+
+do
+    local function direnv_status()
+        return require("direnv").statusline()
+    end
+    local function relative_filepath()
+        return vim.fn.expand("%:.")
+    end
+    require("lualine").setup({
+        options = {
+            globalstatus = true,
+            section_separators = "",
+            component_separators = "",
+            disabled_filetypes = {
+                winbar = {
+                    "dap-view",
+                    "dap-repl",
+                    "dap-view-term",
+                },
+            },
+        },
+        sections = {
+            lualine_a = { "branch", "diff", "lsp_status", require("opencode").statusline, direnv_status, "diagnostics" },
+            lualine_b = { relative_filepath, "macro_recording" },
+            lualine_c = { "windows" },
+            lualine_x = { "overseer", "encoding", "fileformat", "filetype" },
+            lualine_z = { "selectioncount", "location", },
+        }
+    })
+end
+
+--==============================================================================
+-- Tool
+--==============================================================================
+do
+    local telescope = require("telescope.builtin")
+    vim.keymap.set("n", "<leader>fp", telescope.find_files, { noremap = true })
+    vim.keymap.set("n", "<leader>ff", telescope.live_grep, { noremap = true })
+    vim.keymap.set("n", "<leader>fh", telescope.pickers, { noremap = true })
+    vim.keymap.set("n", "<leader>fb", telescope.buffers, { noremap = true })
+    vim.keymap.set("n", "<leader>fh", telescope.help_tags, { noremap = true })
+    vim.keymap.set("n", "<Leader>fw", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
+    vim.keymap.set("n", "<A-p>", telescope.find_files, { noremap = true })
+    vim.keymap.set("n", "<A-f>", telescope.live_grep, { noremap = true })
+    vim.keymap.set("n", "<A-S-f>", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
+end
+
+require("spectre").setup()
+vim.keymap.set("n", "<Leader>tr", function() require("spectre").toggle() end, { desc = "Toggle Spectre" })
+
+do
+    vim.opt.hidden = true
+    require("toggleterm").setup({
+        open_mapping        = "<A-`>",
+        autochdir           = true,
+        direction           = "float",
+    })
+    vim.keymap.set({ "n", "t" }, "<A-S-`>", "<Cmd>TermSelect<CR>", { noremap = true })
+end
+
+require("overseer").setup({
+    dap = false,
+    task_list = {
+        min_height = 12,
+    }
+})
+vim.keymap.set({ "n" }, "<Leader>rt", "<Cmd>OverseerRun<CR>", { noremap = true })
+vim.keymap.set({ "n" }, "<Leader>tt", "<Cmd>OverseerToggle<CR>", { noremap = true })
+
+require("telescope").load_extension("diff")
+vim.keymap.set("n", "<Leader>fd", function() require("telescope").extensions.diff.diff_files({ hidden = true }) end, { desc = "Compare 2 files" })
+vim.keymap.set("n", "<Leader>fc", function() require("telescope").extensions.diff.diff_current({ hidden = true }) end, { desc = "Compare file with current" })
+
+vim.notify = require("notify")
+vim.notify.setup({
+    render = "compact",
+    stages = "slide",
+    background_colour = "#1d2021",
+    top_down = false
+})
+require("telescope").load_extension("notify")
+vim.keymap.set({ "n" }, "<Leader>f/", "<Cmd>Telescope notify<CR>", { noremap = true })
+
+require("mini.align").setup()
+require("mini.trailspace").setup()
+require("mini.move").setup({
+    mappings = {
+        left = "<C-A-h>",
+        right = "<C-A-l>",
+        down = "<C-A-j>",
+        up = "<C-A-k>",
+        line_left = "<C-A-h>",
+        line_right = "<C-A-l>",
+        line_down = "<C-A-j>",
+        line_up = "<C-A-k>",
+    },
+})
+
+vim.keymap.set("n", "<Leader>tl", "<Cmd>LiveServerToggle<CR>", { noremap = true })
+vim.keymap.set("n", "<Leader>rg", "<Cmd>LazyGit<CR>", { noremap = true })
+
+require("kitty-scrollback").setup()
+
+--==============================================================================
+-- Git
+--==============================================================================
+require("diffview").setup({
+    enhanced_diff_hl = true,
+    file_panel = {
+        listing_style = "tree",
+        tree_options = {
+            flatten_dirs = true,
+            folder_statuses = "only_folded",
+        },
+        win_config = {
+            position = "right",
+            width = 35,
+            win_opts = {},
+        },
+    },
+})
+vim.keymap.set("n", "<Leader>do", ":DiffviewOpen", { noremap = true })
+vim.keymap.set("n", "<Leader>dd", "<Cmd>DiffviewOpen<CR>", { noremap = true })
+vim.keymap.set("n", "<Leader>dq", "<Cmd>DiffviewClose<CR>", { noremap = true })
+vim.keymap.set("n", "<A-]>", "]c", { noremap = true })
+vim.keymap.set("n", "<A-[>", "[c", { noremap = true })
+
+-- gitsigns' plugin/ file calls setup() with no args, which never resets the
+-- config, so we can configure it directly here.
+local gitsigns = require("gitsigns")
+gitsigns.setup {
+    current_line_blame = true,
+    current_line_blame_opts = {
+        virt_text_pos = "eol",
+        delay = 300,
+        ignore_whitespace = true
+    },
+    current_line_blame_formatter = "<author>, <author_time:%Y-%m-%d> - <summary>",
+    preview_config = {
+    },
+}
+vim.keymap.set("n", "<Leader>tg", gitsigns.toggle_current_line_blame, { noremap = true, silent = true })
+
+--==============================================================================
+-- Completion
+--==============================================================================
+-- Build LuaSnip's optional jsregexp engine if it is not already present.
+do
+    local luasnip_dir = vim.fn.stdpath("data") .. "/site/pack/core/opt/LuaSnip"
+    if vim.uv.fs_stat(luasnip_dir) ~= nil and vim.uv.fs_stat(luasnip_dir .. "/lua/luasnip-jsregexp.lua") == nil then
+        pcall(function()
+            vim.system({ "make", "install_jsregexp" }, { cwd = luasnip_dir }):wait()
+        end)
     end
 end
 
-vim.opt.runtimepath:prepend(lazypath)
-vim.keymap.set({ "n" }, "<Leader>rx", "<Cmd>Lazy<CR>", { noremap = true })
-
-require("lazy").setup({
-    --==============================================================================
-    -- Enviroment
-    --==============================================================================
-    { "NotAShelf/direnv.nvim",
-        config = function()
-            require("direnv").setup({
-                autoload_direnv = true,
-                statusline = {
-                    enabled = true,
-                    icon = "󱚟",
-                },
-                keybindings = {
-                    allow = "<Leader>da",
-                    deny = "<Leader>dc",
-                    reload = "<Leader>dr",
-                    edit = "<Leader>de",
-                },
-            })
-        end,
-    },
-
-    --==============================================================================
-    -- Editor
-    --==============================================================================
-    { "smoka7/hop.nvim", version  = "*",
-        config = function()
-            local hop = require("hop")
-            local directions = require("hop.hint").HintDirection
-            hop.setup();
-
-            vim.keymap.set({ "n", "v" }, "f", function() hop.hint_char1({ direction = directions.AFTER_CURSOR,  current_line_only = true })                    end, { remap = true })
-            vim.keymap.set({ "n", "v" }, "F", function() hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true })                    end, { remap = true })
-            vim.keymap.set({ "n", "v" }, "t", function() hop.hint_char1({ direction = directions.AFTER_CURSOR,  current_line_only = true, hint_offset = -1 })  end, { remap = true })
-            vim.keymap.set({ "n", "v" }, "T", function() hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true, hint_offset = 1 })   end, { remap = true })
-            vim.keymap.set({ "n", "v" }, "<Leader>w", "<Cmd>HopWord<CR>",  { noremap = true })
-            vim.keymap.set({ "n", "v" }, "<Leader>c", "<Cmd>HopChar1<CR>", { noremap = true })
-        end
-    },
-    { "windwp/nvim-autopairs", event = "InsertEnter",
-        config = function()
-            require("nvim-autopairs").setup({
-                enable_bracket_in_quote = false,
-            })
-        end
-    },
-    { "okuuva/auto-save.nvim",
-        config = function()
-            require("auto-save").setup({
-                immediate_save = { "QuitPre", "VimSuspend" },
-                defer_save = { "InsertLeave", "TextChanged", "BufLeave", "FocusLost", },
-                debounce_delay = 300,
-                condition = function(buf)
-                    local fn = vim.fn
-                    local utils = require("auto-save.utils.data")
-
-                    if
-                        fn.getbufvar(buf, "&modifiable") == 1 and
-                        utils.not_in(fn.getbufvar(buf, "&filetype"), {"kitty-scrollback", "zsh"}) then
-                        return true
-                    end
-                    return false
-                end,
-            })
-        end
-    },
-    { "kylechui/nvim-surround", version="*", event="VeryLazy",
-        config = true
-    },
-
-    --==============================================================================
-    -- Decoration
-    --==============================================================================
-    { "ellisonleao/gruvbox.nvim", priority=1000,
-        config = function()
-            require("gruvbox").setup({
-                transparent_mode    = true,
-            })
-            vim.cmd.colorscheme("gruvbox")
-        end
-    },
-    { "RRethy/vim-illuminate",
-        config = function()
-            vim.api.nvim_set_hl(0, "IlluminatedWordText", { link = "Visual" })
-            vim.api.nvim_set_hl(0, "IlluminatedWordRead", { link = "Visual" })
-            vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { link = "Visual" })
-
-            vim.api.nvim_create_autocmd({"WinEnter", "FocusGained"}, {
-                callback = function()
-                    vim.wo.cursorline = true
-                    require("illuminate").resume_buf()
-                end
-            })
-
-            vim.api.nvim_create_autocmd({"WinLeave", "FocusLost"}, {
-                callback = function()
-                    vim.wo.cursorline = false
-                    require("illuminate").pause_buf()
-                end
-            })
-        end
-    },
-    { "nvimdev/hlsearch.nvim", event = "BufRead", config = true },
-    { "HiPhish/rainbow-delimiters.nvim" },
-    { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate",
-        config = function()
-            local languages = { "cpp", "c", "python", "go", "cmake", "typst", "javascript",
-            "html", "css", "json", "glsl", }
-
-            require("nvim-treesitter").install(languages)
-            vim.api.nvim_create_autocmd("FileType", {
-                pattern = languages,
-                callback = function()
-                    vim.treesitter.start()
-                end,
-            })
-
-        end
-    },
-    { "3rd/image.nvim", enabled = false },
-
-    --==============================================================================
-    -- Window
-    --==============================================================================
-    { "nvim-tree/nvim-tree.lua",
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-        config = function()
-            require("nvim-tree").setup({
-                view = {
-                    signcolumn = "auto",
-                    side       = "right"
-                },
-                renderer = {
-                    indent_width = 1
-                },
-                filters = {
-                    git_ignored = false,
-                    dotfiles = false
-                },
-            })
-
-            vim.keymap.set({ "n" }, "<A-e>",    "<Cmd>NvimTreeFindFileToggle<CR>",   { noremap = true })
-        end
-    },
-    { "nvim-lualine/lualine.nvim",
-        dependencies = { "nvim-tree/nvim-web-devicons", "yavorski/lualine-macro-recording.nvim",
-            "NotAShelf/direnv.nvim", "nickjvandyke/opencode.nvim" },
-        config = function()
-            local function direnv_status()
-                return require("direnv").statusline()
-            end
-
-            local function relative_filepath()
-                return vim.fn.expand("%:.")
-            end
-
-            require("lualine").setup({
-                options = {
-                    globalstatus = true,
-                    section_separators = "",
-                    component_separators = "",
-                    disabled_filetypes = {
-                        winbar = {
-                            "dap-view",
-                            "dap-repl",
-                            "dap-view-term",
-                        },
-                    },
-                },
-
-                sections = {
-                    lualine_a = { "branch", "diff", "lsp_status", require("opencode").statusline, direnv_status, "diagnostics" },
-                    lualine_b = { relative_filepath, "macro_recording" },
-                    lualine_c = { "windows" },
-                    lualine_x = { "overseer", "encoding", "fileformat", "filetype" },
-                    lualine_z = { "selectioncount", "location", },
-                }
-            })
-        end
-    },
-
-    --==============================================================================
-    -- Tool
-    --==============================================================================
-    { "nvim-telescope/telescope.nvim", version = "*",
-        dependencies = { "nvim-lua/plenary.nvim" },
-        config = function()
-            local telescope = require("telescope.builtin")
-            vim.keymap.set("n", "<leader>fp", telescope.find_files, { noremap = true })
-            vim.keymap.set("n", "<leader>ff", telescope.live_grep, { noremap = true })
-            vim.keymap.set("n", "<leader>fh", telescope.pickers, { noremap = true })
-            vim.keymap.set("n", "<leader>fb", telescope.buffers, { noremap = true })
-            vim.keymap.set("n", "<leader>fh", telescope.help_tags, { noremap = true })
-            vim.keymap.set("n", "<Leader>fw", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
-
-            vim.keymap.set("n", "<A-p>", telescope.find_files, { noremap = true })
-            vim.keymap.set("n", "<A-f>", telescope.live_grep, { noremap = true })
-            vim.keymap.set("n", "<A-S-f>", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
-        end
-    },
-    { "nvim-pack/nvim-spectre",
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-        config = function()
-            require("spectre").setup()
-
-            vim.keymap.set("n", "<Leader>tr", function() require("spectre").toggle() end,
-                { desc = "Toggle Spectre" })
-        end
-    },
-    { "akinsho/toggleterm.nvim", version  = "*",
-        config = function()
-            vim.opt.hidden          = true
-            require("toggleterm").setup({
-                open_mapping        = "<A-`>",
-                autochdir           = true,
-                direction           = "float",
-            })
-
-            vim.keymap.set({ "n", "t" }, "<A-S-`>", "<Cmd>TermSelect<CR>", { noremap = true })
-        end
-    },
-    { "stevearc/overseer.nvim",
-        dependencies = { "nvim-telescope/telescope.nvim", "akinsho/toggleterm.nvim" },
-        config = function()
-            require("overseer").setup({
-                dap = false,
-                task_list = {
-                    min_height = 12,
-                }
-            })
-
-            vim.keymap.set({ "n" }, "<Leader>rt", "<Cmd>OverseerRun<CR>", { noremap = true })
-            vim.keymap.set({ "n" }, "<Leader>tt", "<Cmd>OverseerToggle<CR>", { noremap = true })
-        end
-    },
-    { "jemag/telescope-diff.nvim",
-        dependencies = { "nvim-telescope/telescope.nvim" },
-        config = function()
-            require("telescope").load_extension("diff")
-
-            vim.keymap.set("n", "<Leader>fd", function() require("telescope").extensions.diff.diff_files({ hidden = true }) end,
-            { desc = "Compare 2 files" })
-            vim.keymap.set("n", "<Leader>fc",   function() require("telescope").extensions.diff.diff_current({ hidden = true }) end,
-            { desc = "Compare file with current" })
-        end
-    },
-    { "rcarriga/nvim-notify",
-        config = function()
-            vim.notify = require("notify")
-            vim.notify.setup({
-                render = "compact",
-                stages = "slide",
-                background_colour = "#1d2021",
-                top_down = false
-            })
-
-            require("telescope").load_extension("notify")
-            vim.keymap.set({ "n" }, "<Leader>f/", "<Cmd>Telescope notify<CR>", { noremap = true })
-        end
-    },
-    { "echasnovski/mini.nvim", version = false,
-        config = function()
-            require("mini.align").setup()
-            require("mini.trailspace").setup({
-
-            });
-
-            require("mini.move").setup({
-                mappings = {
-                    left = "<C-A-h>",
-                    right = "<C-A-l>",
-                    down = "<C-A-j>",
-                    up = "<C-A-k>",
-                    line_left = "<C-A-h>",
-                    line_right = "<C-A-l>",
-                    line_down = "<C-A-j>",
-                    line_up = "<C-A-k>",
-                },
-            })
-        end
-    },
-    { "https://forge.barrettruth.com/barrettruth/live-server.nvim",
-        config = function()
-            vim.keymap.set("n", "<Leader>tl", "<Cmd>LiveServerToggle<CR>",   { noremap = true })
-        end
-    },
-    { "kdheepak/lazygit.nvim", lazy = true,
-        dependencies = { "nvim-lua/plenary.nvim", },
-        cmd = {
-            "LazyGit",
-            "LazyGitConfig",
-            "LazyGitCurrentFile",
-            "LazyGitFilter",
-            "LazyGitFilterCurrentFile",
-        },
-        keys = {
-            { "<Leader>rg", "<Cmd>LazyGit<CR>", desc = "LazyGit" }
-        }
-    },
-    {
-        'mikesmithgh/kitty-scrollback.nvim', lazy = true,
-        cmd = { 'KittyScrollbackGenerateKittens', 'KittyScrollbackCheckHealth', 'KittyScrollbackGenerateCommandLineEditing' },
-        event = { 'User KittyScrollbackLaunch' },
-        config = function()
-            require('kitty-scrollback').setup()
-        end,
-    },
-
-    --==============================================================================
-    -- Git
-    --==============================================================================
-    { "sindrets/diffview.nvim",
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-        config = function()
-            require("diffview").setup({
-                enhanced_diff_hl = true,
-                file_panel = {
-                    listing_style = "tree",
-                    tree_options = {
-                        flatten_dirs = true,
-                        folder_statuses = "only_folded",
-                    },
-                    win_config = {
-                        position = "right",
-                        width = 35,
-                        win_opts = {},
-                    },
-                },
-            })
-
-            vim.keymap.set("n", "<Leader>do",   ":DiffviewOpen",          { noremap = true })
-            vim.keymap.set("n", "<Leader>dd",   "<Cmd>DiffviewOpen<CR>",  { noremap = true })
-            vim.keymap.set("n", "<Leader>dq",   "<Cmd>DiffviewClose<CR>", { noremap = true })
-            vim.keymap.set("n", "<A-]>", "]c",  { noremap = true })
-            vim.keymap.set("n", "<A-[>", "[c",  { noremap = true })
-        end
-    },
-    { "lewis6991/gitsigns.nvim",
-        config = function()
-            local gitsigns = require("gitsigns")
-
-            gitsigns.setup {
-                current_line_blame = true,
-                current_line_blame_opts = {
-                    virt_text_pos = "eol",
-                    delay = 300,
-                    ignore_whitespace = true
-                },
-                current_line_blame_formatter = "<author>, <author_time:%Y-%m-%d> - <summary>",
-                preview_config = {
-                },
-            }
-
-            vim.keymap.set("n", "<Leader>tg", gitsigns.toggle_current_line_blame,  { noremap = true, silent = true })
-        end
-    },
-
-    --==============================================================================
-    -- Completion
-    --==============================================================================
-    { "L3MON4D3/LuaSnip", build = "make install_jsregexp",
-        config = function()
-            local code_snippets    = "~/.config/Code/User/snippets/common.code-snippets"
-
-            require("luasnip.loaders.from_vscode").load_standalone({
-                path = code_snippets,
-                lazy = true
-            })
-        end
-    },
-    { "github/copilot.vim",
-        config = function()
-            vim.keymap.set("i", "<A-S-Tab>", "copilot#Accept('\\<CR>')", {
-                expr = true,
-                replace_keycodes = false
-            })
-            vim.g.copilot_no_tab_map = true
-        end
-    },
-    { "nickjvandyke/opencode.nvim",
-        config = function()
-            vim.keymap.set({ "n", "x" }, "<Leader>aa",   function() require("opencode").ask("@this: ") end,                    { desc = "Ask OpenCode…" })
-            vim.keymap.set({ "n", "x" }, "<Leader>as",   function() require("opencode").select() end,                          { desc = "Select OpenCode…" })
-            vim.keymap.set({ "n", "x" }, "<Leader>ar",   function() return require("opencode").operator("@this") end,         { desc = "Send range to OpenCode", expr = true })
-            vim.keymap.set({ "n" },      "<Leader>al",   function() return require("opencode").operator("@this") .. "_" end,  { desc = "Send line to OpenCode", expr = true })
-        end,
-    },
-    { "saghen/blink.cmp",
-        dependencies = { "saghen/blink.lib", "L3MON4D3/LuaSnip" },
-        opts = {
-            keymap = {
-                preset      = "default",
-                ["<A-Tab>"]  = { "accept", "fallback" },
-                ["<Tab>"]   = { "select_next", "snippet_forward", "fallback" },
-                ["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
-            },
-            completion = {
-                documentation = { auto_show = true, auto_show_delay_ms = 300 },
-                menu = { auto_show_delay_ms = 300, draw = { treesitter = { "lsp" } } },
-            },
-            sources   = {
-                default = { "lsp", "path", "snippets", "buffer" },
-                providers = {
-                    cmdline = {
-                        min_keyword_length = function(ctx)
-                            if ctx.mode == 'cmdline' and string.find(ctx.line, ' ') == nil then
-                                return 3
-                            end
-                            return 0
-                        end
-                    }
-                }
-            },
-            snippets  = { preset = "luasnip" },
-            signature = { enabled = true },
-            cmdline   = {
-                keymap     = { preset = "inherit" },
-                completion = { menu = { auto_show = true } },
-            },
-        },
-    },
-
-    --==============================================================================
-    -- LSP
-    --==============================================================================
-    { "williamboman/mason.nvim",
-        config = function()
-            require("mason").setup({
-                ui = {
-                    icons = {
-                        package_installed   = "✓",
-                        package_pending     = "➜",
-                        package_uninstalled = "✗"
-                    }
-                }
-            })
-
-            vim.keymap.set({ "n" }, "<Leader>rm", "<Cmd>Mason<CR>", { noremap = true })
-        end
-    },
-    { "WhoIsSethDaniel/mason-tool-installer.nvim",
-        config = function()
-            require('mason-tool-installer').setup {
-                run_on_start = false,
-                ensure_installed = {
-                    "codelldb",
-                    "cortex-debug",
-                    "glsl_analyzer",
-                    "neocmakelsp",
-                    "systemd-lsp",
-                }
-            }
-        end
-    },
-    { "williamboman/mason-lspconfig.nvim",
-        dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
-        config = function()
-            require("mason-lspconfig").setup({
-                handlers = {
-                    ["neocmake"] = function()
-                        vim.lsp.config.neocmake = {
-                            init_options = {
-                                lint = {
-                                    enable = false,
-                                }
-                            },
-                        }
-                    end,
-                    ["verible"] = function()
-                        vim.lsp.config.verible = {
-                            root_dir     = function() return vim.fn.getcwd() end,
-                            handlers     = {
-                                ["textDocument/publishDiagnostics"] = nil
-                            }
-                        }
-                    end,
-                }
-            })
-        end
-    },
-    { "neovim/nvim-lspconfig",
-        dependencies = { "b0o/schemastore.nvim" },
-        config = function()
-            vim.lsp.config('*', {
-                capabilities = require("blink.cmp").get_lsp_capabilities(),
-            })
-
-            vim.lsp.config.lua_ls = {
-                settings     = {
-                    Lua = { diagnostics = { globals = { "vim" } } }
-                }
-            }
-
-            vim.lsp.config.tinymist = {
-                offset_encoding = "utf-8",
-                settings     = {
-                    formatterMode = "typstyle",
-                    exportPdf = "onSave",
-                    semanticTokens = "disable"
-                }
-            }
-
-            vim.lsp.config.djlsp = {
-                filetypes = { "htmldjango" },
-            }
-
-            vim.lsp.config.jsonls = {
-                settings = {
-                    json = {
-                        schemas = require("schemastore").json.schemas(),
-                        validate = { enable = true },
-                    },
-                }
-            }
-
-            vim.lsp.enable({"clangd", "basedpyright", "ruff", "lua_ls", "gopls", "rust_analyzer", "ts_ls"})
-            vim.lsp.enable({"tinymist", "bashls"})
-            vim.lsp.enable({"html", "cssls", "yamlls", "dockerls", "jsonls"})
-            vim.lsp.enable({"neocmake", "glsl_analyzer", "systemd_lsp", "emmet_language_server", "djlsp"})
-        end
-    },
-    { "chomosuke/typst-preview.nvim", ft = "typst", version = '*',
-        config = function()
-            require("typst-preview").setup({
-                open_cmd = "chromium --new-window %s",
-                invert_colors = '{"rest": "always","image": "never"}',
-                dependencies_bin = {
-                    ["tinymist"] = "tinymist",
-                    ["websocat"] = "websocat",
-                },
-            })
-
-            vim.keymap.set("n", "<Leader>tp", "<Cmd>TypstPreviewToggle<CR>",     { noremap = true })
-        end
-    },
-
-    --==============================================================================
-    -- DAP
-    --==============================================================================
-    { "mfussenegger/nvim-dap",
-        config = function()
-            local dap = require("dap")
-            require("overseer").enable_dap()
-
-            dap.adapters.codelldb = {
-                type = "server",
-                port = "${port}",
-                executable = {
-                    command = "codelldb",
-                    args = { "--port", "${port}" }
-                }
-            }
-
-            dap.adapters.cortex_debug = {
-                type = "server",
-                port = "${port}",
-                executable = {
-                    command = "codelldb",
-                    args = { "--port", "${port}" }
-                }
-            }
-
-            dap.adapters.arm_none_eabi_gdb = {
-                type = "server",
-                port = "${port}",
-                executable = {
-                    command = "arm-none-eabi-gdb",
-                    args = { "--port", "${port}" }
-                }
-            }
-
-            vim.keymap.set("n", "<A-d>", function()
-                require("dap").continue()
-            end,          { noremap = true, silent = true })
-            vim.keymap.set("n", "<A-n>", function() dap.step_over() end,         { noremap = true, silent = true })
-            vim.keymap.set("n", "<A-i>", function() dap.step_into() end,         { noremap = true, silent = true })
-            vim.keymap.set("n", "<A-o>", function() dap.step_out() end,          { noremap = true, silent = true })
-            vim.keymap.set("n", "<Leader>tb", function() dap.toggle_breakpoint() end, { noremap = true, silent = true })
-        end
-    },
-    { "igorlfs/nvim-dap-view",
-        dependencies = {"mfussenegger/nvim-dap" },
-        config = function()
-            local dap = require("dap")
-            local dap_view = require("dap-view")
-
-            dap_view.setup({
-                winbar = {
-                    show = true,
-                    sections = { "console", "watches", "exceptions", "breakpoints", "threads", "repl" },
-                    default_section = "console",
-                },
-            })
-
-            dap.listeners.before.attach["dap-view-config"]           = function() dap_view.open() end
-            dap.listeners.before.launch["dap-view-config"]           = function() dap_view.open() end
-            dap.listeners.before.event_terminated["dap-view-config"] = function() dap_view.close() end
-            dap.listeners.before.event_exited["dap-view-config"]     = function() dap_view.close() end
-
-            vim.keymap.set("n", "<Leader>td", function() dap_view.toggle() end, { noremap = true, silent = true })
-        end
-    },
-    { "theHamsta/nvim-dap-virtual-text",
-        dependencies = { "mfussenegger/nvim-dap",  "nvim-treesitter/nvim-treesitter", },
-        config = function()
-            require("nvim-dap-virtual-text").setup({
-                virt_text_pos = "eol"
-            })
-        end
-    },
-
-    --==============================================================================
-    -- Application
-    --==============================================================================
-    { "kawre/leetcode.nvim", lazy = vim.fn.argv()[1] ~= "leetcode",
-        dependencies = { "nvim-telescope/telescope.nvim", "MunifTanjim/nui.nvim", "nvim-treesitter/nvim-treesitter",
-            "rcarriga/nvim-notify", "nvim-tree/nvim-web-devicons", "3rd/image.nvim", },
-        config = function()
-            vim.api.nvim_create_autocmd("FileType", {
-                pattern = "leetcode.nvim",
-                callback = function()
-                    vim.cmd("Copilot disable")
-                end,
-            })
-
-            require("leetcode").setup({
-                arg = "leetcode",
-                lang = "golang",
-                cn = {
-                    enabled = true,
-                    translator = false,
-                    translate_problems = false,
-                },
-                injector = {
-                    ["cpp"] = { before =  { leetcodeCppBeforeInjection }},
-                    ["python3"] = { before =  { leetcodePythonBeforeInjection }},
-                    ["golang"] = { before =  { leetcodeGoBeforeInjection }},
-                }
-            })
-
-            vim.keymap.set("n", "<Leader>ll", "<Cmd>Leet list<CR>",     { noremap = true })
-            vim.keymap.set("n", "<Leader>li", "<Cmd>Leet inject<CR>",   { noremap = true })
-            vim.keymap.set("n", "<Leader>lr", "<Cmd>Leet reset<CR>",    { noremap = true })
-            vim.keymap.set("n", "<Leader>lt", "<Cmd>Leet test<CR>",     { noremap = true })
-            vim.keymap.set("n", "<Leader>ls", "<Cmd>Leet submit<CR>",   { noremap = true })
-            vim.keymap.set("n", "<Leader>lc", "<Cmd>Leet console<CR>",  { noremap = true })
-            vim.keymap.set("n", "<Leader>lh", "<Cmd>Leet hints<CR>",    { noremap = true })
-            vim.keymap.set("n", "<Leader>lm", "<Cmd>Leet menu<CR>",     { noremap = true })
-            vim.keymap.set("n", "<Leader>lp", "<Cmd>Leet lang<CR>",     { noremap = true })
-            vim.keymap.set("n", "<Leader>ld", "<Cmd>Leet daily<CR>",     { noremap = true })
-            vim.keymap.set("n", "<Leader>lq", "<Cmd>Leet exit<CR>",     { noremap = true })
-        end
-    },
-},
-{
-  rocks = { enabled = false, hererocks = false },
+require("luasnip.loaders.from_vscode").load_standalone({
+    path = "~/.config/Code/User/snippets/common.code-snippets",
+    lazy = true
 })
 
+vim.keymap.set("i", "<A-S-Tab>", "copilot#Accept('\\<CR>')", {
+    expr = true,
+    replace_keycodes = false
+})
+vim.g.copilot_no_tab_map = true
+
+vim.keymap.set({ "n", "x" }, "<Leader>aa", function() require("opencode").ask("@this: ") end, { desc = "Ask OpenCode…" })
+vim.keymap.set({ "n", "x" }, "<Leader>as", function() require("opencode").select() end, { desc = "Select OpenCode…" })
+vim.keymap.set({ "n", "x" }, "<Leader>ar", function() return require("opencode").operator("@this") end, { desc = "Send range to OpenCode", expr = true })
+vim.keymap.set({ "n" }, "<Leader>al", function() return require("opencode").operator("@this") .. "_" end, { desc = "Send line to OpenCode", expr = true })
+
+require("blink.cmp").build():pwait()
+require("blink.cmp").setup({
+    keymap = {
+        preset      = "default",
+        ["<A-Tab>"] = { "accept", "fallback" },
+        ["<Tab>"]   = { "select_next", "snippet_forward", "fallback" },
+        ["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
+    },
+    completion = {
+        documentation = { auto_show = true, auto_show_delay_ms = 300 },
+        menu = { auto_show_delay_ms = 300, draw = { treesitter = { "lsp" } } },
+    },
+    sources   = {
+        default = { "lsp", "path", "snippets", "buffer" },
+        providers = {
+            cmdline = {
+                min_keyword_length = function(ctx)
+                    if ctx.mode == 'cmdline' and string.find(ctx.line, ' ') == nil then
+                        return 3
+                    end
+                    return 0
+                end
+            }
+        }
+    },
+    snippets  = { preset = "luasnip" },
+    signature = { enabled = true },
+    cmdline   = {
+        keymap     = { preset = "inherit" },
+        completion = { menu = { auto_show = true } },
+    },
+})
+
+--==============================================================================
+-- LSP
+--==============================================================================
+require("mason").setup({
+    ui = {
+        icons = {
+            package_installed   = "✓",
+            package_pending     = "➜",
+            package_uninstalled = "✗"
+        }
+    }
+})
+vim.keymap.set({ "n" }, "<Leader>rm", "<Cmd>Mason<CR>", { noremap = true })
+
+require("mason-tool-installer").setup {
+    run_on_start = false,
+    ensure_installed = {
+        "codelldb",
+        "cortex-debug",
+        "glsl_analyzer",
+        "neocmakelsp",
+        "systemd-lsp",
+    }
+}
+
+require("mason-lspconfig").setup({
+    handlers = {
+        ["neocmake"] = function()
+            vim.lsp.config.neocmake = {
+                init_options = {
+                    lint = {
+                        enable = false,
+                    }
+                },
+            }
+        end,
+        ["verible"] = function()
+            vim.lsp.config.verible = {
+                root_dir     = function() return vim.fn.getcwd() end,
+                handlers     = {
+                    ["textDocument/publishDiagnostics"] = nil
+                }
+            }
+        end,
+    }
+})
+
+vim.lsp.config('*', {
+    capabilities = require("blink.cmp").get_lsp_capabilities(),
+})
+
+vim.lsp.config.lua_ls = {
+    settings = {
+        Lua = { diagnostics = { globals = { "vim" } } }
+    }
+}
+
+vim.lsp.config.tinymist = {
+    offset_encoding = "utf-8",
+    settings = {
+        formatterMode = "typstyle",
+        exportPdf = "onSave",
+        semanticTokens = "disable"
+    }
+}
+
+vim.lsp.config.djlsp = {
+    filetypes = { "htmldjango" },
+}
+
+vim.lsp.config.jsonls = {
+    settings = {
+        json = {
+            schemas = require("schemastore").json.schemas(),
+            validate = { enable = true },
+        },
+    }
+}
+
+vim.lsp.enable({"clangd", "basedpyright", "ruff", "lua_ls", "gopls", "rust_analyzer", "ts_ls"})
+vim.lsp.enable({"tinymist", "bashls"})
+vim.lsp.enable({"html", "cssls", "yamlls", "dockerls", "jsonls"})
+vim.lsp.enable({"neocmake", "glsl_analyzer", "systemd_lsp", "emmet_language_server", "djlsp"})
+
+require("typst-preview").setup({
+    open_cmd = "chromium --new-window %s",
+    invert_colors = '{"rest": "always","image": "never"}',
+    dependencies_bin = {
+        ["tinymist"] = "tinymist",
+        ["websocat"] = "websocat",
+    },
+})
+vim.keymap.set("n", "<Leader>tp", "<Cmd>TypstPreviewToggle<CR>", { noremap = true })
+
+--==============================================================================
+-- DAP
+--==============================================================================
+do
+    local dap = require("dap")
+    require("overseer").enable_dap()
+
+    dap.adapters.codelldb = {
+        type = "server",
+        port = "${port}",
+        executable = {
+            command = "codelldb",
+            args = { "--port", "${port}" }
+        }
+    }
+    dap.adapters.cortex_debug = {
+        type = "server",
+        port = "${port}",
+        executable = {
+            command = "codelldb",
+            args = { "--port", "${port}" }
+        }
+    }
+    dap.adapters.arm_none_eabi_gdb = {
+        type = "server",
+        port = "${port}",
+        executable = {
+            command = "arm-none-eabi-gdb",
+            args = { "--port", "${port}" }
+        }
+    }
+
+    vim.keymap.set("n", "<A-d>", function() require("dap").continue() end, { noremap = true, silent = true })
+    vim.keymap.set("n", "<A-n>", function() dap.step_over() end, { noremap = true, silent = true })
+    vim.keymap.set("n", "<A-i>", function() dap.step_into() end, { noremap = true, silent = true })
+    vim.keymap.set("n", "<A-o>", function() dap.step_out() end, { noremap = true, silent = true })
+    vim.keymap.set("n", "<Leader>tb", function() dap.toggle_breakpoint() end, { noremap = true, silent = true })
+end
+
+do
+    local dap = require("dap")
+    local dap_view = require("dap-view")
+    dap_view.setup({
+        winbar = {
+            show = true,
+            sections = { "console", "watches", "exceptions", "breakpoints", "threads", "repl" },
+            default_section = "console",
+        },
+    })
+    dap.listeners.before.attach["dap-view-config"]           = function() dap_view.open() end
+    dap.listeners.before.launch["dap-view-config"]           = function() dap_view.open() end
+    dap.listeners.before.event_terminated["dap-view-config"] = function() dap_view.close() end
+    dap.listeners.before.event_exited["dap-view-config"]     = function() dap_view.close() end
+    vim.keymap.set("n", "<Leader>td", function() dap_view.toggle() end, { noremap = true, silent = true })
+end
+
+require("nvim-dap-virtual-text").setup({
+    virt_text_pos = "eol"
+})
+
+--==============================================================================
+-- Application
+--==============================================================================
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "leetcode.nvim",
+    callback = function()
+        vim.cmd("Copilot disable")
+    end,
+})
+
+require("leetcode").setup({
+    arg = "leetcode",
+    lang = "golang",
+    cn = {
+        enabled = true,
+        translator = false,
+        translate_problems = false,
+    },
+    injector = {
+        ["cpp"] = { before =  { leetcodeCppBeforeInjection }},
+        ["python3"] = { before =  { leetcodePythonBeforeInjection }},
+        ["golang"] = { before =  { leetcodeGoBeforeInjection }},
+    }
+})
+
+vim.keymap.set("n", "<Leader>ll", "<Cmd>Leet list<CR>", { noremap = true })
+vim.keymap.set("n", "<Leader>li", "<Cmd>Leet inject<CR>", { noremap = true })
+vim.keymap.set("n", "<Leader>lr", "<Cmd>Leet reset<CR>", { noremap = true })
+vim.keymap.set("n", "<Leader>lt", "<Cmd>Leet test<CR>", { noremap = true })
+vim.keymap.set("n", "<Leader>ls", "<Cmd>Leet submit<CR>", { noremap = true })
+vim.keymap.set("n", "<Leader>lc", "<Cmd>Leet console<CR>", { noremap = true })
+vim.keymap.set("n", "<Leader>lh", "<Cmd>Leet hints<CR>", { noremap = true })
+vim.keymap.set("n", "<Leader>lm", "<Cmd>Leet menu<CR>", { noremap = true })
+vim.keymap.set("n", "<Leader>lp", "<Cmd>Leet lang<CR>", { noremap = true })
+vim.keymap.set("n", "<Leader>ld", "<Cmd>Leet daily<CR>", { noremap = true })
+vim.keymap.set("n", "<Leader>lq", "<Cmd>Leet exit<CR>", { noremap = true })
