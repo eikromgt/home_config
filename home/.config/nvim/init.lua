@@ -47,7 +47,7 @@ vim.keymap.set("i", "<C-BS>",  "<C-w>",  { noremap = true })
 
 vim.keymap.set("n", "<A-W>",   "<C-w>c", { noremap = true })
 vim.keymap.set("n", "<A-S>",   "<C-w>v", { noremap = true })
-vim.keymap.set("n", "<A-w>",   "<C-w>", { noremap = true })
+vim.keymap.set("n", "<A-w>",   "<C-w>",  { noremap = true })
 vim.keymap.set("n", "<A-l>",   "<C-w>l", { noremap = true })
 vim.keymap.set("n", "<A-h>",   "<C-w>h", { noremap = true })
 vim.keymap.set("n", "<A-k>",   "<C-w>k", { noremap = true })
@@ -230,6 +230,12 @@ plugin("https://github.com/nvim-treesitter/nvim-treesitter", function()
     })
 end)
 
+plugin("https://github.com/folke/which-key.nvim", function()
+    require("which-key").setup({
+        preset = "helix"
+    })
+end)
+
 --==============================================================================
 -- Editor
 --==============================================================================
@@ -272,6 +278,13 @@ end)
 
 plugin("https://github.com/kylechui/nvim-surround", function()
     require("nvim-surround").setup()
+end)
+
+plugin("https://github.com/chtenb/helix.vim", function()
+    -- helix.vim is a plain Vim script with no plugin/ dir, so source it manually
+    -- (Lua equivalent of `source ~/helix.vim/helix.vim`).
+    local dir = vim.fn.stdpath("data") .. "/site/pack/core/opt/helix.vim"
+    vim.cmd.source(dir .. "/helix.vim")
 end)
 
 --==============================================================================
