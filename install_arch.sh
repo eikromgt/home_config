@@ -102,7 +102,7 @@ function install_rootfs() {
         htop trash-cli yazi lazygit tmux \
         nvidia-open nvidia-utils libva-nvidia-driver vulkan-radeon \
         hyprland uwsm xdg-desktop-portal-hyprland xorg-xwayland wl-clipboard \
-        noctalia brightnessctl wl-clip-persist grim slurp satty \
+        noctalia brightnessctl wl-clip-persist grim slurp satty ydotool \
         noto-fonts noto-fonts-cjk adobe-source-code-pro-fonts \
         noto-fonts-emoji otf-font-awesome ttf-nerd-fonts-symbols-mono \
         kitty chromium zathura zathura-pdf-poppler opencode \
