@@ -7,6 +7,9 @@ builtin = "Gruvbox"
 [wallpaper]
 directory = "~/media/wallpaper/3840x2160"
 
+[wallpaper.automation]
+enabled = true
+
 [bar.default]
 position = "bottom"
 auto_hide = true
