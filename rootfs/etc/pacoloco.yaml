@@ -8,8 +8,8 @@ purge_files_after: 2592000 ## purge file after 30 days
 repos:
   archlinux:
     urls: ## add or change official mirror urls as desired, see https://archlinux.org/mirrors/status/
-      - https://mirrors.aliyun.com/archlinux
       - https://mirrors.tuna.tsinghua.edu.cn/archlinux
+      - https://mirrors.aliyun.com/archlinux
       - https://mirrors.ustc.edu.cn/archlinux
       - https://mirrors.bfsu.edu.cn/archlinux
       # - http://mirror.lty.me/archlinux
