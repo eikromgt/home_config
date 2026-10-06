@@ -319,6 +319,7 @@ hl.bind(mainMod .. " + SLASH",      hl.dsp.exec_cmd("noctalia msg panel-toggle c
 hl.bind(mainMod .. " + SHIFT + C",  hl.dsp.exec_cmd([[grim -g "$(slurp)" - | satty --early-exit -f - --copy-command wl-copy]]))
 hl.bind(mainMod .. " + Z",          hl.dsp.exec_cmd(ipc .. "panel-toggle control-center"))
 hl.bind(mainMod .. " + X",          hl.dsp.exec_cmd(ipc .. "settings-toggle"))
+hl.bind(mainMod .. " + O",          hl.dsp.exec_cmd(ipc .. "panel-toggle thepunkoff/pomodoro:panel"))
 
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + H",          hl.dsp.focus({ direction = "left" }))

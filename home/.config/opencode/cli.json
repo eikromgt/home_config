@@ -6,5 +6,8 @@
   "keybinds": {
     "leader": "alt+r"
   },
-  "animations": true
+  "animations": true,
+  "session": {
+    "sidebar": "hide"
+  }
 }

@@ -14,8 +14,15 @@ enabled = true
 position = "bottom"
 auto_hide = true
 reserve_space = false
+center = ["clock", "pomodoro-timer"]
 
 [idle.behavior.screen-off]
 timeout = 300
 action = "screen_off"
 enabled = true
+
+[plugins]
+enabled = ["thepunkoff/pomodoro"]
+
+[widget.pomodoro-timer]
+type = "thepunkoff/pomodoro:widget"
