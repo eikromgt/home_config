@@ -309,7 +309,12 @@ hl.bind(mainMod .. " + SHIFT + Q",  hl.dsp.exec_cmd("uwsm stop"))
 hl.bind(mainMod .. " + SHIFT + R",  hl.dsp.exec_cmd("systemctl reboot"))
 hl.bind(mainMod .. " + SHIFT + X",  hl.dsp.exec_cmd("systemctl poweroff"))
 hl.bind(mainMod .. " + SHIFT + D",  hl.dsp.exec_cmd([[sleep 0.3 && hyprctl dispatch 'hl.dsp.dpms({action = "off"})']]))
-hl.bind(mainMod .. " + T",          hl.dsp.window.float({ action = "unset" }))
+
+hl.bind(mainMod .. " + T",          function()
+    hl.dispatch(hl.dsp.window.float({ action = "unset" }))
+    hl.dispatch(hl.dsp.window.fullscreen({ action = "unset" }))
+end)
+
 hl.bind(mainMod .. " + V",          hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + F",          hl.dsp.window.fullscreen({ action = "toggle", mode = "fullscreen" }))
 hl.bind(mainMod .. " + E",          hl.dsp.exec_cmd("uwsm-app -- kitty yazi"))
@@ -322,10 +327,30 @@ hl.bind(mainMod .. " + X",          hl.dsp.exec_cmd(ipc .. "settings-toggle"))
 hl.bind(mainMod .. " + O",          hl.dsp.exec_cmd(ipc .. "panel-toggle thepunkoff/pomodoro:panel"))
 
 -- Move focus with mainMod + arrow keys
-hl.bind(mainMod .. " + H",          hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + L",          hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + K",          hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + J",          hl.dsp.focus({ direction = "down" }))
+hl.bind(mainMod .. " + H", function()
+    hl.dispatch(hl.dsp.focus({ direction = "left" }))
+    hl.dispatch(hl.dsp.window.bring_to_top())
+end)
+
+hl.bind(mainMod .. " + L", function()
+    hl.dispatch(hl.dsp.focus({ direction = "right" }))
+    hl.dispatch(hl.dsp.window.bring_to_top())
+end)
+
+hl.bind(mainMod .. " + K", function()
+    hl.dispatch(hl.dsp.focus({ direction = "up" }))
+    hl.dispatch(hl.dsp.window.bring_to_top())
+end)
+
+hl.bind(mainMod .. " + J", function()
+    hl.dispatch(hl.dsp.focus({ direction = "down" }))
+    hl.dispatch(hl.dsp.window.bring_to_top())
+end)
+
+hl.bind("SUPER + Tab", function()
+    hl.dispatch(hl.dsp.window.cycle_next())
+    hl.dispatch(hl.dsp.window.bring_to_top())
+end)
 
 hl.bind(mainMod .. " + SHIFT + H",          hl.dsp.layout("rollnext"))
 hl.bind(mainMod .. " + SHIFT + L",          hl.dsp.layout("rollprev"))
