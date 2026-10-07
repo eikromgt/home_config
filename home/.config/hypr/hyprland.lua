@@ -311,12 +311,17 @@ hl.bind(mainMod .. " + SHIFT + X",  hl.dsp.exec_cmd("systemctl poweroff"))
 hl.bind(mainMod .. " + SHIFT + D",  hl.dsp.exec_cmd([[sleep 0.3 && hyprctl dispatch 'hl.dsp.dpms({action = "off"})']]))
 
 hl.bind(mainMod .. " + T",          function()
-    hl.dispatch(hl.dsp.window.float({ action = "unset" }))
     hl.dispatch(hl.dsp.window.fullscreen({ action = "unset" }))
+    hl.dispatch(hl.dsp.window.float({ action = "unset" }))
 end)
 
-hl.bind(mainMod .. " + V",          hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + V",          function()
+    hl.dispatch(hl.dsp.window.fullscreen({ action = "unset" }))
+    hl.dispatch(hl.dsp.window.float({ action = "toggle" }))
+end)
+
 hl.bind(mainMod .. " + F",          hl.dsp.window.fullscreen({ action = "toggle", mode = "fullscreen" }))
+
 hl.bind(mainMod .. " + E",          hl.dsp.exec_cmd("uwsm-app -- kitty yazi"))
 hl.bind(mainMod .. " + P",          hl.dsp.exec_cmd(ipc .. "panel-toggle launcher"))
 hl.bind(mainMod .. " + B",          hl.dsp.exec_cmd(ipc .. "bar-toggle"))
