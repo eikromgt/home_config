@@ -94,7 +94,7 @@ function install_rootfs() {
         neovim helix tree-sitter-cli lua-language-server yaml-language-server python-uv \
         bash-language-server typescript-language-server dockerfile-language-server \
         vscode-html-languageserver vscode-css-languageserver vscode-json-languageserver \
-        rust-analyzer systemd-lsp \
+        rust-analyzer systemd-lsp imagemagick \
         shellcheck shfmt \
         dhcpcd networkmanager wpa_supplicant ethtool inetutils wireless-regdb \
         bluez bluez-utils pulsemixer pipewire-alsa pipewire-jack pipewire-pulse udiskie \
