@@ -325,7 +325,7 @@ hl.bind(mainMod .. " + F",          hl.dsp.window.fullscreen({ action = "toggle"
 hl.bind(mainMod .. " + E",          hl.dsp.exec_cmd("uwsm-app -- kitty yazi"))
 hl.bind(mainMod .. " + P",          hl.dsp.exec_cmd(ipc .. "panel-toggle launcher"))
 hl.bind(mainMod .. " + B",          hl.dsp.exec_cmd(ipc .. "bar-toggle"))
-hl.bind(mainMod .. " + SLASH",      hl.dsp.exec_cmd("noctalia msg panel-toggle control-center notifications"))
+hl.bind(mainMod .. " + SLASH",      hl.dsp.exec_cmd(ipc .. "panel-toggle control-center notifications"))
 hl.bind(mainMod .. " + SHIFT + C",  hl.dsp.exec_cmd([[grim -g "$(slurp)" - | satty --early-exit -f - --copy-command wl-copy]]))
 hl.bind(mainMod .. " + Z",          hl.dsp.exec_cmd(ipc .. "panel-toggle control-center"))
 hl.bind(mainMod .. " + X",          hl.dsp.exec_cmd(ipc .. "settings-toggle"))
