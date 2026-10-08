@@ -191,6 +191,7 @@ end)
 
 plugin("https://github.com/3rd/image.nvim", function()
     require("image").setup({
+        tmux_show_only_in_active_window = true
     })
 end)
 
