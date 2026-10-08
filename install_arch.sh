@@ -91,7 +91,8 @@ function install_rootfs() {
     pacman -S --needed --noconfirm man-db man-pages texinfo pacman-contrib \
         arch-install-scripts efibootmgr dosfstools \
         base-devel ccache clang lldb llvm python cmake ninja typst tinymist websocat go gopls \
-        neovim helix tree-sitter-cli lua-language-server yaml-language-server python-uv \
+        neovim helix tree-sitter-cli tree-sitter-bash tree-sitter-python tree-sitter-javascript \
+        tree-sitter-rust lua-language-server yaml-language-server python-uv \
         bash-language-server typescript-language-server dockerfile-language-server \
         vscode-html-languageserver vscode-css-languageserver vscode-json-languageserver \
         rust-analyzer systemd-lsp imagemagick \
