@@ -16,6 +16,11 @@ auto_hide = true
 reserve_space = false
 center = ["clock", "pomodoro-timer"]
 
+[idle.behavior.lock]
+timeout = 180
+action = "lock"
+enabled = true
+
 [idle.behavior.screen-off]
 timeout = 300
 action = "screen_off"

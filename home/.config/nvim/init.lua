@@ -471,7 +471,7 @@ end)
 -- Completion
 --==============================================================================
 plugin("https://github.com/github/copilot.vim", function()
-    vim.keymap.set("i", "<A-S-Tab>", "copilot#Accept('\\<CR>')", {
+    vim.keymap.set("i", "<A-S-a>", 'copilot#Accept("\\<CR>")', {
         expr = true,
         replace_keycodes = false
     })
