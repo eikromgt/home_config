@@ -189,6 +189,11 @@ plugin("https://github.com/ellisonleao/gruvbox.nvim", function()
     vim.cmd.colorscheme("gruvbox")
 end)
 
+plugin("https://github.com/3rd/image.nvim", function()
+    require("image").setup({
+    })
+end)
+
 plugin("https://github.com/RRethy/vim-illuminate", function()
     -- Auto-starts from its plugin/ file; it defines its highlight groups with
     -- `:hi default`, so our links win regardless of order.
@@ -226,6 +231,8 @@ plugin("https://github.com/nvim-treesitter/nvim-treesitter", function()
         end,
     })
 end)
+
+plugin("https://github.com/MeanderingProgrammer/render-markdown.nvim")
 
 --==============================================================================
 -- Editor
@@ -471,34 +478,34 @@ plugin("https://github.com/github/copilot.vim", function()
     vim.g.copilot_no_tab_map = true
 end)
 
-plugin("https://github.com/milanglacier/minuet-ai.nvim", function()
-    require("minuet").setup {
-        virtualtext = {
-            auto_trigger_ft = {},
-            keymap = {
-                accept = "<A-S-a>",
-                accept_line = "<A-S-Tab>",
-            },
-        },
-        provider = "openai_fim_compatible",
-        request_timeout = 2.5,
-        throttle = 3000,
-        debounce = 1500,
-        provider_options = {
-            openai_fim_compatible = {
-                api_key = "DEEPSEEK_API_KEY",
-                end_point ="https://api.deepseek.com/beta/completions",
-                model = "deepseek-flash",
-                name = "Deepseek",
-                optional = {
-                    max_tokens = 256,
-                    top_p = 0.9,
-                    thinking = { type = "disabled" },
-                },
-            },
-        },
-    }
-end)
+--plugin("https://github.com/milanglacier/minuet-ai.nvim", function()
+--    require("minuet").setup {
+--        virtualtext = {
+--            auto_trigger_ft = {},
+--            keymap = {
+--                accept = "<A-S-a>",
+--                accept_line = "<A-S-Tab>",
+--            },
+--        },
+--        provider = "openai_fim_compatible",
+--        request_timeout = 2.5,
+--        throttle = 3000,
+--        debounce = 1500,
+--        provider_options = {
+--            openai_fim_compatible = {
+--                api_key = "DEEPSEEK_API_KEY",
+--                end_point ="https://api.deepseek.com/beta/completions",
+--                model = "deepseek-flash",
+--                name = "Deepseek",
+--                optional = {
+--                    max_tokens = 256,
+--                    top_p = 0.9,
+--                    thinking = { type = "disabled" },
+--                },
+--            },
+--        },
+--    }
+--end)
 
 plugin("https://github.com/saghen/blink.cmp", function()
     require("blink.cmp").build():pwait()
