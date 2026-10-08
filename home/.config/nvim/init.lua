@@ -191,7 +191,21 @@ end)
 
 plugin("https://github.com/3rd/image.nvim", function()
     require("image").setup({
-        tmux_show_only_in_active_window = true
+        tmux_show_only_in_active_window = true,
+        integrations = {
+            markdown = {
+                resolve_image_path = function(document_path, image_path, fallback)
+                    -- Resolve missing absolute paths relative to the Markdown file.
+                    if image_path:sub(1, 1) == "/"
+                        and not vim.uv.fs_stat(image_path)
+                    then
+                        image_path = image_path:gsub("^/+", "")
+                    end
+
+                    return fallback(document_path, image_path)
+                end,
+            },
+        },
     })
 end)
 
@@ -722,4 +736,3 @@ for _, p in ipairs(plugins) do
         p.config()
     end
 end
-
