@@ -1,5 +1,9 @@
 [shell]
 font_family = "SourceCodePro,NotoSansCJK"
+settings_window_translucent = true
+
+[shell.panel]
+transparency_mode = "glass"
 
 [theme]
 builtin = "Gruvbox"

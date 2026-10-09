@@ -237,7 +237,7 @@ end)
 plugin("https://github.com/HiPhish/rainbow-delimiters.nvim")
 
 plugin("https://github.com/nvim-treesitter/nvim-treesitter", function()
-    local languages = { "cpp", "c", "python", "go", "cmake", "typst", "javascript", "html", "css", "json", "glsl", }
+    local languages = { "cpp", "go", "cmake", "typst", "html", "xml", "css", "json", "glsl", "markdown_inline" }
     require("nvim-treesitter").install(languages)
     vim.api.nvim_create_autocmd("FileType", {
         pattern = languages,
