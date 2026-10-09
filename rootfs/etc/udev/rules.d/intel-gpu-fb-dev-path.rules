@@ -3,4 +3,5 @@ SUBSYSTEM=="drm", \
 SUBSYSTEMS=="pci", \
 DRIVERS=="i915", \
 ATTRS{vendor}=="0x8086", \
+ATTRS{BOOT_VGA}!="?*", \
 SYMLINK+="dri/intel-gpu"
