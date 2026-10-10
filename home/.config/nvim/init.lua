@@ -39,6 +39,7 @@ vim.lsp.log.set_level("off")
 --==============================================================================
 vim.keymap.set("n", "<Space>", "<Nop>",  { noremap = true })
 vim.g.mapleader         = " "
+vim.g.maplocalleader    = "\\"
 
 vim.keymap.set("x", "p",       "\"_dP")
 
@@ -237,12 +238,49 @@ end)
 plugin("https://github.com/HiPhish/rainbow-delimiters.nvim")
 
 plugin("https://github.com/nvim-treesitter/nvim-treesitter", function()
-    local languages = { "cpp", "go", "cmake", "typst", "html", "xml", "css", "json", "glsl", "markdown_inline" }
-    require("nvim-treesitter").install(languages)
+    local treesitter = require("nvim-treesitter")
+    local available = {}
+    for _, lang in ipairs(treesitter.get_available()) do
+        available[lang] = true
+    end
+    local pending = {}
+    local ready = {}
+
     vim.api.nvim_create_autocmd("FileType", {
-        pattern = languages,
-        callback = function()
-            vim.treesitter.start()
+        group = vim.api.nvim_create_augroup("AutoTreesitter", { clear = true }),
+        callback = function(args)
+            local lang = vim.treesitter.language.get_lang(args.match)
+            if not lang or vim.bo[args.buf].buftype ~= "" then
+                return
+            end
+
+            local function start()
+                if vim.api.nvim_buf_is_valid(args.buf)
+                    and vim.bo[args.buf].filetype == args.match
+                then
+                    pcall(vim.treesitter.start, args.buf, lang)
+                end
+            end
+
+            if ready[lang] or not available[lang] then
+                start()
+                return
+            end
+
+            if not pending[lang] then
+                pending[lang] = treesitter.install({ lang })
+            end
+            pending[lang]:await(function(err, success)
+                vim.schedule(function()
+                    pending[lang] = nil
+                    if err or not success then
+                        vim.notify("Tree-sitter installation failed for " .. lang .. ". See :TSLog", vim.log.levels.WARN)
+                        return
+                    end
+                    ready[lang] = true
+                    start()
+                end)
+            end)
         end,
     })
 end)
@@ -365,9 +403,11 @@ plugin("https://github.com/nvim-telescope/telescope.nvim", function()
     vim.keymap.set("n", "<A-S-f>", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
 end)
 
-plugin("https://github.com/nvim-pack/nvim-spectre", function()
-    require("spectre").setup()
-    vim.keymap.set("n", "<Leader>tr", function() require("spectre").toggle() end, { desc = "Toggle Spectre" })
+plugin("https://github.com/MagicDuck/grug-far.nvim", function()
+    require("grug-far").setup({})
+    vim.keymap.set("n", "<Leader>tr", function()
+        require("grug-far").toggle_instance({ instanceName = "far", staticTitle = "Find and Replace" })
+    end, { desc = "Toggle Grug Far" })
 end)
 
 plugin("https://github.com/akinsho/toggleterm.nvim", function()
