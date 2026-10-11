@@ -525,42 +525,61 @@ end)
 --==============================================================================
 -- Completion
 --==============================================================================
-plugin("https://github.com/github/copilot.vim", function()
-    vim.keymap.set("i", "<A-S-a>", 'copilot#Accept("\\<CR>")', {
-        expr = true,
-        replace_keycodes = false
-    })
-    vim.g.copilot_no_tab_map = true
-end)
-
---plugin("https://github.com/milanglacier/minuet-ai.nvim", function()
---    require("minuet").setup {
---        virtualtext = {
---            auto_trigger_ft = {},
---            keymap = {
---                accept = "<A-S-a>",
---                accept_line = "<A-S-Tab>",
---            },
---        },
---        provider = "openai_fim_compatible",
---        request_timeout = 2.5,
---        throttle = 3000,
---        debounce = 1500,
---        provider_options = {
---            openai_fim_compatible = {
---                api_key = "DEEPSEEK_API_KEY",
---                end_point ="https://api.deepseek.com/beta/completions",
---                model = "deepseek-flash",
---                name = "Deepseek",
---                optional = {
---                    max_tokens = 256,
---                    top_p = 0.9,
---                    thinking = { type = "disabled" },
---                },
---            },
---        },
---    }
+--plugin("https://github.com/github/copilot.vim", function()
+--    vim.keymap.set("i", "<A-S-a>", 'copilot#Accept("\\<CR>")', {
+--        expr = true,
+--        replace_keycodes = false
+--    })
+--    vim.g.copilot_no_tab_map = true
 --end)
+
+
+plugin("https://github.com/milanglacier/minuet-ai.nvim", function()
+    require("minuet").setup {
+        virtualtext = {
+            auto_trigger_ft = { "*" },
+            keymap = {
+                accept = "<A-S-a>",
+                accept_line = "<A-S-Tab>",
+            },
+        },
+        provider = "openai_fim_compatible",
+        -- Local llama.cpp server is single-model and slower to first token.
+        n_completions = 1,
+        context_window = 1024,
+        request_timeout = 10,
+        throttle = 1000,
+        debounce = 500,
+        provider_options = {
+            openai_fim_compatible = {
+                -- llama-server ignores the key; a function avoids depending on
+                -- a particular environment variable existing.
+                api_key = function() return "sk-no-key-required" end,
+                end_point = "http://127.0.0.1:8000/v1/completions",
+                -- Value is ignored by llama.cpp (the loaded model is used).
+                model = "qwen2.5-coder",
+                name = "Llama.cpp",
+                optional = {
+                    max_tokens = 256,
+                    top_p = 0.95,
+                    temperature = 0.6,
+                },
+                -- llama.cpp does not support the FIM `suffix` field, so bake the
+                -- Qwen2.5-Coder FIM special tokens into the prompt instead.
+                template = {
+                    prompt = function(context_before_cursor, context_after_cursor, _)
+                        return "<|fim_prefix|>"
+                            .. context_before_cursor
+                            .. "<|fim_suffix|>"
+                            .. context_after_cursor
+                            .. "<|fim_middle|>"
+                    end,
+                    suffix = false,
+                },
+            },
+        },
+    }
+end)
 
 plugin("https://github.com/saghen/blink.cmp", function()
     require("blink.cmp").build():pwait()

@@ -1,0 +1,13 @@
+[Unit]
+Description=llama.cpp local LLM server
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/llama-server -hf Qwen/Qwen2.5-Coder-14B-Instruct-GGUF:Q4_K_M --host 127.0.0.1 --port 8012 -ngl 99 -c 12288 -b 512 -ub 256 --flash-attn on
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
+
