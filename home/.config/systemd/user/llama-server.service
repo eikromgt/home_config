@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/llama-server -hf Qwen/Qwen2.5-Coder-14B-Instruct-GGUF:Q4_K_M --host 127.0.0.1 --port 8012 -ngl 99 -c 12288 -b 512 -ub 256 --flash-attn on
+ExecStart=/usr/bin/llama-server -hf Qwen/Qwen2.5-Coder-14B-Instruct-GGUF:Q4_K_M --host 127.0.0.1 --port 8000  -ngl 99 -c 16384 -b 1024 -ub 512 --temp 0.6 --top-p 0.95
 Restart=on-failure
 RestartSec=5
 
