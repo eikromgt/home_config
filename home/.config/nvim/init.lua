@@ -680,7 +680,7 @@ plugin("https://github.com/neovim/nvim-lspconfig", function()
 
     vim.lsp.enable({"clangd", "basedpyright", "ruff", "lua_ls", "gopls", "rust_analyzer", "ts_ls"})
     vim.lsp.enable({"tinymist", "bashls"})
-    vim.lsp.enable({"html", "cssls", "yamlls", "dockerls", "jsonls"})
+    vim.lsp.enable({"html", "cssls", "yamlls", "dockerls", "jsonls", "yang_lsp"})
     vim.lsp.enable({"neocmake", "glsl_analyzer", "systemd_lsp", "emmet_language_server", "djlsp"})
 end)
 

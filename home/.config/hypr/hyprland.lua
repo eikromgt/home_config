@@ -536,4 +536,4 @@ hl.layer_rule({
 
 hl.workspace_rule({ workspace = "4", on_created_empty = "kitty -e tmux new-session -A -s dev" })
 hl.workspace_rule({ workspace = "7", on_created_empty = "kitty -e tmux new-session -A -s test" })
-hl.workspace_rule({ workspace = "special", on_created_empty = "kitty -e tmux new-session -A -s special" })
+hl.workspace_rule({ workspace = "special:magic", on_created_empty = "kitty -e tmux new-session -A -s special" })
