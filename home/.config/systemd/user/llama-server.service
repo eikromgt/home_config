@@ -1,6 +1,7 @@
 [Unit]
 Description=llama.cpp local LLM server
 After=network.target
+Conflicts=lemonade-server.service
 
 [Service]
 Type=simple

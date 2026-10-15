@@ -1,0 +1,16 @@
+[Unit]
+Description=Lemonade local AI server (Ryzen AI NPU via FastFlowLM)
+After=network.target
+Conflicts=llama-server.service
+
+[Service]
+Type=simple
+# Arch package: lemonade-server; NPU backend: fastflowlm.
+# Current Lemonade releases use lemond as the foreground server.
+# Select an FLM model through the CLI/API to run inference on the NPU.
+ExecStart=/usr/bin/lemond --host 127.0.0.1 --port 8000 --no-broadcast
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

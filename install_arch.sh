@@ -108,6 +108,7 @@ function install_rootfs() {
         noto-fonts-emoji otf-font-awesome ttf-nerd-fonts-symbols-mono \
         kitty chromium zathura zathura-pdf-poppler opencode \
         fcitx5-im fcitx5-nord fcitx5-rime \
+        lemonade-server fastflowlm \
         arm-none-eabi-gcc arm-none-eabi-gdb assimp glfw stb \
         chntpw github-cli wireshark-qt postgresql \
         kicad rpi-imager \
