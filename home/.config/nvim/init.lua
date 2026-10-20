@@ -639,7 +639,10 @@ plugin("https://github.com/milanglacier/minuet-ai.nvim", function()
                     end
                     results[profile] = available
                     if results.npu ~= nil and results.llama ~= nil and minuet.config == initial_config then
-                        minuet.change_preset(results.npu and "npu" or results.llama and "llama" or "off")
+                        local preset = results.npu and "npu" or results.llama and "llama" or "off"
+                        if preset ~= "off" then
+                            minuet.change_preset(preset)
+                        end
                     end
                 end)
             end)

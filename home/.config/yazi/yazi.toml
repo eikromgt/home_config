@@ -1,9 +1,6 @@
 [opener]
-edit = [
-	{ run = '$EDITOR "$@"', block = true, for = "unix" },
-]
 pdf = [
-    { run = 'zathura "$@"', orphan = true, for = "unix" },
+    { run = 'zathura "%s"', orphan = true, for = "unix" },
 ]
 
 [open]
@@ -11,3 +8,4 @@ rules = [
     { mime = "text/*", use = "edit" },
     { mime = "application/pdf", use = "pdf" },
 ]
+
