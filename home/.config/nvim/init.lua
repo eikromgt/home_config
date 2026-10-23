@@ -23,6 +23,8 @@ vim.opt.ignorecase      = true
 vim.opt.smartcase       = true
 vim.opt.display         = "uhex"
 
+vim.opt.exrc            = true
+
 vim.opt.clipboard:append("unnamedplus")
 vim.opt.fillchars:append({ eob = " ", diff = " " })
 vim.opt.matchpairs:append("<:>")
