@@ -597,12 +597,6 @@ plugin("https://github.com/neovim/nvim-lspconfig", function()
         capabilities = require("blink.cmp").get_lsp_capabilities(),
     })
 
-    vim.lsp.config.lua_ls = {
-        settings = {
-            Lua = { diagnostics = { globals = { "vim" } } }
-        }
-    }
-
     vim.lsp.config.tinymist = {
         offset_encoding = "utf-8",
         settings = {
