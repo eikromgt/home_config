@@ -1,3 +1,4 @@
+geodata-mode: true
 external-controller: 0.0.0.0:9090
 external-ui: /usr/share/metacubexd
 geox-url:
