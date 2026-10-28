@@ -17,5 +17,3 @@ tun:
 dns:
   enable: true
   listen: 0.0.0.0:53
-rules:
-  - "DST-PORT,22,DIRECT"
