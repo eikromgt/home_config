@@ -70,15 +70,10 @@ hl.monitor({ output   = "", mode     = "preferred", position = "auto-center-left
 -- Or execute your favorite apps at launch like this:
 --
 hl.on("hyprland.start", function ()
-    hl.exec_cmd("uwsm-app -- noctalia")
-
-    --hl.exec_cmd("uwsm-app -- hypridle")
-    hl.exec_cmd("uwsm-app -- udiskie")
-    --hl.exec_cmd("uwsm-app -- swaybg --mode fill --image $(fd --type file --full-path $HOME/media/wallpaper/3840x2160/ | shuf -n1)")
-    hl.exec_cmd("uwsm-app -- wl-clip-persist --clipboard regular")
-    --hl.exec_cmd("uwsm-app -- waybar")
-    --hl.exec_cmd("uwsm-app -- swaync")
-    hl.exec_cmd("uwsm-app -- fcitx5")
+    hl.exec_cmd("systemctl --user is-active --quiet noctalia.service || uwsm-app -t service -u noctalia.service -- noctalia")
+    hl.exec_cmd("systemctl --user is-active --quiet udiskie.service || uwsm-app -t service -u udiskie.service -- udiskie")
+    hl.exec_cmd("systemctl --user is-active --quiet wl-clip-persist.service || uwsm-app -t service -u wl-clip-persist.service -- wl-clip-persist")
+    hl.exec_cmd("systemctl --user is-active --quiet fcitx5.service || uwsm-app -t service -u fcitx5.service -- fcitx5")
     hl.exec_cmd("uwsm-app -- chromium")
 end)
 
