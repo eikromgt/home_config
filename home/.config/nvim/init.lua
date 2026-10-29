@@ -583,8 +583,6 @@ plugin("https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim", function(
     require("mason-tool-installer").setup {
         run_on_start = false,
         ensure_installed = {
-            "codelldb",
-            "cortex-debug",
             "glsl_analyzer",
             "neocmakelsp",
             "systemd-lsp",
@@ -668,29 +666,9 @@ plugin("https://github.com/mfussenegger/nvim-dap", function()
     local dap = require("dap")
     require("overseer").enable_dap()
 
-    dap.adapters.codelldb = {
-        type = "server",
-        port = "${port}",
-        executable = {
-            command = "codelldb",
-            args = { "--port", "${port}" }
-        }
-    }
-    dap.adapters.cortex_debug = {
-        type = "server",
-        port = "${port}",
-        executable = {
-            command = "codelldb",
-            args = { "--port", "${port}" }
-        }
-    }
-    dap.adapters.arm_none_eabi_gdb = {
-        type = "server",
-        port = "${port}",
-        executable = {
-            command = "arm-none-eabi-gdb",
-            args = { "--port", "${port}" }
-        }
+    dap.adapters.lldb = {
+        type = "execute",
+        command = "lldb-dap"
     }
 
     vim.keymap.set("n", "<A-d>", function() require("dap").continue() end, { noremap = true, silent = true })
@@ -703,6 +681,7 @@ end)
 plugin("https://github.com/igorlfs/nvim-dap-view", function()
     local dap = require("dap")
     local dap_view = require("dap-view")
+
     dap_view.setup({
         winbar = {
             show = true,
@@ -710,6 +689,7 @@ plugin("https://github.com/igorlfs/nvim-dap-view", function()
             default_section = "console",
         },
     })
+
     dap.listeners.before.attach["dap-view-config"]           = function() dap_view.open() end
     dap.listeners.before.launch["dap-view-config"]           = function() dap_view.open() end
     dap.listeners.before.event_terminated["dap-view-config"] = function() dap_view.close() end
