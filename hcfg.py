@@ -230,6 +230,12 @@ home_install_tasks = [
         "src_path": os.path.join(os.path.dirname(os.path.abspath(__file__)), "home"),
         "func": install_config,
     },
+    {
+        "name": "tmux-plugins/tpm",
+        "path": os.path.expandvars("$XDG_DATA_HOME/tmux/plugins/tpm"),
+        "func": git_clone,
+        "depends": ["install"],
+    },
 ]
 
 
