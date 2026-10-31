@@ -76,8 +76,7 @@ minuet.setup {
     virtualtext = {
         auto_trigger_ft = { },
         keymap = {
-            accept = "<A-S-a>",
-            accept_line = "<A-S-Tab>",
+            accept = "<A-S-Tab>",
         },
     },
     provider = "openai_fim_compatible",

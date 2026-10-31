@@ -64,9 +64,7 @@ vim.keymap.set("n", "<A-J>",   "<C-w>J", { noremap = true })
 vim.keymap.set("n", "<Leader>{", "\"oddO{<CR>}<Esc>\"oP=i{",  { noremap = true })
 vim.keymap.set("v", "<Leader>{", "\"odO{<CR>}<Esc>\"oP=i{",   { noremap = true })
 
-vim.keymap.set("n", "<A-p>",   ":e ",                   { noremap = true })
-vim.keymap.set("n", "<A-S-p>", ":",                     { noremap = true })
-vim.keymap.set("n", "<A-z>",   ":vertical help ",       { noremap = true })
+vim.keymap.set("n", "<Leader>rh",   ":vertical help ",       { noremap = true })
 
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(_)
@@ -394,13 +392,24 @@ end)
 --==============================================================================
 plugin("https://github.com/nvim-telescope/telescope.nvim", function()
     local telescope = require("telescope.builtin")
+
+    local function find_all_files()
+        telescope.find_files({
+            hidden = true,
+            no_ignore = false,
+            find_command = { "fd", "--type", "f", "--exclude", ".git" },
+        })
+     end
+
     vim.keymap.set("n", "<leader>fp", telescope.find_files, { noremap = true })
+    vim.keymap.set("n", "<leader>fP", find_all_files)
     vim.keymap.set("n", "<leader>ff", telescope.live_grep, { noremap = true })
     vim.keymap.set("n", "<leader>fh", telescope.pickers, { noremap = true })
     vim.keymap.set("n", "<leader>fb", telescope.buffers, { noremap = true })
     vim.keymap.set("n", "<leader>fh", telescope.help_tags, { noremap = true })
     vim.keymap.set("n", "<Leader>fw", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
     vim.keymap.set("n", "<A-p>", telescope.find_files, { noremap = true })
+    vim.keymap.set("n", "<A-S-p>", find_all_files)
     vim.keymap.set("n", "<A-f>", telescope.live_grep, { noremap = true })
     vim.keymap.set("n", "<A-S-f>", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
 end)
@@ -667,7 +676,7 @@ plugin("https://github.com/mfussenegger/nvim-dap", function()
     require("overseer").enable_dap()
 
     dap.adapters.lldb = {
-        type = "execute",
+        type = "executable",
         command = "lldb-dap"
     }
 
