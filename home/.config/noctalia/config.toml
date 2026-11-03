@@ -18,7 +18,8 @@ enabled = true
 position = "bottom"
 auto_hide = true
 reserve_space = false
-center = ["clock", "pomodoro-timer"]
+start  = ["launcher", "wallpaper", "workspaces", "taskbar"]
+center = ["pomodoro-timer", "clock", "active_window"]
 
 [idle.behavior.lock]
 timeout = 180
