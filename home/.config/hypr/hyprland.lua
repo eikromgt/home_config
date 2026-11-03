@@ -529,6 +529,21 @@ hl.layer_rule({
     blur_popups = true,
 })
 
-hl.workspace_rule({ workspace = "4", on_created_empty = "kitty -e tmux new-session -A -s dev" })
-hl.workspace_rule({ workspace = "7", on_created_empty = "kitty -e tmux new-session -A -s test" })
-hl.workspace_rule({ workspace = "special:magic", on_created_empty = "kitty -e tmux new-session -A -s special" })
+ local workspace_programs = {
+     ["4"]             = "kitty -e tmux new-session -A -s dev",
+     ["7"]             = "kitty -e tmux new-session -A -s test",
+     ["special:magic"] = "kitty -e tmux new-session -A -s special",
+ }
+
+ hl.on("workspace.created", function(ws)
+     if not ws.is_empty then
+         return
+     end
+
+     local cmd = workspace_programs[ws.name]
+     if not cmd then
+         return
+     end
+
+     hl.exec_cmd(cmd, { workspace = ws.name .. " silent" })
+ end)
