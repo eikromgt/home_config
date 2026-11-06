@@ -391,27 +391,32 @@ end)
 -- Tool
 --==============================================================================
 plugin("https://github.com/nvim-telescope/telescope.nvim", function()
-    local telescope = require("telescope.builtin")
+    local telescope = require("telescope")
+    local builtin = require("telescope.builtin")
 
     local function find_all_files()
-        telescope.find_files({
+        builtin.find_files({
             hidden = true,
             no_ignore = false,
             find_command = { "fd", "--type", "f", "--exclude", ".git" },
         })
      end
 
-    vim.keymap.set("n", "<leader>fp", telescope.find_files, { noremap = true })
+    vim.keymap.set("n", "<leader>fp", builtin.find_files, { noremap = true })
     vim.keymap.set("n", "<leader>fP", find_all_files)
-    vim.keymap.set("n", "<leader>ff", telescope.live_grep, { noremap = true })
-    vim.keymap.set("n", "<leader>fh", telescope.pickers, { noremap = true })
-    vim.keymap.set("n", "<leader>fb", telescope.buffers, { noremap = true })
-    vim.keymap.set("n", "<leader>fh", telescope.help_tags, { noremap = true })
-    vim.keymap.set("n", "<Leader>fw", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
-    vim.keymap.set("n", "<A-p>", telescope.find_files, { noremap = true })
+    vim.keymap.set("n", "<leader>ff", telescope.extensions.egrepify.egrepify, { noremap = true })
+    vim.keymap.set("n", "<leader>fh", builtin.pickers, { noremap = true })
+    vim.keymap.set("n", "<leader>fb", builtin.buffers, { noremap = true })
+    vim.keymap.set("n", "<leader>fh", builtin.help_tags, { noremap = true })
+    vim.keymap.set("n", "<Leader>fw", function() builtin.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
+    vim.keymap.set("n", "<A-p>", builtin.find_files, { noremap = true })
     vim.keymap.set("n", "<A-S-p>", find_all_files)
-    vim.keymap.set("n", "<A-f>", telescope.live_grep, { noremap = true })
-    vim.keymap.set("n", "<A-S-f>", function() telescope.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
+    vim.keymap.set("n", "<A-f>", telescope.extensions.egrepify.egrepify, { noremap = true })
+    vim.keymap.set("n", "<A-S-f>", function() builtin.grep_string({search = vim.fn.expand("<cword>")}) end, { noremap = true })
+end)
+
+plugin("https://github.com/fdschmidt93/telescope-egrepify.nvim", function()
+    require("telescope").load_extension("egrepify")
 end)
 
 plugin("https://github.com/MagicDuck/grug-far.nvim", function()
