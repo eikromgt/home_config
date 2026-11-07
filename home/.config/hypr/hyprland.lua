@@ -57,8 +57,8 @@ hl.env("XMODIFIERS", "@im=fcitx")
 ------------------
 
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
-hl.monitor({ output   = "", mode     = "preferred", position = "auto", scale    = "auto", })
-hl.monitor({ output   = "", mode     = "preferred", position = "auto-center-left", scale    = "auto", })
+hl.monitor({ output   = "DP-1", mode     = "preferred", position = "auto", scale    = "auto", })
+hl.monitor({ output   = "DP-2", mode     = "preferred", position = "auto", scale    = "auto"  })
 
 -------------------
 ---- AUTOSTART ----
@@ -294,7 +294,7 @@ hl.device({
 })
 
 
----------------------
+------UTILS---------------
 ---- KEYBINDINGS ----
 ---------------------
 
@@ -552,3 +552,14 @@ hl.layer_rule({
 
      hl.exec_cmd(cmd, { workspace = ws.name .. " silent" })
  end)
+
+
+------------------------------
+---- LOCAL CONFIGURATIONS ----
+------------------------------
+local local_path = package.searchpath("local", package.path)
+if local_path then
+    package.loaded["local"] = nil
+    require("local")
+end
+
