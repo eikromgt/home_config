@@ -285,6 +285,16 @@ plugin("https://github.com/nvim-treesitter/nvim-treesitter", function()
     })
 end)
 
+local function treesitter_status()
+    local highlighter = vim.treesitter.highlighter.active[vim.api.nvim_get_current_buf()]
+
+    if not highlighter then
+        return ""
+    end
+
+    return "󰐅 " .. highlighter.tree:lang()
+end
+
 plugin("https://github.com/MeanderingProgrammer/render-markdown.nvim")
 
 --==============================================================================
@@ -378,7 +388,7 @@ plugin("https://github.com/nvim-lualine/lualine.nvim", function()
             },
         },
         sections = {
-            lualine_a = { "branch", "diff", "lsp_status", require("opencode").statusline, direnv_status, "diagnostics" },
+            lualine_a = { "branch", "diff",  treesitter_status, "lsp_status", require("opencode").statusline, direnv_status, "diagnostics" },
             lualine_b = { relative_filepath, "macro_recording" },
             lualine_c = { "windows" },
             lualine_x = { "overseer", "encoding", "fileformat", "filetype" },
@@ -561,7 +571,7 @@ plugin("https://github.com/saghen/blink.cmp", function()
                 cmdline = {
                     min_keyword_length = function(ctx)
                         if ctx.mode == 'cmdline' and string.find(ctx.line, ' ') == nil then
-                            return 3
+                            return 2
                         end
                         return 0
                     end
