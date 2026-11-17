@@ -83,6 +83,18 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end,
 })
 
+local get_current_line_commit_hash = function()
+    local filepath = vim.api.nvim_buf_get_name(0)
+    local line = vim.api.nvim_win_get_cursor(0)[1]
+    local out = vim.fn.systemlist({
+        "git", "blame", "-sp", "-L", line .. "," .. line, "--", filepath,
+    })
+    if vim.v.shell_error ~= 0 or #out == 0 then
+        return nil
+    end
+    return out[1]:match("^%x+")
+end
+
 -- copy current filepath to system clipboard
 vim.keymap.set("n", "<Leader>tf", function()
         local filepath = vim.api.nvim_buf_get_name(0)
@@ -91,13 +103,15 @@ vim.keymap.set("n", "<Leader>tf", function()
     end, { noremap = true, silent = true })
 
 -- copy current line git commit hash to system clipboard
-vim.keymap.set("n", "<Leader>tc", function()
-        local filepath = vim.api.nvim_buf_get_name(0)
-        local line = vim.api.nvim_win_get_cursor(0)[1]
+vim.keymap.set("n", "<Leader>th", function()
+        local hash = get_current_line_commit_hash()
+        if not hash then
+            vim.notify("No commit found for current line", vim.log.levels.WARN)
+            return
+        end
 
-        local sha = vim.fn.system("git blame -sp -L " .. line .. "," .. line .. " "..  filepath .. " | head -n1 | cut -d ' ' -f 1")
-        vim.fn.setreg("+", sha)
-        vim.notify(filepath .. ":" .. line .. " " .. sha, "info")
+        vim.fn.setreg("+", hash)
+        vim.notify("commit hash copied: " .. hash, "info")
     end, { noremap = true, silent = true })
 
 --==============================================================================
@@ -523,11 +537,20 @@ plugin("https://github.com/sindrets/diffview.nvim", function()
             },
         },
     })
+
+    vim.keymap.set("n", "<A-]>", "]c", { noremap = true })
+    vim.keymap.set("n", "<A-[>", "[c", { noremap = true })
     vim.keymap.set("n", "<Leader>do", ":DiffviewOpen", { noremap = true })
     vim.keymap.set("n", "<Leader>dd", "<Cmd>DiffviewOpen<CR>", { noremap = true })
     vim.keymap.set("n", "<Leader>dq", "<Cmd>DiffviewClose<CR>", { noremap = true })
-    vim.keymap.set("n", "<A-]>", "]c", { noremap = true })
-    vim.keymap.set("n", "<A-[>", "[c", { noremap = true })
+    vim.keymap.set("n", "<Leader>dl", function()
+        local hash = get_current_line_commit_hash()
+        if not hash then
+            vim.notify("No commit found for current line", vim.log.levels.WARN)
+            return
+        end
+        require("diffview").open({ hash .. "^!" })
+    end, { noremap = true })
 end)
 
 plugin("https://github.com/lewis6991/gitsigns.nvim", function()
