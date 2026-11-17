@@ -57,8 +57,8 @@ hl.env("XMODIFIERS", "@im=fcitx")
 ------------------
 
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
-hl.monitor({ output   = "DP-1", mode     = "preferred", position = "auto", scale    = "auto", })
-hl.monitor({ output   = "DP-2", mode     = "preferred", position = "auto", scale    = "auto"  })
+hl.monitor({ output   = "", mode     = "preferred", position = "auto", scale    = "auto", })
+hl.monitor({ output   = "", mode     = "preferred", position = "auto", scale    = "auto"  })
 
 -------------------
 ---- AUTOSTART ----
