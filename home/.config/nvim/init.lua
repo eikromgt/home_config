@@ -18,6 +18,7 @@ vim.opt.cmdheight       = 0
 vim.opt.showmode        = false
 vim.opt.splitright      = true
 vim.opt.splitkeep       = "screen"
+vim.opt.showtabline     = 0
 
 vim.opt.ignorecase      = true
 vim.opt.smartcase       = true
@@ -402,9 +403,9 @@ plugin("https://github.com/nvim-lualine/lualine.nvim", function()
             },
         },
         sections = {
-            lualine_a = { "branch", "diff",  treesitter_status, "lsp_status", require("opencode").statusline, direnv_status, "diagnostics" },
-            lualine_b = { relative_filepath, "macro_recording" },
-            lualine_c = { "windows" },
+            lualine_a = { "branch", "diff",  treesitter_status, "lsp_status", require("opencode").statusline, direnv_status, "diagnostics", "macro_recording"},
+            lualine_b = { { "tabs", mode = 2 },  },
+            lualine_c = { relative_filepath },
             lualine_x = { "overseer", "encoding", "fileformat", "filetype" },
             lualine_z = { "selectioncount", "location", },
         }
