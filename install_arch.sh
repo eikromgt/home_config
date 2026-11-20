@@ -130,6 +130,9 @@ function install_rootfs() {
     systemctl enable sshd
     systemctl enable paccache.timer
 
+    INFO "Enable ntp"
+    timedatectl set-ntp true
+
     INFO "Setup user configurations"
     id "${NEW_USER}" >/dev/null 2>&1 || useradd -m -s /usr/bin/fish "${NEW_USER}"
     echo "${NEW_USER} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/"${NEW_USER}"
